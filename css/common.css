@@ -1,0 +1,40 @@
+
+:root {
+    --color-white: #ffffff;
+    --color-secondary: #292B35;
+    --color-secondary-dark: #111216;
+    --color-primary: #449963;
+    --color-primary-dark: #307c4d;
+    font-family: Helvetica, "Trebuchet MS", Verdana, sans-serif;
+    box-sizing: border-box;
+
+
+}
+::selection{
+    background-color: var(--color-primary) !important;
+
+}
+h1, h2,h3,h4,h5,h6{
+    font-weight: 700;
+}
+p{
+    font-weight: 300;
+}
+
+
+.uk-section{
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+}
+
+.uk-image-text{
+    background-color: black;
+    background-image: url("../assets/images/back.jpeg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-font-smoothing: antialiased;
+}
+.uk-heading{
+    line-height: 1.1;
+}
