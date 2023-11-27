@@ -62,7 +62,7 @@ const projects = [
     "description": "Furkan is a android version of holy quran. It is developed to help people to read quran on the go in bengali language. It has also a special feature for searching any Surah or Ayat by related keywords.",
     "technologies_text": "Furqan is build with android java.  In backend Php is used MySQL is for database. Also used codeigniter4 framework in backend",
     "image": "assets/images/furkan.png",
-    "url": "https://webtrackers.co.in",
+    "url": "https://play.google.com/store/apps/details?id=webtrackers.co.in.furkan&hl=en&gl=US",
     "technologies": [
       "php",
       "mysql",
