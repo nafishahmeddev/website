@@ -1,5 +1,7 @@
 RewriteEngine on
-RewriteCond %{HTTP_HOST} ^domain-name.com$ [NC,OR]
-RewriteCond %{HTTP_HOST} ^www.domain-name.com$
-RewriteCond %{REQUEST_URI} !frontend/dist/
-RewriteRule (.*) /frontend/dist/$1 [L]
+
+# Check if the request is not already in the /frontend/dist/ subdirectory
+RewriteCond %{REQUEST_URI} !^/frontend/dist/
+
+# Rewrite the request to the /frontend/dist/ subdirectory
+RewriteRule ^(.*)$ /frontend/dist/$1 [L]
