@@ -1,3 +1,4 @@
+import { FaDownload, FaLink } from "react-icons/fa6"
 const projects = [
     {
       "title": "FinTacker",
@@ -156,7 +157,7 @@ export default function HomePage(){
               </div>
               <div className="mt-5">
                 <a className="px-9 py-2 bg-emerald-700 hover:bg-emerald-600 transition-all inline-flex justify-center gap-1 items-center  border-b-2 active:border-b-0 active:border-t-2  border-emerald-900 " href="/resume" target="_blank" rel="noreferrer">
-                  Download Resume <span><i className="fa-solid fa-download text-xs"></i></span>
+                  Download Resume <span className="text-sm"><FaDownload/></span>
                 </a>
               </div>
             </div>
@@ -182,7 +183,7 @@ export default function HomePage(){
                       <div>
                         <a className={`px-6 py-2 border-b-2 active:border-b-0 active:border-t-2 transition-all ${index % 2 != 1 ? "bg-white text-gray-900 border-gray-200" : "bg-gray-800 text-white border-gray-950"} hover:opacity-80 font-mono inline-flex items-center gap-2`} href={project.url} target="_blank" rel="noreferrer">
                           View Project Details
-                          <span><i className="fa-solid fa-link text-xs"></i></span>
+                          <span className="text-sm"><FaLink/></span>
                         </a>
                       </div>
     
