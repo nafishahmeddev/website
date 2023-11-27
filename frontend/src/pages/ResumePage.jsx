@@ -1,17 +1,18 @@
-import { FaBuilding, FaCalendar, FaGraduationCap, FaSuitcase, FaTags, FaUser } from "react-icons/fa6"
+import { FaBuilding, FaCalendar, FaGraduationCap, FaSuitcase, FaTags, FaUser, FaCircleCheck } from "react-icons/fa6"
 
 export default function ResumePage() {
 
     const skills = [
-        { label: "PHP", progress: 5 },
         { label: "NodeJS", progress: 5 },
-        { label: "CSS", progress: 3 },
-        { label: "HTML", progress: 4 },
-        { label: "MySQL", progress: 4 },
         { label: "ReactJS", progress: 4 },
-        { label: "Angular", progress: 3 },
-        { label: "Svelte", progress: 3 },
+        { label: "MongoDB", progress: 4 },
+        { label: "CSS3", progress: 3 },
+        { label: "HTML5", progress: 4 },
+        { label: "MySQL", progress: 4 },
+        { label: "PHP", progress: 4 },
         { label: "Flutter", progress: 1 },
+        { label: "Angular", progress: 2 },
+        { label: "Svelte", progress: 2 },
     ]
 
     const languages = [
@@ -29,12 +30,12 @@ export default function ResumePage() {
             description: "",
             projects: [
                 {
-                    name: "AmanaWallet",
-                    description: "Played a key part in crafting and maintaining both the backend infrastructure and the supervisory control interface."
+                    name: "AmanaWallet, Remittance App",
+                    description: "Played a key part in crafting and maintaining both the backend infrastructure and the admin interface."
                 },
                 {
-                    name: "Haaki",
-                    description: "Orchestrated the development and continuous maintenance of both the backend and managerial interface."
+                    name: "Haaki, Audiobook app",
+                    description: "Orchestrated the development and continuous maintenance of both the backend and admin interface."
                 },
                 {
                     name: "Sarraf",
@@ -54,7 +55,7 @@ export default function ResumePage() {
             description: "",
             projects: [
                 {
-                    name: "SuperMD",
+                    name: "SuperMD, Digital Health Clinic",
                     description: "Contributed significantly to the development and maintenance of not only the backend but also the integral managerial panel."
                 },
             ]
@@ -95,14 +96,24 @@ export default function ResumePage() {
             name: "FinTracker",
             description: "A Flutter-based app for easy daily expense and income tracking, providing valuable insights for effective financial management.",
             link: "https://play.google.com/store/apps/details?id=me.nafish.fintracker&hl=en&gl=US"
+        },
+        {
+            name: "dVal",
+            description: "Dval is a lightweight and intuitive data validation module designed to validate data against specified schemas.",
+            link: "https://www.npmjs.com/package/dval"
+        },
+        {
+            name: "wxproxy",
+            description: "Realtime ExpressJS proxy router.",
+            link: "https://www.npmjs.com/package/wxproxy"
         }
     ]
 
     return (
         <main className="bg-gray-200">
             <section className="flex items-stretch m-auto shadow-sm overflow-hidden" style={{ minHeight: "100vh" }}>
-                <aside className="bg-emerald-900 backdrop:blur-sm p-5 leading-7 text-white w-60">
-                <img src="assets/images/profile-pic.png" className="h-20 rounded-full mb-2" />
+                <aside className="bg-emerald-900 backdrop:blur-sm p-5 leading-7 text-white w-60 md:w-72">
+                    <img src="assets/images/profile-pic.png" className="h-20 rounded-full mb-2" />
                     <h1 className="text-2xl font-bold">Nafish Ahmed</h1>
                     <span className="text-emerald-100">Full Stack Developer</span>
                     <div className="block my-6">
@@ -139,22 +150,32 @@ export default function ResumePage() {
                     </div>
                     <div className="block my-6">
                         <h2 className="mb-3  font-medium">Skills</h2>
-                        <ul className='list-disc ps-4'>
+                        <ul className='list-disc'>
                             {skills.map((record) => (
-                                <li key={record.label} className="flex my-1 text-sm relative">
+                                <li key={record.label} className="flex my-1 text-sm gap-2 items-center">
+                                    <span className='text-xs'>
+                                        <FaCircleCheck />
+                                    </span>
                                     {record.label}
-                                    <span className='absolute h-1.5 w-1.5 bg-emerald-200 -left-4 top-2 rounded-full'></span>
+                                    <div className="flex-1"></div>
+                                    <div>
+                                        <ul className="flex gap-2">
+                                            {[1, 2, 3, 4, 5].map(num => <li key={num} className={`block h-1.5 w-1.5 rounded-full  p-0 m-0 ${num <= record.progress ? "bg-white" : "bg-white/30"}`}></li>)}
+                                        </ul>
+                                    </div>
                                 </li>
                             ))}
                         </ul>
                     </div>
                     <div className="block my-6">
                         <h2 className="mb-3 font-medium">Languages</h2>
-                        <ul className='list-disc ps-4'>
+                        <ul className='list-disc'>
                             {languages.map((record) => (
-                                <li key={record.label} className="flex my-1 text-sm relative">
+                                <li key={record.label} className="flex my-1 text-sm gap-2 items-center">
+                                    <span className='text-xs'>
+                                        <FaCircleCheck />
+                                    </span>
                                     {record.label}
-                                    <span className='absolute h-1.5 w-1.5 bg-emerald-200 -left-4 top-2 rounded-full'></span>
                                 </li>
                             ))}
                         </ul>
@@ -166,7 +187,7 @@ export default function ResumePage() {
                             <div className='w-6'><FaUser className='text-emerald-600' /></div>Professional Summery
                         </h2>
                         <div className='ms-8 my-3 text-sm'>
-                            <p>Results-driven Full Stack Developer with over four years of expertise in application layers, presentation layers, and database management. Proficient in PHP, Node.js, HTML, CSS, MySQL, React.js, Angular, and Svelte. Actively seeking opportunities for skill set expansion.</p>
+                            <p>Results-driven Full Stack Developer with over four years of expertise in application layers, presentation layers, and database management. Proficient in Node.js, HTML5, CSS3, MongoDB, React.js, PHP, MySQL, Angular, and Svelte. Actively seeking opportunities for skill set expansion.</p>
                         </div>
                     </div>
                     <div className="block mb-5">
@@ -200,12 +221,13 @@ export default function ResumePage() {
                         <h2 className="text-lg flex gap-2 items-center font-bold">
                             <div className='w-6'><FaTags className='text-emerald-600' /></div>Hobby Projects
                         </h2>
-                        <div className='ms-8 mt-4'>
+                        <div className='ms-8 mt-4 mb-4'>
                             {
                                 projects.map((project, index) => (
-                                    <div className="content mb-7 relative" key={`work-${index}`}>
+                                    <div className="content mb-3 relative" key={`work-${index}`}>
                                         <p className='h3 font-medium text-emerald-700'>{project.name} </p>
                                         <p>{project.description}</p>
+                                        <a className="text-sm text-emerald-700 underline" href={project.link} target="_blank" rel="noreferrer">{project.link}</a>
                                     </div>
                                 ))
                             }
