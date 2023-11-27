@@ -102,7 +102,8 @@ export default function ResumePage() {
         <main className="bg-gray-200">
             <section className="flex items-stretch m-auto shadow-sm overflow-hidden" style={{ minHeight: "100vh" }}>
                 <aside className="bg-emerald-900 backdrop:blur-sm p-5 leading-7 text-white w-60">
-                    <h1 className="text-3xl font-bold">Nafish Ahmed</h1>
+                <img src="assets/images/profile-pic.png" className="h-20 rounded-full mb-2" />
+                    <h1 className="text-2xl font-bold">Nafish Ahmed</h1>
                     <span className="text-emerald-100">Full Stack Developer</span>
                     <div className="block my-6">
                         <h2 className="font-medium mb-2">Contact</h2>
