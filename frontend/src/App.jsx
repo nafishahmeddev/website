@@ -1,17 +1,18 @@
 const projects = [
   {
-    "title": "Francis&Friends",
+    "title": "FinTacker",
     "description": "Effortlessly track expenses & incomes, stay in control. Simple, secure, and private. Your financial ally. FinTracker is a user-friendly personal finance app designed to help users effortlessly track daily expenses and incomes, and gain valuable insights through monthly tracking. It prioritizes data privacy, securely storing all financial data on the user's device without any data collection. With FinTracker, managing finances becomes simple and convenient.",
     "technologies_text": "Sishu suraksha is bult on webview with some of android native features. On other hand php used for backend and Mysql as database.  The firebase is used to track analytical data, remote config and push notification.",
     "image": "assets/images/fintracker.webp",
     "url": "https://play.google.com/store/apps/details?id=me.nafish.fintracker",
     "technologies": [
       "flutter",
+      "sqlite"
     ]
 
   },
   {
-    "title": "Francis&Friends",
+    "title": "Francis & Friends",
     "description": "Francis&Friends is a UK's real-state business website.\nTo design the website we've used HTML, CSS and JavaScript.",
     "technologies_text": "Sishu suraksha is bult on webview with some of android native features. On other hand php used for backend and Mysql as database.  The firebase is used to track analytical data, remote config and push notification.",
     "image": "assets/images/francis.webp",
@@ -173,7 +174,7 @@ function App() {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-3xl mb-4 font-extrabold tracking-tighter">{project.title}</h2>
+                  <h2 className="text-3xl mb-4 font-extrabold">{project.title}</h2>
                   <p className="font-light leading-7 font-mono">{project.description}</p>
                   <div className="flex gap-4 text-xl py-8">
                     {project.technologies.map(technology => <i key={technology} className={`devicon-${technology}-plain`}></i>)}
