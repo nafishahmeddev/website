@@ -1,4 +1,5 @@
-import { FaDownload, FaLink } from "react-icons/fa6"
+import { FaArrowDown, FaArrowRight } from "react-icons/fa6"
+import Typewriter from "../components/Typewriter";
 const projects = [
   {
     "title": "FinTacker",
@@ -133,60 +134,63 @@ export default function HomePage() {
       <video playsInline autoPlay muted loop className="w-screen h-screen fixed top-0 left-0 -z-10 object-cover">
         <source src="assets/videos/banner.mp4" type="video/mp4" />
       </video>
-      <section className="flex h-screen bg-black/40 text-white backdrop:blur-md">
+      <section className="flex h-screen bg-black/40 text-white backdrop:blur-md text-center  backdrop-blur-lg">
         <div className="container m-auto  px-4  max-w-4xl">
 
           <div className="uk-light">
-            <img src="assets/images/profile-pic.png" className="h-28 rounded-full" />
+            <img src="assets/images/profile-pic.png" className="h-28 rounded-full m-auto" />
             <h2 className="text-4xl font-bold mt-5">Hi I{"'"}m </h2>
-
-            <h1 className="md:text-8xl text-6xl  my-8 font-extrabold font-mono">Nafish Ahmed</h1>
+            <h1 className="md:text-8xl text-6xl  my-8 font-extrabold font-mono inline-flex">Nafish Ahmed</h1>
             <p className="mb-5 leading-7">
               I`m Nafish, a 25-year-old Full Stack Developer from India. I`m a quirky individual who enjoys crafting unconventional projects using web technologies. I thrive on solving design challenges, crafting intuitive user interfaces, and conceptualizing meaningful interactions to develop immersive web experiences and applications.
             </p>
-            <p className="mb-5 ">Got any questions? <a className="underline" href="mailto:hello@nafish.me">Contact me.</a></p>
+            <p className="mb-5 ">Got any questions? <a className="underline" href="mailto:nafish.ahmed.dev@gmail.com">Contact me.</a></p>
           </div>
-          <div className="mt-5">
-            <a className="px-9 py-2 bg-emerald-700 hover:bg-emerald-600 transition-all inline-flex justify-center gap-1 items-center  border-b-2 active:border-b-0 active:border-t-2  border-emerald-900 " href="/resume" target="_blank" rel="noreferrer">
-              Download Resume <span className="text-sm"><FaDownload /></span>
+          <div className="mt-16 flex gap-3 justify-center">
+            <a className="p-2  pt-4 pb-3 animate-bounce rounded-3xl font-mono bg-white/20 border border-white/30 backdrop-blur-lg  transition-all inline-flex justify-center gap-1 items-center" href="#projects">
+              <span className=""><FaArrowDown /></span>
             </a>
           </div>
         </div>
       </section>
 
 
-      {
-        projects.map((project, index) => (
-          <section className={`md:py-30 py-40 flex items-center ${index % 2 == 1 ? "bg-emerald-800 text-white" : "bg-yellow-300 "}`} key={`section_${project.title}`}>
-            <div className="container max-w-6xl mx-auto px-4">
-              <div className={`flex items-center ${index % 2 == 1 ? "md:flex-row-reverse" : "md:flex-row"} flex-col gap-4`}>
-                <div className="md:w-[450px]">
-                  <div>
-                    <img src={project.image} className="w-full" />
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <h2 className="text-3xl mb-4 font-extrabold">{project.title}</h2>
-                  <p className=" leading-7 ">{project.description}</p>
-                  <div className="flex gap-4 text-xl py-8">
-                    {project.technologies.map(technology => <i key={technology} className={`devicon-${technology}-plain`}></i>)}
-                  </div>
-                  <div>
-                    <a className={`px-6 py-2 border-b-2 active:border-b-0 active:border-t-2 transition-all ${index % 2 != 1 ? "bg-white text-gray-900 border-gray-200" : "bg-gray-800 text-white border-gray-950"} hover:opacity-80  inline-flex items-center gap-2`} href={project.url} target="_blank" rel="noreferrer">
-                      View Project Details
-                      <span className="text-sm"><FaLink /></span>
-                    </a>
-                  </div>
+      <section id="projects">
 
+
+        {
+          projects.map((project, index) => (
+            <div className={`py-20 flex items-center ${index % 2 == 1 ? "bg-emerald-800 text-white" : "bg-yellow-300 "}`} key={`section_${project.title}`}>
+              <div className="container max-w-6xl mx-auto px-4">
+                <div className={`flex items-center ${index % 2 == 1 ? "md:flex-row-reverse" : "md:flex-row"} flex-col gap-4`}>
+                  <div className="md:w-[450px]">
+                    <div>
+                      <img src={project.image} className="w-full" />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h2 className="text-3xl mb-4 font-extrabold">{project.title}</h2>
+                    <p className=" leading-7 font-mono">{project.description}</p>
+                    <div className="flex gap-4 text-xl py-8">
+                      {project.technologies.map(technology => <i key={technology} className={`devicon-${technology}-plain`}></i>)}
+                    </div>
+                    <div>
+                      <a className={`px-6 py-1.5 font-mono transition-all bg-gray-800 text-white hover:opacity-90  inline-flex items-center gap-2`} href={project.url} target="_blank" rel="noreferrer">
+                        View Project
+                        <span className="text-sm"><FaArrowRight /></span>
+                      </a>
+                    </div>
+
+                  </div>
                 </div>
+
+
               </div>
 
-
-            </div>
-
-          </section >
-        ))
-      }
+            </div >
+          ))
+        }
+      </section>
       <section className="text-center py-20 bg-emerald-900 text-white">
         <div className="container m-auto">
           <div className="flex gap-3 justify-center text-2xl my-10">
@@ -204,13 +208,13 @@ export default function HomePage() {
           </div>
 
           <h3 className="uk-margin-large-top">Get in touch with me</h3>
-          <a className="underline " href="mailto:hello@nafish.me">hello@nafish.me</a>
+          <a className="underline  font-mono" href="mailto:nafish.ahmed.dev@gmail.com">nafish.ahmed.dev@gmail.com</a>
 
         </div>
       </section>
       <section className="text-center py-4 bg-emerald-950 text-white">
         <div className="container m-auto">
-          <a className="uk-button uk-button-text">hello@nafish.me &copy; Nafish Ahmed. All rights reserved.</a>
+          <a className="uk-button uk-button-text font-mono">&copy; Nafish Ahmed. All rights reserved.</a>
         </div>
 
       </section>

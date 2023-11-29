@@ -7,4 +7,5 @@
 :root{
   font-size: 0.9rem;
   --font-sans: 'Karla', sans-serif;
+  scroll-behavior: smooth;
 }
