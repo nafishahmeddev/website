@@ -1,5 +1,4 @@
 import { FaArrowDown, FaArrowRight } from "react-icons/fa6"
-import Typewriter from "../components/Typewriter";
 const projects = [
   {
     "title": "FinTacker",
