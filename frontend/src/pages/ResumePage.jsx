@@ -6,6 +6,8 @@ export default function ResumePage() {
         { label: "NodeJS", progress: 5 },
         { label: "ReactJS", progress: 4 },
         { label: "MongoDB", progress: 4 },
+        { label: "Redux", progress: 3 },
+        { label: "TypeScript", progress: 3 },
         { label: "CSS3", progress: 3 },
         { label: "HTML5", progress: 4 },
         { label: "MySQL", progress: 4 },
