@@ -1,4 +1,4 @@
-import { FaBuilding, FaCalendar, FaGraduationCap, FaSuitcase, FaTags, FaUser, FaCircleCheck } from "react-icons/fa6"
+import { FaBuilding, FaCalendar, FaGraduationCap, FaSuitcase, FaTags, FaUser, FaCircleCheck, FaLinkedin, FaGithub, FaGlobe } from "react-icons/fa6"
 
 export default function ResumePage() {
 
@@ -138,17 +138,24 @@ export default function ResumePage() {
                                     Karnataka - 560034
                                 </span>
                             </li>
-
-                            <li className="my-3">
-                                <span>LinkedIn</span><br />
-                                <a className="underline text-emerald-100 text-xs" href="https://www.linkedin.com/in/nafish-ahmed-dev/">https://www.linkedin.com/in/nafish-ahmed-dev/</a>
-                            </li>
-
-                            <li className="my-3">
-                                <span>GitHub</span><br />
-                                <a className="underline text-emerald-100 text-xs" href="https://github.com/nafishahmeddev">https://github.com/nafishahmeddev</a>
-                            </li>
                         </ul>
+                    </div>
+
+                    <div className="leading-4">
+                        <table>
+                            <tr>
+                                <td className="py-2"><FaLinkedin /></td>
+                                <td className="ps-2"><a className="underline text-emerald-100 text-xs" href="https://www.linkedin.com/in/nafish-ahmed-dev/">https://www.linkedin.com/in/nafish-ahmed-dev/</a></td>
+                            </tr>
+                            <tr>
+                                <td className="py-2"><FaGithub /></td>
+                                <td className="ps-2"><a className="underline text-emerald-100 text-xs" href="https://github.com/nafishahmeddev">https://github.com/nafishahmeddev</a></td>
+                            </tr>
+                            <tr>
+                                <td className="py-2"><FaGlobe /></td>
+                                <td className="ps-2"><a className="underline text-emerald-100 text-xs" href="https://nafish.me">https://nafish.me</a></td>
+                            </tr>
+                        </table>
                     </div>
                     <div className="block my-6">
                         <h2 className="mb-3  font-medium">Skills</h2>
