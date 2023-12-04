@@ -28,7 +28,7 @@ export default function ResumePage() {
             designation: "Full Stack Developer",
             company: "Vimo Software Development Pvt. Ltd.",
             location: "Bengaluru",
-            date: { from: "March, 2022", to: "Present" },
+            date: { from: "April, 2022", to: "Present" },
             description: "",
             projects: [
                 {
