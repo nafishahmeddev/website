@@ -1,8 +1,23 @@
 import { FaArrowDown, FaArrowRight } from "react-icons/fa6"
 const projects = [
+  
+  {
+    "title": "AmanaWallet",
+    "description": ["Amana Wallet is a digital money wallet from the makers of ViMo – trusted by over 1 Million Customers","Amana Wallet allows you to send remittances worldwide for FREE."],
+    "image": "assets/images/amana.png",
+    "url": "https://play.google.com/store/apps/details?id=com.vimo.vicash&hl=en-IN",
+    "technologies": [
+      "react",
+      "nodejs",
+      "mongodb",
+      "typescript",
+      "materialui",
+      "redux"
+    ]
+  },
   {
     "title": "FinTacker",
-    "description": "Effortlessly track expenses & incomes, stay in control. Simple, secure, and private. Your financial ally. FinTracker is a user-friendly personal finance app designed to help users effortlessly track daily expenses and incomes, and gain valuable insights through monthly tracking. It prioritizes data privacy, securely storing all financial data on the user's device without any data collection.",
+    "description": ["Effortlessly monitor your expenses and incomes, maintaining control with ease. Simple, secure, and prioritizing privacy, FinTracker serves as your dedicated financial ally.","This user-friendly personal finance app is crafted to effortlessly track your daily expenditures and earnings, providing valuable insights through seamless monthly monitoring."],
     "image": "assets/images/fintracker.webp",
     "url": "https://play.google.com/store/apps/details?id=me.nafish.fintracker",
     "technologies": [
@@ -12,8 +27,35 @@ const projects = [
 
   },
   {
+    "title": "Haaki - Audiobooks",
+    "description": ["HAAKI - the ultimate gateway to a captivating world of immersive storytelling in Turkish! Within its virtual realm,","listeners are invited to dive into an extensive collection of mesmerizing audiobooks and audiodramas meticulously crafted to cater to every audience. "],
+    "image": "assets/images/haaki.png",
+    "url": "https://haaki.com",
+    "technologies": [
+      "react",
+      "nodejs",
+      "mongodb",
+      "typescript",
+      "materialui",
+      "redux"
+    ]
+  },
+  {
+    "title": "SuperMD - Teleconsulation app",
+    "description": ["SuperMD, your premier teleconsultation app, connects you with top-tier healthcare professionals anytime, anywhere.","Access expert medical advice and prescriptions with ease, ensuring convenient and secure virtual healthcare experiences.","Your health, your way, with SuperMD."],
+    "image": "assets/images/supermd.png",
+    "url": "https://supermd.io",
+    "technologies": [
+      "react",
+      "nodejs",
+      "mongodb",
+      "nextjs",
+      "redux"
+    ]
+  },
+  {
     "title": "Francis & Friends",
-    "description": "Francis&Friends is a UK's real-state business website.\nTo design the website we've used HTML, CSS and JavaScript.",
+    "description": ["Francis&Friends is a UK's real-state business website.","To design the website we've used HTML, CSS and JavaScript."],
     "image": "assets/images/francis.webp",
     "url": "https://francisandfriends.co.uk/home",
     "technologies": [
@@ -169,11 +211,16 @@ export default function HomePage() {
                   </div>
                   <div className="flex-1">
                     <h2 className="text-3xl mb-4 font-extrabold">{project.title}</h2>
-                    <p className=" leading-7 font-mono">{project.description}</p>
-                    <div className="flex gap-4 text-xl py-8">
+                    {
+                      (Array.isArray(project.description) ? project.description : [project.description]).map(description=>
+                        <p className="leading-7 font-mono my-2" key={description}>{description}</p>
+                      )
+                    }
+                  
+                    <div className="flex gap-4 text-xl my-4">
                       {project.technologies.map(technology => <i key={technology} className={`devicon-${technology}-plain`}></i>)}
                     </div>
-                    <div>
+                    <div className="pt-4">
                       <a className={`px-6 py-1.5 font-mono transition-all bg-gray-800 text-white hover:opacity-90  inline-flex items-center gap-2`} href={project.url} target="_blank" rel="noreferrer">
                         View Project
                         <span className="text-sm"><FaArrowRight /></span>
