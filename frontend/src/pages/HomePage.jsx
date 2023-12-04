@@ -48,7 +48,7 @@ const projects = [
     "technologies": [
       "react",
       "nodejs",
-      "mongodb",
+      "mysql",
       "nextjs",
       "redux"
     ]
