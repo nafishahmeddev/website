@@ -66,7 +66,7 @@ export default function ResumePage() {
             designation: "Web Developer",
             company: "WEBTRACKERS4U",
             location: "Kolkata",
-            date: { from: "February 2019", to: "July 2021" },
+            date: { from: "May 2019", to: "July 2021" },
             description: "",
             projects: [
                 {
