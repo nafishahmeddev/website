@@ -168,9 +168,9 @@ export default function ResumePage() {
                                     {record.label}
                                     <div className="flex-1"></div>
                                     <div>
-                                        <ul className="flex gap-2">
+                                        {/* <ul className="flex gap-2">
                                             {[1, 2, 3, 4, 5].map(num => <li key={num} className={`block h-1.5 w-1.5 rounded-full  p-0 m-0 ${num <= record.progress ? "bg-white" : "bg-white/30"}`}></li>)}
-                                        </ul>
+                                        </ul> */}
                                     </div>
                                 </li>
                             ))}
@@ -252,17 +252,6 @@ export default function ResumePage() {
                                     <span className='text-emerald-700 font-medium'><span>B.Tech in Civil Engineering</span></span> - <span>2017- 2020</span><br />
                                     <span className='text-sm'>Maulana Abul Kalam Azad University of Technology</span>
                                 </li>
-                                {/* <li className="content my-3">
-                  <span className='text-emerald-700 font-medium'><span>Diploma in Civil Engineering</span> (<span>70 %</span>)</span> -  <span>2014-2017</span><br />
-                  <span className='text-sm'>
-                    West Bengal State Council of Technical &amp; Vocational Education
-                    and Skill Development.
-                  </span>
-                </li>
-                <li className="content my-3">
-                  <span className='text-emerald-700 font-medium'><span>Secondary</span> (<span>56 %</span>)</span> - <span>2014</span><br />
-                  <span className='text-sm'>West Bengal Board of Secondary Education</span>
-                </li> */}
                             </ul>
                         </div>
                     </div>
