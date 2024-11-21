@@ -6,6 +6,8 @@ export default function ResumePage() {
         { label: "NodeJS", progress: 5 },
         { label: "ReactJS", progress: 4 },
         { label: "MongoDB", progress: 4 },
+        { label: "Serverless", progress: 3 },
+        { label: "AWS Cloud", progress: 3 },
         { label: "Redux", progress: 3 },
         { label: "TypeScript", progress: 3 },
         { label: "CSS3", progress: 3 },
@@ -15,8 +17,7 @@ export default function ResumePage() {
         { label: "Flutter", progress: 1 },
         { label: "Angular", progress: 2 },
         { label: "Svelte", progress: 2 },
-    ]
-
+    ];
     const languages = [
         { label: "English", progress: 4 },
         { label: "Bengali", progress: 5 },
@@ -25,10 +26,23 @@ export default function ResumePage() {
 
     const works = [
         {
+            designation: "Software Engineer",
+            company: "Softway Solutions",
+            location: "Bengaluru",
+            date: { from: "March, 2023", to: "Present" },
+            description: "",
+            projects: [
+                {
+                    name: "Daikin One Cloud Services (DOCS)",
+                    description: "Continuously managing the DOCS backend and implementing new features."
+                },
+            ]
+        },
+        {
             designation: "Full Stack Developer",
             company: "Vimo Software Development Pvt. Ltd.",
             location: "Bengaluru",
-            date: { from: "April, 2022", to: "Present" },
+            date: { from: "April, 2022", to: "Febrary 2023" },
             description: "",
             projects: [
                 {
