@@ -29,7 +29,7 @@ export default function ResumePage() {
             designation: "Software Engineer",
             company: "Softway Solutions",
             location: "Bengaluru",
-            date: { from: "March, 2023", to: "Present" },
+            date: { from: "March, 2024", to: "Present" },
             description: "",
             projects: [
                 {
@@ -42,7 +42,7 @@ export default function ResumePage() {
             designation: "Full Stack Developer",
             company: "Vimo Software Development Pvt. Ltd.",
             location: "Bengaluru",
-            date: { from: "April, 2022", to: "Febrary 2023" },
+            date: { from: "April, 2022", to: "February 2024" },
             description: "",
             projects: [
                 {
