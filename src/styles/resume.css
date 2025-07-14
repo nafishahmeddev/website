@@ -1,0 +1,9 @@
+@media print {
+  body {
+    zoom: 0.8;
+  }
+
+  @page {
+    size: A4;
+  }
+}
