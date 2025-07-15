@@ -152,21 +152,28 @@ export default function ResumePage() {
         <main>
             <section className="p-8 font-reset">
                 {/* Header: Name, Title, Contact */}
-                <div className="border-b-2 border-black pb-3 mb-6">
+                <div className="pb-3 mb-6">
                     <h1 className="text-4xl font-bold tracking-wide m-0">Nafish Ahmed</h1>
                     <div className="text-xl font-semibold mt-2">Full Stack Developer</div>
-                    <div className="text-base mt-2">
-                        <span className="font-semibold">Phone:</span> +91 9123881186 &nbsp;|&nbsp;
-                        <span className="font-semibold">Email:</span> nafish.ahmed.dev@gmail.com
+                    <div className="text-base mt-2 flex gap-4">
+                        <div><span className="font-semibold">Phone:</span> <span className='text-rose-600'>+91 9123881186</span></div>
+                        <div><span className="font-semibold">Email:</span> <span className='text-rose-600'>nafish.ahmed.dev@gmail.com</span></div>
                     </div>
                     <div className="text-base mt-1">
-                        <span className="font-semibold">Links:</span> {links.join(' | ')}
+                        <span className="font-semibold">Links:</span> {links.map((link, index) => (
+                            <span key={index}>
+                                <a href={link} className="text-rose-600 underline" target="_blank" rel="noopener noreferrer">
+                                    {link}
+                                </a>
+                                {index < links.length - 1 && ', '}
+                            </span>
+                        ))}
                     </div>
                 </div>
 
                 {/* Skills */}
                 <div className="mb-6">
-                    <div className="font-bold text-base uppercase tracking-wide mb-1">Skills</div>
+                    <div className="font-bold text-base uppercase tracking-wide mb-3 text-rose-600  border-b">Skills</div>
                     <div className="text-base leading-relaxed">
                         {skillText.map((item) => (
                             <div key={item.category}>
@@ -177,9 +184,8 @@ export default function ResumePage() {
                 </div>
 
                 {/* Employment History */}
-                <hr className="border-t-2 border-black my-8" />
                 <div className="mb-6">
-                    <div className="font-bold text-base uppercase tracking-wide mb-1">Employment History</div>
+                    <div className="font-bold text-base uppercase tracking-wide mb-3 text-rose-600  border-b">Employment History</div>
                     {works.map((work, index) => (
                         <div key={`work-${index}`} className="mb-5">
                             <div className="font-semibold text-base">{work.designation}</div>
@@ -198,22 +204,20 @@ export default function ResumePage() {
                 </div>
 
                 {/* Projects */}
-                <hr className="border-t-2 border-black my-8" />
                 <div className="mb-6">
-                    <div className="font-bold text-base uppercase tracking-wide mb-1">Projects</div>
+                    <div className="font-bold text-base uppercase tracking-wide mb-3 text-rose-600 border-b">Projects</div>
                     {projects.map((project, index) => (
                         <div key={`work-${index}`} className="mb-3">
                             <div className="font-semibold text-base">{project.name}</div>
                             <div className="text-base">{project.description}</div>
-                            <div className="text-base">{project.link}</div>
+                            <div className="text-base"><a href={project.link} className="text-rose-600 underline" target="_blank" rel="noopener noreferrer">{project.link}</a></div>
                         </div>
                     ))}
                 </div>
 
                 {/* Education */}
-                <hr className="border-t-2 border-black my-8" />
                 <div>
-                    <div className="font-bold text-base uppercase tracking-wide mb-1">Education</div>
+                    <div className="font-bold text-base uppercase tracking-wide mb-3 text-rose-600 border-b">Education</div>
                     <div className="text-base">
                         <span className="font-semibold">B.Tech in Civil Engineering</span> - 2017-2020<br />
                         <span>Maulana Abul Kalam Azad University of Technology</span>
