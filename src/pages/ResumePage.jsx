@@ -49,8 +49,8 @@ const resumeData = {
         "DevOps/Cloud: AWS (EC2, S3), Docker, CI/CD",
         "Mobile: Flutter (Cross-Platform)",
     ],
-    // UPDATED SUMMARY: Years updated to 6+ and language simplified
-    summary: "**Senior Full Stack Engineer** with **6+ years** of extensive experience in designing and optimizing scalable **MERN stack** applications (**React.js, Node.js, MongoDB**). Proven specialization in **performance engineering** and system reliability, highlighted by a dramatic report generation speed increase (from **45 minutes to 3 seconds**) and effective **Redis** caching implementation for latency reduction. Excels at modernizing legacy systems and building secure, high-availability microservices (e.g., **Pinex** migration, **Topup Gateway**). Proficient in **TypeScript, MySQL, and AWS**.",
+    // UPDATED SUMMARY: Years updated to 4+ and language simplified
+    summary: "**Senior Full Stack Engineer** with **4+ years** of extensive experience in designing and optimizing scalable **MERN stack** applications (**React.js, Node.js, MongoDB**). Proven specialization in **performance engineering** and system reliability, highlighted by a dramatic report generation speed increase (from **45 minutes to 3 seconds**) and effective **Redis** caching implementation for latency reduction. Excels at modernizing legacy systems and building secure, high-availability microservices (e.g., **Pinex** migration, **Topup Gateway**). Proficient in **TypeScript, MySQL, and AWS**.",
     workExperience: [
         {
             title: "SENIOR FULL STACK DEVELOPER", // NEW ROLE
@@ -90,14 +90,6 @@ const resumeData = {
             date: "August 2021 – March 2022",
             description: [
                 "**Developed core backend services** and the administrative panel for **SuperMD**, a Digital Health Clinic platform, ensuring secure data handling and robust performance.",
-            ]
-        },
-        {
-            title: "WEB DEVELOPER",
-            company: "WEBTRACKERS4U",
-            date: "May 2019 – July 2021",
-            description: [
-                "**Designed and developed** multiple responsive client websites using HTML, CSS, and JavaScript, ensuring cross-browser compatibility and SEO best practices.",
             ]
         }
     ],
