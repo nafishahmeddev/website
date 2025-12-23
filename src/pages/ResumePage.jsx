@@ -245,7 +245,7 @@ const ResumePage = () => {
                     <div className="flex-1">
                         <SectionHeader title="Languages" />
                         <div className="text-[9.5pt] text-slate-700">
-                            Bengali (Native), English (Fluent), Hindi (Conv.)
+                            Bengali, English, Hindi
                         </div>
                     </div>
                 </div>
