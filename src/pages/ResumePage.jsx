@@ -43,11 +43,11 @@ const resumeData = {
     // CONSOLIDATED SKILLS FOR BETTER ATS PARSING AND READABILITY
     skills: [
         // UPDATED: Removed Angular
-        "Frontend/UI: React.js, Svelte, Redux, TypeScript, SASS/CSS3",
-        "Backend/API: Node.js, Express.js, PHP, Serverless, JWT, RESTful APIs",
+        "Frontend/UI: React.js, Svelte, Redux, TypeScript, Tailwind CSS, SASS",
+        "Backend: Node.js, Express.js, PHP, Serverless, JWT",
         "Databases: MongoDB (NoSQL), MySQL (SQL), Redis (Caching)",
-        "Cloud/DevOps: AWS Services (EC2, S3), Docker, CI/CD",
-        "Mobile: Flutter (Cross-Platform Development)",
+        "DevOps/Cloud: AWS (EC2, S3), Docker, CI/CD",
+        "Mobile: Flutter (Cross-Platform)",
     ],
     // UPDATED SUMMARY: Years updated to 6+ and language simplified
     summary: "**Senior Full Stack Engineer** with **6+ years** of extensive experience in designing and optimizing scalable **MERN stack** applications (**React.js, Node.js, MongoDB**). Proven specialization in **performance engineering** and system reliability, highlighted by a dramatic report generation speed increase (from **45 minutes to 3 seconds**) and effective **Redis** caching implementation for latency reduction. Excels at modernizing legacy systems and building secure, high-availability microservices (e.g., **Pinex** migration, **Topup Gateway**). Proficient in **TypeScript, MySQL, and AWS**.",
@@ -80,9 +80,8 @@ const resumeData = {
             company: "Vimo Software Development Pvt. Ltd.",
             date: "April 2022 – February 2024",
             description: [
-                // Enhanced: Focused on technical contributions, not just product names
-                "**Contributed** to the full-stack maintenance of high-value applications (e.g., **AmanaWallet** remittance app), focusing on securing backend infrastructure and optimizing admin interface performance.",
-                "**Orchestrated** the development and optimization of scalable backend systems for Sarraf & Sendony, focusing on API performance improvements and managing multiple external payment gateway integrations.",
+                "**Maintained and secured** high-value applications (e.g., **AmanaWallet**), optimizing backend infrastructure and admin interfaces for better performance.",
+                "**built and scaled** backend systems for Sarraf & Sendony, prioritizing API efficiency and integrating multiple payment gateways.",
             ]
         },
         {
@@ -90,7 +89,7 @@ const resumeData = {
             company: "Avital Software Development Pvt. Ltd.",
             date: "August 2021 – March 2022",
             description: [
-                "**Contributed** significantly to the core development and maintenance of the Node.js backend and integral managerial panel for **SuperMD, a Digital Health Clinic** platform.",
+                "**Developed core backend services** and the administrative panel for **SuperMD**, a Digital Health Clinic platform, ensuring secure data handling and robust performance.",
             ]
         },
         {
@@ -98,8 +97,7 @@ const resumeData = {
             company: "WEBTRACKERS4U",
             date: "May 2019 – July 2021",
             description: [
-                "**Led** the creation, continual upkeep, and optimization of multiple client websites, focusing on responsive design, SEO improvements, and front-end performance.",
-                "**Conceptualized** and **executed** the complete design and development for client sites, ensuring cross-browser compatibility and visual integrity using HTML/CSS/JavaScript.",
+                "**Designed and developed** multiple responsive client websites using HTML, CSS, and JavaScript, ensuring cross-browser compatibility and SEO best practices.",
             ]
         }
     ],
@@ -117,121 +115,148 @@ const resumeData = {
     ],
 };
 
-// Helper component for section headings
 const SectionHeader = ({ title }) => (
-    <h2 className="text-xl font-bold uppercase border-b-2 border-gray-400 pb-1 mb-3 mt-5 text-gray-800 tracking-wider">
-        {title}
-    </h2>
+    <div className="flex items-center mb-1.5">
+        <h2 className="text-[9pt] font-bold uppercase tracking-[0.1em] text-slate-500 mr-2 whitespace-nowrap">
+            {title}
+        </h2>
+        <div className="flex-grow border-t border-slate-200"></div>
+    </div>
 );
 
 const ResumePage = () => {
     return (
-        <div className="flex justify-center min-h-screen bg-white p-4 sm:p-8 font-sans">
-            {/* ATS Resume Container - Max width 8.5in */}
-            <div className="w-full bg-white text-gray-800">
+        <div className="min-h-screen bg-gray-100 flex justify-center py-10 print:bg-white print:p-0">
 
-                {/* 1. NAME & CONTACT HEADER */}
-                <header className="text-center mb-6">
-                    <h1 className="text-3xl font-extrabold uppercase tracking-widest text-gray-900">{resumeData.name}</h1>
-                    <p className="text-lg font-semibold text-gray-700 mt-1">{resumeData.title}</p>
+            {/* DOCUMENT CONTAINER: Compact for single page */}
+            <div className="w-[210mm] bg-white text-slate-900 border border-gray-200 shadow-xl print:shadow-none print:border-none print:w-full box-border px-[1.5cm] py-[1.5cm] min-h-[297mm]">
 
-                    {/* Contact Bar - Single line, minimal dividers for parsing */}
-                    <div className="flex flex-wrap justify-center text-sm mt-2 text-gray-600 space-x-4">
-                        <span className="flex items-center">
-                            <PhoneIcon />{resumeData.contact.phone}
-                        </span>
-                        <span className="hidden sm:inline">|</span>
-                        <span className="flex items-center">
-                            <MailIcon />{resumeData.contact.email}
-                        </span>
-                        <span className="hidden sm:inline">|</span>
-                        <a href={`https://${resumeData.contact.linkedin}`} target="_blank" className="text-gray-600 flex items-center print:text-black">
-                            <LinkIcon />{resumeData.contact.linkedin}
-                        </a>
-                        <span className="hidden md:inline">|</span>
-                        <a href={`https://${resumeData.contact.github}`} target="_blank" className="text-gray-600 flex items-center print:text-black">
-                            <LinkIcon />{resumeData.contact.github}
-                        </a>
+                {/* 1. HEADER */}
+                <header className="border-b border-slate-300 pb-3 mb-4">
+                    <div className="flex justify-between items-end">
+                        <div>
+                            <h1 className="text-2xl font-bold uppercase tracking-tight text-slate-900 mb-0.5">{resumeData.name}</h1>
+                            <p className="text-sm font-medium text-slate-600 uppercase tracking-wider">{resumeData.title}</p>
+                        </div>
+                    </div>
+
+                    {/* Contact Info - Single Line Row */}
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-[9pt] text-slate-600">
+                        <div className="flex items-center gap-1">
+                            <MailIcon className="w-3 h-3" /> {resumeData.contact.email}
+                        </div>
+                        <div className="flex items-center gap-1">
+                            <PhoneIcon className="w-3 h-3" /> {resumeData.contact.phone}
+                        </div>
+                        {resumeData.contact.linkedin && (
+                            <div className="flex items-center gap-1">
+                                <LinkIcon className="w-3 h-3" />
+                                <span className="hover:underline">{resumeData.contact.linkedin}</span>
+                            </div>
+                        )}
+                        {resumeData.contact.portfolio && (
+                            <div className="flex items-center gap-1">
+                                <LinkIcon className="w-3 h-3" />
+                                <span className="hover:underline">{resumeData.contact.portfolio}</span>
+                            </div>
+                        )}
+                        {resumeData.contact.github && (
+                            <div className="flex items-center gap-1">
+                                <LinkIcon className="w-3 h-3" />
+                                <span className="hover:underline">{resumeData.contact.github}</span>
+                            </div>
+                        )}
                     </div>
                 </header>
 
-                {/* 2. PROFESSIONAL SUMMARY */}
-                <SectionHeader title="PROFESSIONAL SUMMARY" />
-                {/* FIX: Changed outer <p> to <div> to prevent DOM nesting warning, 
-            as the inner element generated by dangerouslySetInnerHTML is a block element (div). */}
-                <div className="text-sm text-gray-700 mb-4 leading-relaxed">
-                    <div dangerouslySetInnerHTML={{ __html: resumeData.summary.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
-                </div>
+                {/* 2. SUMMARY */}
+                <section className="mb-4">
+                    <SectionHeader title="Summary" />
+                    <div className="text-[9pt] leading-snug text-slate-700 text-justify">
+                        <div dangerouslySetInnerHTML={{ __html: resumeData.summary.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900">$1</strong>') }} />
+                    </div>
+                </section>
 
-                {/* 3. CORE TECHNICAL SKILLS */}
-                <SectionHeader title="CORE TECHNICAL SKILLS" />
-                <div className="text-sm text-gray-700 mb-4">
-                    {/* Using a simple comma-separated list or brief categorized list is best for ATS */}
-                    <p className="font-semibold mb-1">Expertise:</p>
-                    <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-1 list-none p-0">
-                        {resumeData.skills.map((skill, index) => (
-                            <li key={index} className="text-sm">
-                                <span className="text-blue-600 text-lg mr-1">•</span>
-                                {skill}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+                {/* 3. SKILLS - Linear Text List */}
+                <section className="mb-4">
+                    <SectionHeader title="Tech Stack" />
+                    <div className="text-[9pt] text-slate-800">
+                        {resumeData.skills.map((skill, index) => {
+                            const [category, items] = skill.split(':');
+                            return (
+                                <div key={index} className="mb-1 flex align-baseline">
+                                    <span className="font-bold text-slate-900 mr-2 min-w-[100px] text-[8.5pt] uppercase tracking-wide">{category}:</span>
+                                    <span className="text-slate-700 flex-1">{items}</span>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </section>
 
+                {/* 4. EXPERIENCE - Vertical List */}
+                <section className="mb-4">
+                    <SectionHeader title="Professional Experience" />
+                    <div className="space-y-3">
+                        {resumeData.workExperience.map((job, index) => (
+                            <div key={index} className="keep-together">
+                                {/* Job Header */}
+                                <div className="flex justify-between items-baseline mb-0.5">
+                                    <h3 className="text-[10pt] font-bold text-slate-900">{job.title}</h3>
+                                    <span className="text-[8.5pt] font-medium text-slate-500">{job.date}</span>
+                                </div>
+                                <div className="text-[9pt] font-semibold text-slate-700 mb-1">{job.company}</div>
 
-                {/* 4. PROFESSIONAL EXPERIENCE */}
-                <SectionHeader title="PROFESSIONAL EXPERIENCE" />
-                <div className="space-y-5">
-                    {resumeData.workExperience.map((job, index) => (
-                        <div key={index} className="pb-2">
-                            <div className="flex justify-between items-start text-base">
-                                <h3 className="font-bold text-gray-900 uppercase">{job.title} - {job.company}</h3>
-                                <p className="font-medium text-gray-600 whitespace-nowrap">{job.date}</p>
+                                {/* Bullets */}
+                                <ul className="list-disc pl-3 space-y-0.5 text-[9pt] text-slate-700 leading-[1.35] marker:text-slate-400">
+                                    {job.description.map((point, i) => (
+                                        <li key={i} dangerouslySetInnerHTML={{ __html: point.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900">$1</strong>') }} />
+                                    ))}
+                                </ul>
                             </div>
+                        ))}
+                    </div>
+                </section>
 
-                            {/* Job Descriptions */}
-                            <ul className="list-disc space-y-1 mt-1 text-sm text-gray-700 pl-5">
-                                {job.description.map((point, i) => (
-                                    <li key={i} dangerouslySetInnerHTML={{ __html: point.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
-                                ))}
-                            </ul>
+                {/* 5. PROJECTS - Simple Grid (max 2 col) */}
+                <section className="mb-4 keep-together">
+                    <SectionHeader title="Projects" />
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                        {resumeData.projects.map((project, index) => (
+                            <div key={index}>
+                                <div className="flex justify-between items-baseline mb-0.5">
+                                    <h3 className="text-[9.5pt] font-bold text-slate-900">{project.name}</h3>
+                                    <a href={project.link} target="_blank" className="text-[8.5pt] text-blue-600 hover:underline print:text-black print:no-underline">View</a>
+                                </div>
+                                <p className="text-[8.5pt] text-slate-600 leading-snug">{project.description}</p>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* 6. EDUCATION & LANGUAGES - Compact */}
+                <div className="flex justify-between gap-6 keep-together">
+                    {/* Education */}
+                    <div className="flex-1">
+                        <SectionHeader title="Education" />
+                        {resumeData.education.map((edu, index) => (
+                            <div key={index} className="mb-1">
+                                <div className="flex justify-between items-baseline">
+                                    <span className="font-bold text-slate-900 text-[9pt]">{edu.degree}</span>
+                                    <span className="text-[8.5pt] text-slate-500">{edu.year}</span>
+                                </div>
+                                <div className="text-[8.5pt] text-slate-600">{edu.university}</div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Languages */}
+                    <div className="flex-1">
+                        <SectionHeader title="Languages" />
+                        <div className="text-[9pt] text-slate-700">
+                            Bengali, English, Hindi
                         </div>
-                    ))}
+                    </div>
                 </div>
-
-                {/* 5. PROJECTS */}
-                <SectionHeader title="KEY PROJECTS" />
-                <div className="space-y-4">
-                    {resumeData.projects.map((project, index) => (
-                        <div key={index}>
-                            <h3 className="text-sm font-bold text-gray-800 inline-block">{project.name}</h3>
-                            <span className="text-xs text-gray-600 ml-2">
-                                <LinkIcon className="inline-block w-3 h-3 align-text-bottom mr-1" />
-                                <a href={project.link} target="_blank" className="hover:underline text-blue-600 print:text-black">
-                                    {project.link}
-                                </a>
-                            </span>
-                            <p className="text-sm text-gray-700 mt-0.5">{project.description}</p>
-                        </div>
-                    ))}
-                </div>
-
-                {/* 6. EDUCATION */}
-                <SectionHeader title="EDUCATION" />
-                <div className="space-y-2">
-                    {resumeData.education.map((edu, index) => (
-                        <div key={index} className="flex justify-between items-start text-sm">
-                            <p className="font-bold text-gray-800">{edu.degree} - {edu.university}</p>
-                            <p className="text-gray-600 whitespace-nowrap">{edu.year}</p>
-                        </div>
-                    ))}
-                </div>
-
-                {/* 7. LANGUAGES (Optional, but clean) */}
-                <SectionHeader title="LANGUAGES" />
-                <p className="text-sm text-gray-700">
-                    <strong>Bengali</strong> (Native/Fluent), <strong>English</strong> (Professional Working Proficiency), <strong>Hindi</strong> (Conversational)
-                </p>
 
             </div>
         </div>

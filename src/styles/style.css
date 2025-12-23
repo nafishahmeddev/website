@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Karla', sans-serif; 
+  --font-sans: 'Inter', 'Karla', sans-serif;
   --font-mono: 'Inconsolata', monospace;
   --font-reset: sans-serif;
 }
