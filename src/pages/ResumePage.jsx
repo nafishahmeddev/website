@@ -165,7 +165,7 @@ const ResumePage = () => {
                 <section className="mb-4">
                     <SectionHeader title="Summary" />
                     <div className="text-[9.5pt] leading-snug text-slate-700 text-justify">
-                        <div dangerouslySetInnerHTML={{ __html: resumeData.summary }} />
+                        <div dangerouslySetInnerHTML={{ __html: resumeData.summary.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900">$1</strong>') }} />
                     </div>
                 </section>
 
