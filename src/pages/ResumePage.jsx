@@ -108,11 +108,11 @@ const resumeData = {
 };
 
 const SectionHeader = ({ title }) => (
-    <div className="flex items-center mb-1.5">
-        <h2 className="text-[9pt] font-bold uppercase tracking-[0.1em] text-slate-500 mr-2 whitespace-nowrap">
+    <div className="flex items-center mb-3">
+        <h2 className="text-[10pt] font-bold uppercase tracking-[0.1em] text-slate-500 mr-3 whitespace-nowrap">
             {title}
         </h2>
-        <div className="flex-grow border-t border-slate-200"></div>
+        <div className="flex-grow border-t border-slate-300"></div>
     </div>
 );
 
@@ -121,40 +121,40 @@ const ResumePage = () => {
         <div className="min-h-screen bg-gray-100 flex justify-center py-10 print:bg-white print:p-0">
 
             {/* DOCUMENT CONTAINER: Compact for single page */}
-            <div className="w-[210mm] bg-white text-slate-900 border border-gray-200 shadow-xl print:shadow-none print:border-none print:w-full box-border px-[1.5cm] py-[1.5cm] min-h-[297mm]">
+            <div className="w-[210mm] bg-white text-slate-900 border border-gray-200 shadow-xl print:shadow-none print:border-none print:w-full box-border px-[2cm] py-[1cm] min-h-[297mm]">
 
                 {/* 1. HEADER */}
                 <header className="border-b border-slate-300 pb-3 mb-4">
                     <div className="flex justify-between items-end">
-                        <div>
+                        <div className="mb-1">
                             <h1 className="text-2xl font-bold uppercase tracking-tight text-slate-900 mb-0.5">{resumeData.name}</h1>
                             <p className="text-sm font-medium text-slate-600 uppercase tracking-wider">{resumeData.title}</p>
                         </div>
                     </div>
 
                     {/* Contact Info - Single Line Row */}
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-[9pt] text-slate-600">
-                        <div className="flex items-center gap-1">
-                            <MailIcon className="w-3 h-3" /> {resumeData.contact.email}
+                    <div className="flex flex-wrap gap-x-6 gap-y-2 mt-3 text-[10pt] text-slate-600">
+                        <div className="flex items-center gap-1.5">
+                            <MailIcon className="w-3.5 h-3.5" /> {resumeData.contact.email}
                         </div>
-                        <div className="flex items-center gap-1">
-                            <PhoneIcon className="w-3 h-3" /> {resumeData.contact.phone}
+                        <div className="flex items-center gap-1.5">
+                            <PhoneIcon className="w-3.5 h-3.5" /> {resumeData.contact.phone}
                         </div>
                         {resumeData.contact.linkedin && (
-                            <div className="flex items-center gap-1">
-                                <LinkIcon className="w-3 h-3" />
+                            <div className="flex items-center gap-1.5">
+                                <LinkIcon className="w-3.5 h-3.5" />
                                 <span className="hover:underline">{resumeData.contact.linkedin}</span>
                             </div>
                         )}
                         {resumeData.contact.portfolio && (
-                            <div className="flex items-center gap-1">
-                                <LinkIcon className="w-3 h-3" />
+                            <div className="flex items-center gap-1.5">
+                                <LinkIcon className="w-3.5 h-3.5" />
                                 <span className="hover:underline">{resumeData.contact.portfolio}</span>
                             </div>
                         )}
                         {resumeData.contact.github && (
-                            <div className="flex items-center gap-1">
-                                <LinkIcon className="w-3 h-3" />
+                            <div className="flex items-center gap-1.5">
+                                <LinkIcon className="w-3.5 h-3.5" />
                                 <span className="hover:underline">{resumeData.contact.github}</span>
                             </div>
                         )}
@@ -164,20 +164,20 @@ const ResumePage = () => {
                 {/* 2. SUMMARY */}
                 <section className="mb-4">
                     <SectionHeader title="Summary" />
-                    <div className="text-[9pt] leading-snug text-slate-700 text-justify">
-                        <div dangerouslySetInnerHTML={{ __html: resumeData.summary.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900">$1</strong>') }} />
+                    <div className="text-[9.5pt] leading-snug text-slate-700 text-justify">
+                        <div dangerouslySetInnerHTML={{ __html: resumeData.summary }} />
                     </div>
                 </section>
 
                 {/* 3. SKILLS - Linear Text List */}
                 <section className="mb-4">
                     <SectionHeader title="Tech Stack" />
-                    <div className="text-[9pt] text-slate-800">
+                    <div className="text-[9.5pt] text-slate-800">
                         {resumeData.skills.map((skill, index) => {
                             const [category, items] = skill.split(':');
                             return (
                                 <div key={index} className="mb-1 flex align-baseline">
-                                    <span className="font-bold text-slate-900 mr-2 min-w-[100px] text-[8.5pt] uppercase tracking-wide">{category}:</span>
+                                    <span className="font-bold text-slate-900 mr-2 min-w-[100px] text-[9pt] uppercase tracking-wide">{category}:</span>
                                     <span className="text-slate-700 flex-1">{items}</span>
                                 </div>
                             );
@@ -193,13 +193,13 @@ const ResumePage = () => {
                             <div key={index} className="keep-together">
                                 {/* Job Header */}
                                 <div className="flex justify-between items-baseline mb-0.5">
-                                    <h3 className="text-[10pt] font-bold text-slate-900">{job.title}</h3>
-                                    <span className="text-[8.5pt] font-medium text-slate-500">{job.date}</span>
+                                    <h3 className="text-[10.5pt] font-bold text-slate-900">{job.title}</h3>
+                                    <span className="text-[9pt] font-medium text-slate-500">{job.date}</span>
                                 </div>
-                                <div className="text-[9pt] font-semibold text-slate-700 mb-1">{job.company}</div>
+                                <div className="text-[9.5pt] font-semibold text-slate-700 mb-1">{job.company}</div>
 
                                 {/* Bullets */}
-                                <ul className="list-disc pl-3 space-y-0.5 text-[9pt] text-slate-700 leading-[1.35] marker:text-slate-400">
+                                <ul className="list-disc pl-3 space-y-0.5 text-[9.5pt] text-slate-700 leading-[1.4] marker:text-slate-400">
                                     {job.description.map((point, i) => (
                                         <li key={i} dangerouslySetInnerHTML={{ __html: point.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900">$1</strong>') }} />
                                     ))}
@@ -219,7 +219,7 @@ const ResumePage = () => {
                                     <h3 className="text-[9.5pt] font-bold text-slate-900">{project.name}</h3>
                                     <a href={project.link} target="_blank" className="text-[8.5pt] text-blue-600 hover:underline print:text-black print:no-underline">View</a>
                                 </div>
-                                <p className="text-[8.5pt] text-slate-600 leading-snug">{project.description}</p>
+                                <p className="text-[9pt] text-slate-600 leading-snug">{project.description}</p>
                             </div>
                         ))}
                     </div>
@@ -233,10 +233,10 @@ const ResumePage = () => {
                         {resumeData.education.map((edu, index) => (
                             <div key={index} className="mb-1">
                                 <div className="flex justify-between items-baseline">
-                                    <span className="font-bold text-slate-900 text-[9pt]">{edu.degree}</span>
-                                    <span className="text-[8.5pt] text-slate-500">{edu.year}</span>
+                                    <span className="font-bold text-slate-900 text-[9.5pt]">{edu.degree}</span>
+                                    <span className="text-[9pt] text-slate-500">{edu.year}</span>
                                 </div>
-                                <div className="text-[8.5pt] text-slate-600">{edu.university}</div>
+                                <div className="text-[9pt] text-slate-600">{edu.university}</div>
                             </div>
                         ))}
                     </div>
@@ -244,8 +244,8 @@ const ResumePage = () => {
                     {/* Languages */}
                     <div className="flex-1">
                         <SectionHeader title="Languages" />
-                        <div className="text-[9pt] text-slate-700">
-                            Bengali, English, Hindi
+                        <div className="text-[9.5pt] text-slate-700">
+                            Bengali (Native), English (Fluent), Hindi (Conv.)
                         </div>
                     </div>
                 </div>
