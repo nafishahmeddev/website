@@ -157,7 +157,7 @@ export function Home() {
                             className={`topic-card ${isTopicDone ? 'done' : ''} fade-up`}
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigate(`/topic/${topic.id}`);
+                              navigate(`/topic/${topic.slug}`);
                             }}
                           >
                             <div className="flex items-start gap-4 mb-4">

@@ -1,5 +1,6 @@
 export interface Topic {
   id: string;
+  slug: string;
   title: string;
   desc: string;
   diff: 1 | 2 | 3 | 4;
@@ -31,6 +32,7 @@ export const PHASES: Phase[] = [
     topics: [
       {
         id: 't1_1',
+        slug: 'python-for-ml',
         title: 'Python for JS Devs',
         desc: 'Syntax, list comprehensions, dicts, modules. Fast track from JS.',
         diff: 1,
@@ -50,6 +52,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't1_2',
+        slug: 'numpy-arrays',
         title: 'NumPy Arrays',
         desc: 'N-dimensional arrays, broadcasting, vectorisation — replaces loops.',
         diff: 1,
@@ -65,6 +68,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't1_3',
+        slug: 'pandas-dataframes',
         title: 'Pandas DataFrames',
         desc: 'Load CSVs, filter rows, group-by, handle missing data.',
         diff: 1,
@@ -80,6 +84,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't1_4',
+        slug: 'matplotlib-seaborn',
         title: 'Matplotlib / Seaborn',
         desc: 'Visualise data distributions, correlations, training curves.',
         diff: 1,
@@ -95,6 +100,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't1_5',
+        slug: 'linear-algebra-intuition',
         title: 'Linear Algebra Intuition',
         desc: 'Vectors, matrices, dot product, eigenvalues — visual-first approach.',
         diff: 2,
@@ -110,6 +116,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't1_6',
+        slug: 'calculus-derivatives',
         title: 'Calculus — Derivatives',
         desc: 'Chain rule, partial derivatives. All of backprop is just this.',
         diff: 2,
@@ -125,6 +132,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't1_7',
+        slug: 'probability-statistics',
         title: 'Probability & Statistics',
         desc: 'Distributions, expectation, variance, Bayes theorem.',
         diff: 2,
@@ -151,6 +159,7 @@ export const PHASES: Phase[] = [
     topics: [
       {
         id: 't2_1',
+        slug: 'supervised-vs-unsupervised',
         title: 'Supervised vs Unsupervised',
         desc: 'Types of ML, when to use each, the taxonomy of problems.',
         diff: 1,
@@ -165,6 +174,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't2_2',
+        slug: 'loss-functions',
         title: 'Loss Functions',
         desc: 'MSE, cross-entropy, huber. What "learning" actually means numerically.',
         diff: 2,
@@ -179,6 +189,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't2_3',
+        slug: 'gradient-descent',
         title: 'Gradient Descent',
         desc: 'The engine of all ML. SGD, mini-batch, momentum, Adam.',
         diff: 2,
@@ -194,6 +205,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't2_4',
+        slug: 'overfitting-regularisation',
         title: 'Overfitting & Regularisation',
         desc: 'Bias-variance tradeoff, L1/L2, dropout, early stopping.',
         diff: 2,
@@ -209,6 +221,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't2_5',
+        slug: 'train-val-test-split',
         title: 'Train / Val / Test Split',
         desc: 'Why data splits matter. k-fold cross validation.',
         diff: 1,
@@ -223,6 +236,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't2_6',
+        slug: 'feature-engineering',
         title: 'Feature Engineering',
         desc: 'Normalisation, encoding categoricals, handling nulls, feature selection.',
         diff: 2,
@@ -238,6 +252,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't2_7',
+        slug: 'scikit-learn-api',
         title: 'scikit-learn API',
         desc: 'fit / predict / score. Pipelines, transformers. The sklearn mental model.',
         diff: 1,
@@ -264,6 +279,7 @@ export const PHASES: Phase[] = [
     topics: [
       {
         id: 't3_1',
+        slug: 'linear-logistic-regression',
         title: 'Linear & Logistic Regression',
         desc: 'Build from scratch first. Then use sklearn. Understand the maths.',
         diff: 1,
@@ -279,6 +295,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't3_2',
+        slug: 'decision-trees',
         title: 'Decision Trees',
         desc: 'Gini impurity, information gain, pruning. Very visual to understand.',
         diff: 1,
@@ -293,6 +310,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't3_3',
+        slug: 'random-forests',
         title: 'Random Forests',
         desc: 'Bagging. Ensemble methods. Feature importance. Go-to baseline.',
         diff: 2,
@@ -307,6 +325,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't3_4',
+        slug: 'gradient-boosting-xgboost',
         title: 'Gradient Boosting / XGBoost',
         desc: 'The king of Kaggle tabular. Boosting vs bagging intuition.',
         diff: 3,
@@ -321,6 +340,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't3_5',
+        slug: 'k-means-clustering',
         title: 'K-Means Clustering',
         desc: 'Unsupervised grouping. Elbow method. Good for data exploration.',
         diff: 1,
@@ -335,6 +355,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't3_6',
+        slug: 'pca-dimensionality-reduction',
         title: 'PCA / Dimensionality Reduction',
         desc: 'Compress high-dimensional data. Eigenvalue decomposition in practice.',
         diff: 3,
@@ -360,6 +381,7 @@ export const PHASES: Phase[] = [
     topics: [
       {
         id: 't4_1',
+        slug: 'perceptron-mlp',
         title: 'Perceptron & MLP',
         desc: 'Single neuron → layers. Forward pass, activation functions.',
         diff: 2,
@@ -374,6 +396,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't4_2',
+        slug: 'backpropagation',
         title: 'Backpropagation',
         desc: 'Chain rule applied to networks. Compute gradients layer-by-layer.',
         diff: 3,
@@ -388,6 +411,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't4_3',
+        slug: 'pytorch-fundamentals',
         title: 'PyTorch Fundamentals',
         desc: 'Tensors, autograd, nn.Module, DataLoader, training loop.',
         diff: 2,
@@ -403,6 +427,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't4_4',
+        slug: 'cnns-convolutional-nets',
         title: 'CNNs — Convolutional Nets',
         desc: 'Filters, feature maps, pooling. ResNet architecture overview.',
         diff: 3,
@@ -418,6 +443,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't4_5',
+        slug: 'rnns-lstms',
         title: 'RNNs & LSTMs',
         desc: 'Sequence modelling. Vanishing gradients problem. When to use RNN.',
         diff: 3,
@@ -432,6 +458,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't4_6',
+        slug: 'transformers-attention',
         title: 'Transformers & Attention',
         desc: 'Self-attention, multi-head, positional encoding. The GPT architecture.',
         diff: 4,
@@ -447,6 +474,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't4_7',
+        slug: 'transfer-learning-fine-tuning',
         title: 'Transfer Learning & Fine-tuning',
         desc: 'Pretrained models, frozen layers, fine-tune on custom data.',
         diff: 2,
@@ -472,6 +500,7 @@ export const PHASES: Phase[] = [
     topics: [
       {
         id: 't5_1',
+        slug: 'evaluation-metrics',
         title: 'Evaluation Metrics',
         desc: 'Accuracy, precision, recall, F1, AUC-ROC. Pick the right one per task.',
         diff: 2,
@@ -486,6 +515,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't5_2',
+        slug: 'experiment-tracking',
         title: 'Experiment Tracking',
         desc: 'MLflow or Weights & Biases. Log params, metrics, artifacts.',
         diff: 1,
@@ -500,6 +530,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't5_3',
+        slug: 'fastapi-model-serving',
         title: 'FastAPI Model Serving',
         desc: 'Wrap your model in a REST endpoint. You know APIs — easiest phase.',
         diff: 1,
@@ -514,6 +545,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't5_4',
+        slug: 'docker-for-ml',
         title: 'Docker for ML',
         desc: 'Containerise training + inference. Multi-stage builds, GPU images.',
         diff: 2,
@@ -528,6 +560,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't5_5',
+        slug: 'hugging-face-ecosystem',
         title: 'Hugging Face Ecosystem',
         desc: 'Transformers, datasets, PEFT, Spaces. The npm of ML.',
         diff: 2,
@@ -542,6 +575,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't5_6',
+        slug: 'llm-apis-rag',
         title: 'LLM APIs & RAG',
         desc: 'Anthropic/OpenAI APIs, embeddings, vector DBs, RAG architecture.',
         diff: 3,
@@ -556,6 +590,7 @@ export const PHASES: Phase[] = [
       },
       {
         id: 't5_7',
+        slug: 'cloud-ml-aws-gcp',
         title: 'Cloud ML (AWS / GCP)',
         desc: 'SageMaker or Vertex AI basics. Training jobs, model registry.',
         diff: 3,

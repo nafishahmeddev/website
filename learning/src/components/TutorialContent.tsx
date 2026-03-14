@@ -1,10 +1,13 @@
-import { useState, lazy, Suspense } from 'react';
+import { useState, Suspense, lazy } from 'react';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { InteractiveViz } from './InteractiveViz';
+
 // Lazy load syntax highlighter
 const SyntaxHighlighterFull = lazy(() => import('react-syntax-highlighter').then(m => ({ default: m.Prism })));
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { InteractiveViz, type VizType } from './InteractiveViz';
+
+export type VizType = 'vector-space' | 'probability-dist' | 'linear-regression' | 'gradient-descent' | 'logistic-sigmoid';
 
 // Inline simple styles for the markdown components to match the app's aesthetic
 const MarkdownComponents = (color: string): Components => ({
@@ -28,8 +31,9 @@ const MarkdownComponents = (color: string): Components => ({
 });
 
 export interface Lesson {
+  id: string;
   title: string;
-  content: string;
+  content?: string;
   noobDefinition?: string;
   realWorldExample?: string;
   videoUrl?: string;
@@ -42,6 +46,8 @@ export interface Lesson {
 interface TutorialContentProps {
   color: string;
   lessons: Lesson[];
+  activeLesson: number;
+  onActiveLessonChange: (index: number) => void;
   onNextTopic?: () => void;
   onPrevTopic?: () => void;
   isLastTopic?: boolean;
@@ -51,15 +57,16 @@ interface TutorialContentProps {
 export function TutorialContent({ 
   color, 
   lessons, 
+  activeLesson,
+  onActiveLessonChange,
   onNextTopic, 
   onPrevTopic, 
   isLastTopic,
   nextTopicLabel 
 }: TutorialContentProps) {
-  const [activeLesson, setActiveLesson] = useState(0);
   const [codeCopied, setCodeCopied] = useState(false);
 
-  const lesson = lessons[activeLesson];
+  const lesson = lessons[activeLesson] || lessons[0];
   const markdownComponents = MarkdownComponents(color);
 
   const copyCode = () => {
@@ -71,54 +78,9 @@ export function TutorialContent({
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-24">
-      {/* Sidebar - Lesson Navigation */}
-      <div className="lg:col-span-3">
-        <div className="sticky top-32">
-          <div className="flex items-center gap-2 mb-8 opacity-50">
-            <div className="w-1 h-1 rounded-full bg-(--accent)"></div>
-            <span className="mono text-[10px] uppercase tracking-widest font-bold">Curriculum</span>
-          </div>
-          <div className="space-y-1">
-            {lessons.map((l, idx) => (
-              <button
-                key={idx}
-                onClick={() => setActiveLesson(idx)}
-                className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden ${
-                  activeLesson === idx 
-                    ? 'text-white' 
-                    : 'text-(--muted) hover:text-(--text) hover:bg-white/5'
-                }`}
-              >
-                {activeLesson === idx && (
-                  <div className="absolute inset-0 bg-linear-to-r from-(--accent)/20 to-transparent"></div>
-                )}
-                <div className="relative z-10 flex items-center gap-3">
-                  <span className={`mono text-[10px] font-bold ${activeLesson === idx ? 'text-(--accent)' : 'opacity-30'}`}>
-                    0{idx + 1}
-                  </span>
-                  <span className="text-sm font-medium tracking-tight">
-                    {l.title}
-                  </span>
-                </div>
-              </button>
-            ))}
-          </div>
-
-          <div className="mt-12 p-6 rounded-2xl bg-(--accent)/5 border border-(--accent)/10 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-              <span className="text-4xl">🚀</span>
-            </div>
-            <h4 className="text-xs font-bold uppercase tracking-widest mb-2 text-(--accent)">Quick Tip</h4>
-            <p className="text-[11px] leading-relaxed text-(--muted)">
-              Complete each lesson to unlock the full potential of this module.
-            </p>
-          </div>
-        </div>
-      </div>
-
+    <div className="mb-24">
       {/* Main Content */}
-      <div className="lg:col-span-9">
+      <div className="max-w-4xl mx-auto">
         <div className="fade-up">
           {/* Lesson Header */}
           <div className="mb-12">
@@ -300,7 +262,7 @@ export function TutorialContent({
                 if (activeLesson === 0) {
                   onPrevTopic?.();
                 } else {
-                  setActiveLesson(activeLesson - 1);
+                  onActiveLessonChange(activeLesson - 1);
                   window.scrollTo(0, 0);
                 }
               }}
@@ -319,7 +281,7 @@ export function TutorialContent({
                 if (activeLesson === lessons.length - 1) {
                   onNextTopic?.();
                 } else {
-                  setActiveLesson(activeLesson + 1);
+                  onActiveLessonChange(activeLesson + 1);
                   window.scrollTo(0, 0);
                 }
               }}

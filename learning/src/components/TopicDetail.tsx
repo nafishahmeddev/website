@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect, useMemo } from 'react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import type { Topic, Phase } from '../data/roadmap';
 import { TutorialContent } from './TutorialContent';
-import { getTutorial, type TopicTutorial } from '../data/tutorials/index';
+import { LessonSidebar } from './LessonSidebar';
+import { getTutorial } from '../data/tutorials/index';
 import { DIFF_LABELS, DIFF_COLORS } from '../data/roadmap';
 
 interface TopicDetailProps {
@@ -30,28 +31,31 @@ export function TopicDetail({
   prevLabel,
   nextLabel
 }: TopicDetailProps) {
-  const [tutorial, setTutorial] = useState<TopicTutorial | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { lessonId } = useParams<{ lessonId?: string }>();
+  const navigate = useNavigate();
+  const tutorial = getTutorial(topic.id);
+  const lessons = tutorial?.lessons || [];
 
+  // Find index of lesson based on slug from URL
+  const initialLessonIndex = useMemo(() => {
+    if (!lessonId || !tutorial) return 0;
+    const index = tutorial.lessons.findIndex(l => l.id === lessonId);
+    return index !== -1 ? index : 0;
+  }, [lessonId, tutorial]);
+
+  const [activeLesson, setActiveLesson] = useState(initialLessonIndex);
+
+  // Sync state if URL changes (e.g. browser back/forward)
   useEffect(() => {
-    let isMounted = true;
-    
-    // Use a slight delay or untracked state to avoid cascading render warning if necessary,
-    // but the most robust way is to just start the fetch and only set tutorial when ready.
-    // However, we want the skeleton to show, so we keep setIsLoading(true).
-    
-    getTutorial(topic.id).then(data => {
-      if (isMounted) {
-        setTutorial(data);
-        setIsLoading(false);
-      }
-    });
+    setActiveLesson(initialLessonIndex);
+  }, [initialLessonIndex]);
 
-    return () => { 
-      isMounted = false; 
-      setIsLoading(true); // Reset for next topic.id change
-    };
-  }, [topic.id]);
+  const handleActiveLessonChange = (index: number) => {
+    setActiveLesson(index);
+    const lessonSlug = lessons[index]?.id || 'overview';
+    navigate(`/topic/${topic.id}/${lessonSlug}`);
+    window.scrollTo(0, 0);
+  };
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
@@ -163,42 +167,34 @@ export function TopicDetail({
 
       {/* Content area */}
       <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0px 24px 40px' }}>
-        {isLoading ? (
-          <div className="space-y-8 animate-pulse">
-            <div className="h-64 rounded-3xl bg-white/5 border border-white/5" />
-            <div className="space-y-4">
-              <div className="h-4 w-1/4 bg-white/5 rounded" />
-              <div className="h-4 w-3/4 bg-white/5 rounded" />
-              <div className="h-4 w-1/2 bg-white/5 rounded" />
-            </div>
+        {tutorial ? (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <aside className="lg:col-span-3">
+              <LessonSidebar 
+                lessons={lessons} 
+                activeLesson={activeLesson} 
+                onLessonClick={handleActiveLessonChange}
+                color={phase.color}
+              />
+            </aside>
+            <main className="lg:col-span-9">
+              <TutorialContent 
+                color={phase.color} 
+                lessons={lessons} 
+                activeLesson={activeLesson}
+                onActiveLessonChange={handleActiveLessonChange}
+                onNextTopic={onNext}
+                onPrevTopic={onPrev}
+                isLastTopic={isLast}
+                nextTopicLabel={nextLabel}
+              />
+            </main>
           </div>
-        ) : tutorial ? (
-          <TutorialContent 
-            color={phase.color} 
-            lessons={tutorial.lessons} 
-            onNextTopic={onNext}
-            onPrevTopic={onPrev}
-            isLastTopic={isLast}
-            nextTopicLabel={nextLabel}
-          />
         ) : (
           <div>
             <p className="mono font-bold text-[10px] uppercase tracking-widest text-(--muted) mb-6 opacity-60">
-              {">"} topics_covered
+              // NO CONTENT DEFINITION FOUND
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-12">
-              {topic.subtopics?.map((sub, i) => (
-                <div
-                  key={i}
-                  className="p-4 rounded-xl bg-white/2 border border-white/5 flex gap-3 items-start hover:bg-white/5 transition-colors"
-                >
-                  <span className="mono text-[10px] text-(--accent) opacity-50 font-bold">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <span className="text-sm text-(--text)/80 leading-relaxed font-medium">{sub}</span>
-                </div>
-              ))}
-            </div>
             <div className="p-16 rounded-3xl border border-dashed border-white/10 text-center bg-white/2">
               <p className="mono text-[10px] uppercase tracking-[0.2em] text-(--muted) font-bold">
                 Building interactive lessons for {topic.title}...
