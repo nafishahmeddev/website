@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import type { Topic, Phase } from '../data/roadmap';
 import { TutorialContent } from './TutorialContent';
 import { getTutorial, type TopicTutorial } from '../data/tutorials/index';
-import { DIFF_LABELS } from '../data/roadmap';
+import { DIFF_LABELS, DIFF_COLORS } from '../data/roadmap';
 
 interface TopicDetailProps {
   topic: Topic;
@@ -55,65 +55,114 @@ export function TopicDetail({
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#0A0A0F]/85 backdrop-filter-xl border-b border-[#1E1E2E]/70 overflow-hidden">
-        <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+      {/* Sticky Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#0A0A0F]/60 backdrop-blur-2xl border-b border-white/5 h-16 transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
           <Link 
             to="/" 
-            className="text-[10px] uppercase font-bold tracking-[0.2em] text-(--accent) hover:opacity-70 transition-opacity flex items-center gap-2 mono"
+            className="group flex items-center gap-3 no-underline"
           >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-              <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            Roadmap
+            <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-(--accent)/50 transition-all">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-(--muted) group-hover:text-(--accent) transition-colors">
+                <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <div className="flex flex-col">
+              <span className="mono text-[9px] uppercase tracking-[0.2em] text-(--muted) font-bold leading-none">Back to</span>
+              <span className="text-[11px] font-bold text-white tracking-widest uppercase">Platform</span>
+            </div>
           </Link>
 
-          <div className="flex items-center gap-4">
-            <div className="h-1.5 w-1.5 rounded-full bg-(--accent) animate-pulse shadow-[0_0_8px_rgba(110,231,183,0.4)]"></div>
-            <span className="mono text-[10px] font-bold uppercase tracking-widest text-(--muted) opacity-60">System Active</span>
+          <div className="flex items-center gap-6">
+             <div className="hidden md:flex flex-col items-end">
+              <span className="mono text-[9px] uppercase tracking-[0.2em] text-(--muted) font-bold leading-none mb-1">Current Sector</span>
+              <span className="text-[10px] font-bold text-white uppercase tracking-wider" style={{ color: phase.color }}>{phase.title}</span>
+            </div>
+            <div className="h-8 w-px bg-white/5"></div>
+            <button
+              onClick={onToggle}
+              className={`flex items-center gap-3 px-4 py-2 rounded-xl border transition-all duration-300 mono text-[9px] font-bold uppercase tracking-widest ${
+                completed 
+                  ? 'bg-(--accent)/10 border-(--accent)/30 text-(--accent)' 
+                  : 'bg-white/5 border-white/10 text-(--muted) hover:text-white hover:border-white/20'
+              }`}
+            >
+              <div className={`w-1.5 h-1.5 rounded-full ${completed ? 'bg-(--accent) animate-pulse' : 'bg-white/20'}`}></div>
+              {completed ? 'Module Verified' : 'Mark Complete'}
+            </button>
           </div>
         </div>
       </header>
 
-      {/* Hero section for the topic */}
-      <div className="pt-32 pb-16 border-b border-[#1E1E2E]/50 relative overflow-hidden">
-        {/* Background blobs to match home aesthetic */}
-        <div className="blob w-96 h-96 opacity-10" style={{ background: phase.color, top: '-100px', left: '-100px' }}></div>
-        <div className="blob w-64 h-64 opacity-5" style={{ background: phase.color, bottom: '-50px', right: '5%', animationDelay: '2s' }}></div>
+      {/* Hero Section */}
+      <div className="relative pt-32 pb-20 overflow-hidden">
+        {/* Background Atmosphere */}
+        <div className="absolute inset-0 z-0">
+          <div 
+            className="absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full blur-[120px] opacity-[0.08]"
+            style={{ background: phase.color }}
+          ></div>
+          <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent"></div>
+        </div>
 
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <div className="flex items-center justify-between gap-3 mb-6">
-            <div className="flex items-center gap-3">
-              <span className="pill bg-white/5 text-[#64748B] border border-white/10 uppercase tracking-tighter font-bold py-1 px-3">
-                {topic.tag}
-              </span>
-              <span className="pill bg-(--accent)/10 text-(--accent) border border-(--accent)/20 uppercase tracking-tighter font-bold py-1 px-3">
-                {DIFF_LABELS[topic.diff - 1]}
-              </span>
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-12">
+            <div className="flex-1 max-w-3xl">
+              <div className="flex items-center gap-4 mb-4">
+                <span className="mono text-[10px] font-bold tracking-[0.3em] uppercase opacity-40">Phase Context //</span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white/50 uppercase tracking-widest">
+                  {phase.label}
+                </span>
+              </div>
+              
+              <h1 className="text-6xl md:text-8xl font-black mb-8 tracking-tighter leading-[0.85] text-white" style={{ fontFamily: 'Syne, sans-serif' }}>
+                {topic.title}
+              </h1>
+
+              <div className="flex flex-wrap items-center gap-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xl">
+                    {phase.icon}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="mono text-[9px] uppercase tracking-widest text-(--muted) font-bold">Category</span>
+                    <span className="text-[13px] font-bold text-white uppercase tracking-wide">{topic.tag}</span>
+                  </div>
+                </div>
+
+                <div className="w-px h-8 bg-white/5"></div>
+
+                <div className="flex items-center gap-3">
+                  <div className="flex gap-1">
+                    {[1, 2, 3, 4].map((d) => (
+                      <div 
+                        key={d}
+                        className={`w-1.5 h-3 rounded-xs transition-colors ${d <= topic.diff ? '' : 'bg-white/5 opacity-20'}`}
+                        style={{ backgroundColor: d <= topic.diff ? DIFF_COLORS[topic.diff - 1] : undefined }}
+                      ></div>
+                    ))}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="mono text-[9px] uppercase tracking-widest text-(--muted) font-bold">Complexity</span>
+                    <span className="text-[13px] font-bold uppercase tracking-wide" style={{ color: DIFF_COLORS[topic.diff - 1] }}>
+                      {DIFF_LABELS[topic.diff - 1]}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <button
-              onClick={onToggle}
-              className={`flex items-center gap-2 px-4 py-1.5 rounded-full border transition-all duration-300 mono text-[10px] font-bold uppercase tracking-widest ${
-                completed 
-                  ? 'bg-(--accent)/10 border-(--accent)/30 text-(--accent)' 
-                  : 'bg-white/5 border-white/10 text-(--muted) hover:border-white/20'
-              }`}
-            >
-              <div className={`w-2 h-2 rounded-full ${completed ? 'bg-(--accent) animate-pulse' : 'bg-white/20'}`}></div>
-              {completed ? 'Deployment Ready' : 'Initialize Status'}
-            </button>
+            <div className="md:w-72">
+              <p className="text-lg text-(--muted) leading-relaxed font-medium italic opacity-80 border-l-2 border-white/5 pl-6 py-2">
+                "{topic.desc}"
+              </p>
+            </div>
           </div>
-          <h1 className="text-6xl font-extrabold leading-[0.9] mb-6 tracking-tighter" style={{ fontFamily: 'Syne, sans-serif' }}>
-            {topic.title}
-          </h1>
-          <p className="text-(--muted) text-lg max-w-xl leading-relaxed" style={{ fontWeight: 400 }}>
-            {topic.desc}
-          </p>
         </div>
       </div>
 
       {/* Content area */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 24px' }}>
+      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0px 24px 40px' }}>
         {isLoading ? (
           <div className="space-y-8 animate-pulse">
             <div className="h-64 rounded-3xl bg-white/5 border border-white/5" />
@@ -158,18 +207,19 @@ export function TopicDetail({
           </div>
         )}
 
-        {/* Footer Navigation */}
-        <div 
-          style={{ 
-            marginTop: '100px', 
-            paddingTop: '40px', 
-            borderTop: '1px solid var(--border)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            gap: '24px',
-            paddingBottom: '60px'
-          }}
-        >
+        {/* Footer Navigation - Only shown if no tutorial is loaded */}
+        {!tutorial && (
+          <div 
+            style={{ 
+              marginTop: '100px', 
+              paddingTop: '40px', 
+              borderTop: '1px solid var(--border)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              gap: '24px',
+              paddingBottom: '60px'
+            }}
+          >
           <button
             onClick={onPrev}
             disabled={isFirst}
@@ -235,6 +285,7 @@ export function TopicDetail({
             </div>
           </button>
         </div>
+        )}
       </div>
     </div>
   );

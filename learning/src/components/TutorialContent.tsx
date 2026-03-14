@@ -294,7 +294,7 @@ export function TutorialContent({
           </div>
 
           {/* Navigation */}
-          <div className="pt-12 border-t border-white/5 flex gap-4">
+          <div className="pt-12 border-t border-white/5 grid grid-cols-2 gap-6">
             <button
               onClick={() => {
                 if (activeLesson === 0) {
@@ -304,10 +304,16 @@ export function TutorialContent({
                   window.scrollTo(0, 0);
                 }
               }}
-              className="flex-1 py-5 rounded-2xl transition-all border border-white/5 bg-white/5 hover:bg-white/10 font-bold uppercase tracking-widest text-[11px] mono cursor-pointer"
+              className="group flex flex-col items-start p-6 rounded-2xl transition-all border border-white/5 bg-white/2 hover:bg-white/5 hover:border-white/10 cursor-pointer text-left"
             >
-              PREVIOUS
+              <span className="mono text-[9px] uppercase tracking-[0.2em] text-(--muted) mb-2 group-hover:text-(--text) transition-colors">
+                ← Previous
+              </span>
+              <span className="text-sm font-bold tracking-tight text-white/70 group-hover:text-white transition-colors">
+                {activeLesson === 0 ? 'Previous Topic' : lessons[activeLesson - 1].title}
+              </span>
             </button>
+
             <button
               onClick={() => {
                 if (activeLesson === lessons.length - 1) {
@@ -317,15 +323,16 @@ export function TutorialContent({
                   window.scrollTo(0, 0);
                 }
               }}
-              className={`flex-1 py-5 rounded-2xl transition-all font-bold uppercase tracking-widest text-[11px] mono cursor-pointer ${
-                activeLesson === lessons.length - 1 && !isLastTopic
-                  ? 'bg-(--accent)/20 text-(--accent) border border-(--accent)/30'
-                  : 'bg-(--accent) text-black shadow-[0_0_20px_rgba(var(--accent-rgb),0.3)] hover:brightness-110'
-              }`}
+              className="group flex flex-col items-end p-6 rounded-2xl transition-all border border-(--accent)/20 bg-(--accent)/5 hover:bg-(--accent)/10 hover:border-(--accent)/40 cursor-pointer text-right"
             >
-              {activeLesson === lessons.length - 1 
-                ? (isLastTopic ? 'FINISHED' : `NEXT: ${nextTopicLabel || 'PHASE'}`)
-                : 'NEXT LESSON'}
+              <span className="mono text-[9px] uppercase tracking-[0.2em] text-(--accent) mb-2 opacity-70 group-hover:opacity-100 transition-opacity">
+                {activeLesson === lessons.length - 1 && isLastTopic ? 'Completion' : 'Next →'}
+              </span>
+              <span className="text-sm font-bold tracking-tight text-(--accent) group-hover:brightness-110 transition-all">
+                {activeLesson === lessons.length - 1 
+                  ? (isLastTopic ? 'Finish Roadmap' : (nextTopicLabel || 'Next Topic'))
+                  : lessons[activeLesson + 1].title}
+              </span>
             </button>
           </div>
         </div>
