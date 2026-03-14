@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ML Roadmap — Web Dev Edition</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --accent: #00ff9d;
+    --accent2: #ff6b35;
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #1a1a24;
+    --border: rgba(255,255,255,0.07);
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .mono { font-family: 'Space Mono', monospace; }
+
+  /* Grid noise background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,157,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,157,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Glow blobs */
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+    animation: blobFloat 8s ease-in-out infinite;
+  }
+  @keyframes blobFloat {
+    0%,100% { transform: translate(0,0) scale(1); }
+    50% { transform: translate(20px,-20px) scale(1.05); }
+  }
+
+  /* Phase connector line */
+  .phase-connector {
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    margin: 0 auto;
+    height: 48px;
+    opacity: 0.3;
+  }
+
+  /* Scan-line effect on phase badge */
+  .phase-num {
+    position: relative;
+    overflow: hidden;
+  }
+  .phase-num::after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0; right: 0;
+    height: 40%;
+    background: linear-gradient(to bottom, transparent, rgba(0,255,157,0.15), transparent);
+    animation: scan 3s linear infinite;
+  }
+  @keyframes scan {
+    0% { top: -40%; }
+    100% { top: 120%; }
+  }
+
+  /* Topic card */
+  .topic-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .topic-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--accent);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.2s ease;
+  }
+  .topic-card:hover {
+    border-color: rgba(0,255,157,0.2);
+    background: #1e1e2d;
+    transform: translateY(-1px);
+  }
+  .topic-card:hover::before { transform: scaleY(1); }
+  .topic-card.done {
+    border-color: rgba(0,255,157,0.3);
+    background: rgba(0,255,157,0.05);
+  }
+  .topic-card.done::before { transform: scaleY(1); }
+
+  /* Checkbox */
+  .cb {
+    width: 18px; height: 18px;
+    border: 1.5px solid var(--muted);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .topic-card.done .cb {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .cb svg { opacity: 0; transition: opacity 0.15s; }
+  .topic-card.done .cb svg { opacity: 1; }
+
+  /* Phase block */
+  .phase-block {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--bg2);
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .phase-block:hover { border-color: rgba(255,255,255,0.12); }
+
+  /* Progress ring */
+  .ring-track { fill: none; stroke: rgba(255,255,255,0.05); }
+  .ring-fill {
+    fill: none;
+    stroke: var(--accent);
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.6s cubic-bezier(0.4,0,0.2,1);
+    transform: rotate(-90deg);
+    transform-origin: center;
+  }
+
+  /* Pill tag */
+  .pill {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  /* Phase header toggle */
+  .phase-header {
+    padding: 20px 24px;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 16px;
+    user-select: none;
+  }
+  .phase-header:hover .phase-title { color: var(--accent); }
+  .phase-title { transition: color 0.2s; }
+
+  .phase-content {
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s;
+  }
+  .phase-content.collapsed {
+    max-height: 0 !important;
+    opacity: 0;
+  }
+
+  .chevron {
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+  .collapsed-header .chevron { transform: rotate(-90deg); }
+
+  /* Overall progress bar */
+  .master-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #00ccff);
+    border-radius: 100px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+    position: relative;
+    overflow: hidden;
+  }
+  .master-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; right: -20px;
+    width: 40px; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: shimmer 2s infinite;
+  }
+  @keyframes shimmer {
+    0% { right: 100%; }
+    100% { right: -40px; }
+  }
+
+  /* Resource links */
+  .resource-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: all 0.2s;
+    font-family: 'Space Mono', monospace;
+  }
+  .resource-chip:hover {
+    border-color: rgba(0,255,157,0.3);
+    color: var(--accent);
+  }
+
+  /* Tooltip */
+  .tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg3);
+    border: 1px solid rgba(0,255,157,0.2);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 11px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 10;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+  }
+  .has-tooltip:hover .tooltip { opacity: 1; }
+
+  /* Difficulty dot */
+  .diff {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Animate in */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .anim-in {
+    animation: fadeUp 0.5s ease both;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- Background blobs -->
+<div class="blob w-96 h-96 opacity-10" style="background:#00ff9d;top:-100px;left:-100px;"></div>
+<div class="blob w-80 h-80 opacity-5" style="background:#ff6b35;top:40%;right:-80px;animation-delay:3s;"></div>
+<div class="blob w-64 h-64 opacity-5" style="background:#6b35ff;bottom:10%;left:30%;animation-delay:6s;"></div>
+
+<div class="relative z-10 max-w-4xl mx-auto px-4 py-12">
+
+  <!-- Header -->
+  <div class="mb-12 anim-in">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="pill bg-[#00ff9d]/10 text-[#00ff9d] border border-[#00ff9d]/20">v1.0</span>
+      <span class="pill bg-white/5 text-[#6b6b80] border border-white/10">FOR WEB DEVS</span>
+    </div>
+    <h1 class="text-5xl font-extrabold leading-none mb-3" style="letter-spacing:-0.03em;">
+      Machine Learning<br/>
+      <span style="color:var(--accent)">Roadmap</span>
+    </h1>
+    <p class="text-[var(--muted)] text-lg max-w-xl" style="font-weight:400;">
+      A structured path from zero to deployment — built for Node.js & PHP developers who think in APIs, not notebooks.
+    </p>
+  </div>
+
+  <!-- Overall progress -->
+  <div class="phase-block mb-8 anim-in" style="animation-delay:0.1s">
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-sm font-semibold uppercase tracking-widest mono" style="color:var(--muted)">Overall Progress</span>
+        <span class="mono text-sm" id="master-count" style="color:var(--accent)">0 / 34</span>
+      </div>
+      <div class="h-2 rounded-full overflow-hidden" style="background:rgba(255,255,255,0.05)">
+        <div class="master-bar-fill" id="master-bar" style="width:0%"></div>
+      </div>
+      <div class="flex justify-between mt-2">
+        <span class="mono text-xs" style="color:var(--muted)">Start</span>
+        <span class="mono text-xs" style="color:var(--muted)" id="master-pct">0%</span>
+        <span class="mono text-xs" style="color:var(--muted)">ML Engineer</span>
+      </div>
+    </div>
+    <!-- Phase mini progress row -->
+    <div class="border-t flex divide-x" style="border-color:var(--border);" id="phase-mini-row"></div>
+  </div>
+
+  <!-- Phases container -->
+  <div id="phases-container" class="space-y-3"></div>
+
+  <!-- Resources section -->
+  <div class="mt-16 anim-in" style="animation-delay:0.3s">
+    <h2 class="mono text-xs uppercase tracking-widest mb-6" style="color:var(--muted)">&gt; recommended_resources</h2>
+    <div class="flex flex-wrap gap-3">
+      <a href="https://www.fast.ai" target="_blank" class="resource-chip">⚡ fast.ai</a>
+      <a href="https://kaggle.com/learn" target="_blank" class="resource-chip">📊 Kaggle Learn</a>
+      <a href="https://pytorch.org/tutorials" target="_blank" class="resource-chip">🔥 PyTorch Docs</a>
+      <a href="https://huggingface.co/learn" target="_blank" class="resource-chip">🤗 HuggingFace</a>
+      <a href="https://www.youtube.com/@3blue1brown" target="_blank" class="resource-chip">📐 3Blue1Brown</a>
+      <a href="https://scikit-learn.org/stable/tutorial" target="_blank" class="resource-chip">🔬 sklearn Docs</a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="mt-16 pt-8 border-t flex items-center justify-between" style="border-color:var(--border)">
+    <span class="mono text-xs" style="color:var(--muted)">// progress saved in localStorage</span>
+    <button onclick="resetAll()" class="mono text-xs px-4 py-2 rounded-lg transition-all hover:text-red-400"
+      style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--muted)">
+      reset progress
+    </button>
+  </div>
+</div>
+
+<script>
+const PHASES = [
+  {
+    id: 'p1',
+    title: 'Math & Python Foundations',
+    label: 'Phase 01',
+    duration: '2–3 weeks',
+    color: '#00ff9d',
+    icon: '∑',
+    desc: 'The bedrock. You already know JS — Python will take days, not weeks.',
+    topics: [
+      { id: 't1_1', title: 'Python for JS Devs', desc: 'Syntax, list comprehensions, dicts, modules. Fast track from JS.', diff: 1, tag: 'lang' },
+      { id: 't1_2', title: 'NumPy Arrays', desc: 'N-dimensional arrays, broadcasting, vectorisation — replaces loops.', diff: 1, tag: 'lib' },
+      { id: 't1_3', title: 'Pandas DataFrames', desc: 'Load CSVs, filter rows, group-by, handle missing data.', diff: 1, tag: 'lib' },
+      { id: 't1_4', title: 'Matplotlib / Seaborn', desc: 'Visualise data distributions, correlations, training curves.', diff: 1, tag: 'lib' },
+      { id: 't1_5', title: 'Linear Algebra Intuition', desc: 'Vectors, matrices, dot product, eigenvalues — visual-first approach.', diff: 2, tag: 'math' },
+      { id: 't1_6', title: 'Calculus — Derivatives', desc: 'Chain rule, partial derivatives. All of backprop is just this.', diff: 2, tag: 'math' },
+      { id: 't1_7', title: 'Probability & Statistics', desc: 'Distributions, expectation, variance, Bayes theorem.', diff: 2, tag: 'math' },
+    ]
+  },
+  {
+    id: 'p2',
+    title: 'Core ML Concepts',
+    label: 'Phase 02',
+    duration: '3–4 weeks',
+    color: '#00ccff',
+    icon: '⊕',
+    desc: 'The mental model. Understand *why* before you touch a framework.',
+    topics: [
+      { id: 't2_1', title: 'Supervised vs Unsupervised', desc: 'Types of ML, when to use each, the taxonomy of problems.', diff: 1, tag: 'concept' },
+      { id: 't2_2', title: 'Loss Functions', desc: 'MSE, cross-entropy, huber. What "learning" actually means numerically.', diff: 2, tag: 'concept' },
+      { id: 't2_3', title: 'Gradient Descent', desc: 'The engine of all ML. SGD, mini-batch, momentum, Adam.', diff: 2, tag: 'algo' },
+      { id: 't2_4', title: 'Overfitting & Regularisation', desc: 'Bias-variance tradeoff, L1/L2, dropout, early stopping.', diff: 2, tag: 'concept' },
+      { id: 't2_5', title: 'Train / Val / Test Split', desc: 'Why data splits matter. k-fold cross validation.', diff: 1, tag: 'concept' },
+      { id: 't2_6', title: 'Feature Engineering', desc: 'Normalisation, encoding categoricals, handling nulls, feature selection.', diff: 2, tag: 'skill' },
+      { id: 't2_7', title: 'scikit-learn API', desc: 'fit / predict / score. Pipelines, transformers. The sklearn mental model.', diff: 1, tag: 'lib' },
+    ]
+  },
+  {
+    id: 'p3',
+    title: 'Classical Algorithms',
+    label: 'Phase 03',
+    duration: '2–3 weeks',
+    color: '#ffbe00',
+    icon: '◈',
+    desc: 'Still the best tools for tabular data. Know when to reach for these over deep learning.',
+    topics: [
+      { id: 't3_1', title: 'Linear & Logistic Regression', desc: 'Build from scratch first. Then use sklearn. Understand the maths.', diff: 1, tag: 'algo' },
+      { id: 't3_2', title: 'Decision Trees', desc: 'Gini impurity, information gain, pruning. Very visual to understand.', diff: 1, tag: 'algo' },
+      { id: 't3_3', title: 'Random Forests', desc: 'Bagging. Ensemble methods. Feature importance. Go-to baseline.', diff: 2, tag: 'algo' },
+      { id: 't3_4', title: 'Gradient Boosting / XGBoost', desc: 'The king of Kaggle tabular. Boosting vs bagging intuition.', diff: 3, tag: 'algo' },
+      { id: 't3_5', title: 'K-Means Clustering', desc: 'Unsupervised grouping. Elbow method. Good for data exploration.', diff: 1, tag: 'algo' },
+      { id: 't3_6', title: 'PCA / Dimensionality Reduction', desc: 'Compress high-dimensional data. Eigenvalue decomposition in practice.', diff: 3, tag: 'algo' },
+    ]
+  },
+  {
+    id: 'p4',
+    title: 'Neural Networks & Deep Learning',
+    label: 'Phase 04',
+    duration: '4–6 weeks',
+    color: '#b855ff',
+    icon: '⬡',
+    desc: 'The hard part. Take your time here — it pays off for everything that follows.',
+    topics: [
+      { id: 't4_1', title: 'Perceptron & MLP', desc: 'Single neuron → layers. Forward pass, activation functions.', diff: 2, tag: 'concept' },
+      { id: 't4_2', title: 'Backpropagation', desc: 'Chain rule applied to networks. Compute gradients layer-by-layer.', diff: 3, tag: 'concept' },
+      { id: 't4_3', title: 'PyTorch Fundamentals', desc: 'Tensors, autograd, nn.Module, DataLoader, training loop.', diff: 2, tag: 'lib' },
+      { id: 't4_4', title: 'CNNs — Convolutional Nets', desc: 'Filters, feature maps, pooling. ResNet architecture overview.', diff: 3, tag: 'arch' },
+      { id: 't4_5', title: 'RNNs & LSTMs', desc: 'Sequence modelling. Vanishing gradients problem. When to use RNN.', diff: 3, tag: 'arch' },
+      { id: 't4_6', title: 'Transformers & Attention', desc: 'Self-attention, multi-head, positional encoding. The GPT architecture.', diff: 4, tag: 'arch' },
+      { id: 't4_7', title: 'Transfer Learning & Fine-tuning', desc: 'Pretrained models, frozen layers, fine-tune on custom data.', diff: 2, tag: 'skill' },
+    ]
+  },
+  {
+    id: 'p5',
+    title: 'MLOps & Deployment',
+    label: 'Phase 05',
+    duration: '2–3 weeks',
+    color: '#ff6b35',
+    icon: '⬢',
+    desc: 'Ship it. You know APIs — this phase will feel the most natural to you.',
+    topics: [
+      { id: 't5_1', title: 'Evaluation Metrics', desc: 'Accuracy, precision, recall, F1, AUC-ROC. Pick the right one per task.', diff: 2, tag: 'skill' },
+      { id: 't5_2', title: 'Experiment Tracking', desc: 'MLflow or Weights & Biases. Log params, metrics, artifacts.', diff: 1, tag: 'tool' },
+      { id: 't5_3', title: 'FastAPI Model Serving', desc: 'Wrap your model in a REST endpoint. You know APIs — easiest phase.', diff: 1, tag: 'deploy' },
+      { id: 't5_4', title: 'Docker for ML', desc: 'Containerise training + inference. Multi-stage builds, GPU images.', diff: 2, tag: 'deploy' },
+      { id: 't5_5', title: 'Hugging Face Ecosystem', desc: 'Transformers, datasets, PEFT, Spaces. The npm of ML.', diff: 2, tag: 'lib' },
+      { id: 't5_6', title: 'LLM APIs & RAG', desc: 'Anthropic/OpenAI APIs, embeddings, vector DBs, RAG architecture.', diff: 3, tag: 'llm' },
+      { id: 't5_7', title: 'Cloud ML (AWS / GCP)', desc: 'SageMaker or Vertex AI basics. Training jobs, model registry.', diff: 3, tag: 'deploy' },
+    ]
+  }
+];
+
+const TOTAL = PHASES.reduce((s, p) => s + p.topics.length, 0);
+const TAG_COLORS = {
+  lang:    { bg: 'rgba(0,255,157,0.08)', color: '#00cc7d', border: 'rgba(0,255,157,0.15)' },
+  lib:     { bg: 'rgba(0,204,255,0.08)', color: '#00aaff', border: 'rgba(0,204,255,0.15)' },
+  math:    { bg: 'rgba(255,190,0,0.08)',  color: '#cc9900', border: 'rgba(255,190,0,0.15)' },
+  concept: { bg: 'rgba(184,85,255,0.08)', color: '#a040ee', border: 'rgba(184,85,255,0.15)' },
+  algo:    { bg: 'rgba(255,107,53,0.08)', color: '#ee5522', border: 'rgba(255,107,53,0.15)' },
+  skill:   { bg: 'rgba(0,255,157,0.08)', color: '#00cc7d', border: 'rgba(0,255,157,0.15)' },
+  arch:    { bg: 'rgba(184,85,255,0.08)', color: '#a040ee', border: 'rgba(184,85,255,0.15)' },
+  tool:    { bg: 'rgba(255,190,0,0.08)',  color: '#cc9900', border: 'rgba(255,190,0,0.15)' },
+  deploy:  { bg: 'rgba(255,107,53,0.08)', color: '#ee5522', border: 'rgba(255,107,53,0.15)' },
+  llm:     { bg: 'rgba(0,204,255,0.08)', color: '#00aaff', border: 'rgba(0,204,255,0.15)' },
+};
+const DIFF_COLORS = ['#00ff9d', '#00ccff', '#ffbe00', '#ff6b35'];
+const DIFF_LABELS = ['Beginner', 'Easy', 'Medium', 'Advanced'];
+
+let done = new Set(JSON.parse(localStorage.getItem('ml-roadmap-v2') || '[]'));
+let collapsed = new Set(JSON.parse(localStorage.getItem('ml-collapsed') || '[]'));
+
+function save() {
+  localStorage.setItem('ml-roadmap-v2', JSON.stringify([...done]));
+}
+function saveCollapsed() {
+  localStorage.setItem('ml-collapsed', JSON.stringify([...collapsed]));
+}
+
+function phaseDone(phase) {
+  return phase.topics.filter(t => done.has(t.id)).length;
+}
+
+function updateProgress() {
+  const n = done.size;
+  const pct = Math.round(n / TOTAL * 100);
+  document.getElementById('master-count').textContent = n + ' / ' + TOTAL;
+  document.getElementById('master-bar').style.width = pct + '%';
+  document.getElementById('master-pct').textContent = pct + '%';
+
+  PHASES.forEach(phase => {
+    const d = phaseDone(phase);
+    const total = phase.topics.length;
+    const p = Math.round(d / total * 100);
+    const el = document.getElementById('mini-' + phase.id);
+    if (el) el.textContent = d + '/' + total;
+    const ring = document.getElementById('ring-' + phase.id);
+    if (ring) {
+      const r = 14, circ = 2 * Math.PI * r;
+      ring.style.strokeDashoffset = circ - (circ * p / 100);
+    }
+  });
+}
+
+function toggleTopic(id) {
+  if (done.has(id)) done.delete(id); else done.add(id);
+  save();
+  const card = document.querySelector('[data-tid="' + id + '"]');
+  if (card) card.classList.toggle('done', done.has(id));
+  updateProgress();
+}
+
+function togglePhase(phaseId) {
+  if (collapsed.has(phaseId)) collapsed.delete(phaseId); else collapsed.add(phaseId);
+  saveCollapsed();
+  const content = document.getElementById('content-' + phaseId);
+  const header = document.getElementById('header-' + phaseId);
+  if (content) content.classList.toggle('collapsed', collapsed.has(phaseId));
+  if (header) header.classList.toggle('collapsed-header', collapsed.has(phaseId));
+}
+
+function resetAll() {
+  if (!confirm('Reset all progress?')) return;
+  done.clear(); save();
+  document.querySelectorAll('.topic-card.done').forEach(c => c.classList.remove('done'));
+  updateProgress();
+}
+
+function renderPhaseMiniRow() {
+  const row = document.getElementById('phase-mini-row');
+  row.innerHTML = PHASES.map(phase => {
+    const d = phaseDone(phase);
+    const total = phase.topics.length;
+    const r = 14, circ = 2 * Math.PI * r;
+    const offset = circ;
+    return `
+      <div class="flex-1 flex flex-col items-center justify-center py-4 gap-1" style="min-width:0">
+        <svg width="36" height="36" viewBox="0 0 36 36">
+          <circle class="ring-track" cx="18" cy="18" r="${r}" stroke-width="2.5"/>
+          <circle class="ring-fill" id="ring-${phase.id}" cx="18" cy="18" r="${r}" stroke-width="2.5"
+            style="stroke:${phase.color};stroke-dasharray:${circ};stroke-dashoffset:${offset}"/>
+          <text x="18" y="22" text-anchor="middle" font-size="9" fill="${phase.color}" font-family="Space Mono">${Math.round(d/total*100)}%</text>
+        </svg>
+        <span class="mono text-center" style="font-size:9px;color:var(--muted);line-height:1.3" id="mini-${phase.id}">${d}/${total}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderPhases() {
+  const container = document.getElementById('phases-container');
+  container.innerHTML = '';
+
+  PHASES.forEach((phase, pi) => {
+    if (pi > 0) {
+      const conn = document.createElement('div');
+      conn.className = 'phase-connector';
+      container.appendChild(conn);
+    }
+
+    const isCollapsed = collapsed.has(phase.id);
+    const doneCt = phaseDone(phase);
+    const total = phase.topics.length;
+
+    const block = document.createElement('div');
+    block.className = 'phase-block anim-in';
+    block.style.animationDelay = (0.05 * pi) + 's';
+
+    block.innerHTML = `
+      <!-- Phase header -->
+      <div class="phase-header ${isCollapsed ? 'collapsed-header' : ''}" id="header-${phase.id}" onclick="togglePhase('${phase.id}')">
+        <div class="phase-num w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold flex-shrink-0"
+          style="background:${phase.color}15;border:1px solid ${phase.color}30;color:${phase.color}">
+          ${phase.icon}
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 flex-wrap mb-0.5">
+            <span class="mono text-xs" style="color:${phase.color}">${phase.label}</span>
+            <span class="mono text-xs" style="color:var(--muted)">// ${phase.duration}</span>
+          </div>
+          <div class="phase-title text-base font-semibold truncate" style="color:var(--text)">${phase.title}</div>
+          <div class="text-xs mt-0.5 truncate" style="color:var(--muted);font-weight:400">${phase.desc}</div>
+        </div>
+        <div class="flex items-center gap-3 flex-shrink-0">
+          <div class="text-right">
+            <div class="mono text-sm font-bold" style="color:${phase.color}">${doneCt}/${total}</div>
+            <div class="mono text-xs" style="color:var(--muted)">done</div>
+          </div>
+          <svg class="chevron" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M4 6l4 4 4-4" stroke="${phase.color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Topics grid -->
+      <div class="phase-content ${isCollapsed ? 'collapsed' : ''}" id="content-${phase.id}"
+        style="max-height:${isCollapsed ? '0' : '2000px'}">
+        <div class="px-5 pb-5 pt-1">
+          <!-- divider -->
+          <div class="mb-4 h-px" style="background:var(--border)"></div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            ${phase.topics.map((topic, ti) => {
+              const isDone = done.has(topic.id);
+              const tc = TAG_COLORS[topic.tag] || TAG_COLORS.concept;
+              const dc = DIFF_COLORS[topic.diff - 1] || DIFF_COLORS[0];
+              const dl = DIFF_LABELS[topic.diff - 1] || DIFF_LABELS[0];
+              return `
+                <div class="topic-card ${isDone ? 'done' : ''}" data-tid="${topic.id}" onclick="toggleTopic('${topic.id}')">
+                  <div class="flex items-start gap-3 mb-2">
+                    <div class="cb mt-0.5">
+                      <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                        <path d="M1 4l3 3 5-6" stroke="#0a0a0f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="font-semibold text-sm leading-tight mb-1" style="color:var(--text)">${topic.title}</div>
+                      <div class="text-xs leading-relaxed" style="color:var(--muted);font-weight:400">${topic.desc}</div>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2 mt-3">
+                    <span class="pill" style="background:${tc.bg};color:${tc.color};border:1px solid ${tc.border}">${topic.tag}</span>
+                    <div class="relative has-tooltip">
+                      <div class="diff" style="background:${dc};opacity:0.8"></div>
+                      <div class="tooltip">${dl}</div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+
+          <!-- Phase mark-all -->
+          <div class="mt-4 flex justify-end">
+            <button onclick="event.stopPropagation();markPhase('${phase.id}',${JSON.stringify(phase.topics.map(t=>t.id))})"
+              class="mono text-xs px-3 py-1.5 rounded-lg transition-all"
+              style="background:${phase.color}10;border:1px solid ${phase.color}25;color:${phase.color}">
+              mark all done ✓
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(block);
+  });
+}
+
+function markPhase(phaseId, ids) {
+  const allDone = ids.every(id => done.has(id));
+  ids.forEach(id => allDone ? done.delete(id) : done.add(id));
+  save();
+  // Re-render cards
+  ids.forEach(id => {
+    const card = document.querySelector('[data-tid="' + id + '"]');
+    if (card) card.classList.toggle('done', done.has(id));
+  });
+  updateProgress();
+}
+
+// Init
+renderPhases();
+renderPhaseMiniRow();
+updateProgress();
+
+// Animate progress rings on load
+setTimeout(updateProgress, 100);
+</script>
+</body>
+</html>
