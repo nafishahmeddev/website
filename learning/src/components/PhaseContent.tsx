@@ -33,7 +33,7 @@ export const PhaseContent: React.FC<PhaseContentProps> = ({
     >
       <div className="px-5 pb-5 pt-1">
         <div className="mb-4 h-px" style={{ background: 'var(--border)' }} />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="flex flex-col gap-3">
           {phase.topics.map(topic => (
             <TopicCard
               key={topic.id}

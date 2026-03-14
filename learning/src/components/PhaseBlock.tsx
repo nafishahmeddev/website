@@ -2,7 +2,7 @@ import React from 'react';
 import type { Phase } from '../types';
 import { PhaseHeader } from './PhaseHeader';
 import { PhaseContent } from './PhaseContent';
-import { getPhaseCompletedCount, getPhaseTopicIds } from '../utils/phase';
+import { getPhaseCompletedCount, getPhaseTopicIds, getPhaseCompletedSubtopicCount, getPhaseSubtopicCount } from '../utils/phase';
 
 interface PhaseBlockProps {
   phase: Phase;
@@ -29,6 +29,8 @@ export const PhaseBlock: React.FC<PhaseBlockProps> = ({
   onToggleSubtopic
 }) => {
   const completedCount = getPhaseCompletedCount(phase, completedTopicIds);
+  const completedSubCount = getPhaseCompletedSubtopicCount(phase, completedSubtopicIds);
+  const totalSubCount = getPhaseSubtopicCount(phase);
   const topicIds = getPhaseTopicIds(phase);
 
   const handleMarkAllDone = (): void => {
@@ -50,6 +52,8 @@ export const PhaseBlock: React.FC<PhaseBlockProps> = ({
       <PhaseHeader
         phase={phase}
         completedCount={completedCount}
+        completedSubtopicCount={completedSubCount}
+        totalSubtopicCount={totalSubCount}
         isCollapsed={isCollapsed}
         onToggle={() => onTogglePhase(phase.id)}
       />

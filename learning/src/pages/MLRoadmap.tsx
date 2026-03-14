@@ -137,6 +137,7 @@ const MLRoadmap: React.FC = () => {
         <OverallProgressBar
           phases={PHASES}
           completedTopicIds={completedTopicIds}
+          completedSubtopicIds={completedSubtopicIds}
           totalTopics={TOTAL_TOPICS}
         />
 

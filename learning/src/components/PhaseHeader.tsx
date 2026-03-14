@@ -4,6 +4,8 @@ import type { Phase } from '../types';
 interface PhaseHeaderProps {
   phase: Phase;
   completedCount: number;
+  completedSubtopicCount: number;
+  totalSubtopicCount: number;
   isCollapsed: boolean;
   onToggle: () => void;
 }
@@ -14,6 +16,8 @@ interface PhaseHeaderProps {
 export const PhaseHeader: React.FC<PhaseHeaderProps> = ({
   phase,
   completedCount,
+  completedSubtopicCount,
+  totalSubtopicCount,
   isCollapsed,
   onToggle
 }) => {
@@ -71,7 +75,7 @@ export const PhaseHeader: React.FC<PhaseHeaderProps> = ({
             {completedCount}/{phase.topics.length}
           </div>
           <div className="mono text-xs" style={{ color: 'var(--muted)' }}>
-            done
+            {completedSubtopicCount}/{totalSubtopicCount}s
           </div>
         </div>
         <svg
