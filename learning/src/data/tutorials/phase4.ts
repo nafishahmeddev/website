@@ -5,27 +5,33 @@ export const phase4Tutorials: Record<string, TopicTutorial> = {
     topicId: 't4_1',
     lessons: [
       {
-        title: 'Perceptrons & MLP',
-        noobDefinition: 'A Perceptron is like a "Single Brain Cell". It takes in some signals, multiplies them by how much it "cares" about them, and fires a signal if the total is high enough. An MLP is just a whole bunch of these cells connected together in layers.',
-        realWorldExample: 'A bouncer at a club deciding who to let in. He looks at three things: ID, Age, and Dress Code. He gives each a score, and if the total is > 7, you get in.',
-        content: `The Multi-Layer Perceptron (MLP) is the classic "Neural Network". It consists of an Input layer, one or more Hidden layers, and an Output layer.
-        
-Each connection has a **weight** (how much we care about that input) and each neuron has a **bias** (the default state). We use **Activation Functions** like ReLU to make the network capable of learning complex, non-linear patterns.`,
+        title: 'Neural Networks (Multi-Layer Perceptron)',
+        noobDefinition: 'A Neural Network is like a "Chain of Committees". The first committee looks at the raw data and finds tiny patterns. They pass their notes to the second committee, which finds bigger patterns, and so on until the final committee makes the decision.',
+        realWorldExample: 'A system recognizing a handwriting digit "8". Layer 1 finds small lines. Layer 2 finds circles. Layer 3 realizes two circles together make an "8".',
+        content: `Neural Networks are sets of layers that transform data.
+
+### The Anatomy:
+1. **Input Layer**: Where the data enters (e.g., 784 pixels of an image).
+2. **Hidden Layers**: Where the "Magic" happens. Each layer builds on the previous one's findings.
+3. **Output Layer**: The final prediction (e.g., "This is an 8").
+
+### The Math: Weights & Biases
+Every connection between layers has a **Weight**. This is a number that tells the AI how important that specific signal is. The AI learns by adjusting these millions of weights.`,
+        vizType: 'neural-network',
         keyPoints: [
-          'Neuron: The basic building block',
-          'Weights & Biases: The "parameters" the model learns',
-          'Activation Functions: The "switch" that decides if a neuron fires',
-          'ReLU (Rectified Linear Unit): The most common activation function today',
+          'Layers can find non-linear patterns that regular math can\'t',
+          'Deep Learning just means a network with MANY hidden layers',
+          'Activation functions (like ReLU) act as a "switch" for the neurons',
         ],
         codeExample: {
           language: 'python',
           code: `import torch.nn as nn
 
-# A simple 2-layer neural network
+# A simple 3-layer neural network in PyTorch
 model = nn.Sequential(
-    nn.Linear(10, 50), # Input: 10, Hidden: 50
-    nn.ReLU(),
-    nn.Linear(50, 1)   # Output: 1
+    nn.Linear(784, 128), # Input (784) -> Hidden (128)
+    nn.ReLU(),           # Activation Function
+    nn.Linear(128, 10)   # Hidden (128) -> Output (10 classes)
 )`,
         },
       },
@@ -35,51 +41,27 @@ model = nn.Sequential(
     topicId: 't4_2',
     lessons: [
       {
-        title: 'Backpropagation',
-        noobDefinition: 'Backprop is like "Pin the Tail on the Donkey" while someone shouts "LOWER" or "HIGHER". After every guess, you learn exactly how much to move your hand to be closer next time.',
-        realWorldExample: 'A teacher grading a test and giving feedback. Instead of just saying "F", the teacher points to exactly which math step you got wrong so you can fix it in the next exam.',
-        content: `Backpropagation is how neural networks learn. It uses the **Chain Rule** from calculus to calculate how much each weight contributed to the final error (Loss).
-        
-The algorithm starts at the output and "propagates" the error backwards through the layers, updating every weight slightly using Gradient Descent.`,
-        keyPoints: [
-          'Goal: Calculate the gradient of the Loss with respect to every weight',
-          'The Chain Rule: The mathematical engine of deep learning',
-          'Optimizer (like SGD or Adam): The tool that actually updates the weights',
-          'Automatic Differentiation: Why tools like PyTorch are so powerful (they do this for you!)',
-        ],
-        formula: '∂L/∂w = (∂L/y) * (∂y/∂w)',
-        codeExample: {
-          language: 'python',
-          code: `# PyTorch magic: backprop in 2 lines
-loss.backward()  # Calculates all gradients
-optimizer.step()  # Updates all weights`,
-        },
-      },
-    ],
-  },
-  't4_3': {
-    topicId: 't4_3',
-    lessons: [
-      {
-        title: 'PyTorch Fundamentals',
-        noobDefinition: 'PyTorch is like "Numpy with a Turbocharger". It looks just like Python math code, but it can run on super-fast GPUs and automatically calculates all the difficult calculus for you.',
-        realWorldExample: 'If Numpy is a bicycle, PyTorch is a rocket ship. Both get you from A to B, but PyTorch handles massive datasets and complex AI models with ease.',
-        content: `PyTorch is the most popular framework for AI research. It revolves around **Tensors** (fancy multi-dimensional arrays) and **Autograd** (automatic math).`,
-        keyPoints: [
-          'Tensors: The core data structure, similar to NumPy arrays',
-          'nn.Module: The base class for all neural network building blocks',
-          'DataLoader: Efficiently feeding chunks (batches) of data to the model',
-          'CUDA: Moving your code to the GPU for 50x speed gains',
-        ],
-        codeExample: {
-          language: 'python',
-          code: `import torch
+        title: 'Backpropagation (The Learning Loop)',
+        noobDefinition: 'Backprop is how the AI "Checks its Homework". It looks at the mistake it made at the end, and then "goes backwards" through the network to blame and fix exactly which part was responsible for the error.',
+        realWorldExample: 'A chef tasting an over-salted soup. They don\'t just throw it away; they trace back and realize: "Ah, the intern who added the broth used the wrong salt bag." They fix that specific step next time.',
+        content: `How does a network with 1 billion weights actually learn? **Backpropagation**.
 
-# Create a tensor and enable automatic math
-x = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)
-y = x.pow(2).sum()
-y.backward()
-print(x.grad) # Prints gradients automatically!`,
+### The Flow:
+1. **Forward Pass**: Data goes Input -> Output. A prediction is made.
+2. **Calculate Loss**: How far off was the prediction? (e.g., predicted 7, actual was 8).
+3. **Backward Pass**: We calculate the "Gradient" (the blame) for every single weight, starting from the last layer and going back to the first.
+4. **Update**: We slightly nudge every weight in the "Correct" direction.`,
+        vizType: 'backprop',
+        keyPoints: [
+          'Backprop is just the "Chain Rule" from Calculus applied to networks',
+          'It is why networks can learn from hundreds of millions of examples',
+          'Optimization (like SGD or Adam) is the tool that applies these fixes',
+        ],
+        codeExample: {
+          language: 'python',
+          code: `# PyTorch handles backprop automatically!
+loss.backward()  # Calculates the "blame" (gradients)
+optimizer.step()  # Moves weights in the correct direction`,
         },
       },
     ],
@@ -88,25 +70,32 @@ print(x.grad) # Prints gradients automatically!`,
     topicId: 't4_4',
     lessons: [
       {
-        title: 'CNNs (Computer Vision)',
-        noobDefinition: 'A CNN is like a "Detective looking for clues". The first layer looks for tiny edges, the second looks for shapes (circles, squares), and the final layers look for objects (wheels, doors, cars).',
-        realWorldExample: 'How your phone recognizes your face. It starts by finding the contrast of your eyes/nose and builds up to your full face structure.',
-        content: `Convolutional Neural Networks (CNNs) are the kings of Image Recognition. They use **Filters** (kernels) that slide over an image to detect specific patterns regardless of where they appear.`,
+        title: 'CNNs (The Eyes of AI)',
+        noobDefinition: 'A Convolutional Neural Network (CNN) is like a detective with a magnifying glass. It slides the glass over every square inch of an image, looking for specific "clues" like vertical lines, corners, or textures.',
+        realWorldExample: 'Your phone camera finding faces in a group photo. It looks for the specific patterns of eyes, noses, and mouths.',
+        content: `CNNs are specialized for images. Instead of seeing an image as one giant list of numbers, they see it in **Chunks**.
+
+### The Convolution Layer
+A small matrix (called a **Filter**) slides over the image. It does math on a 3x3 or 5x5 area and "highlights" features.
+- If the filter is for "Edges", the output will show only the edges.
+- If the filter is for "Curves", only curves will be highlighted.
+
+By stacking these filters, the model can eventually "see" complex objects like cars or faces.`,
+        vizType: 'cnn-conv',
         keyPoints: [
-          'Convolution: Sliding filters to extract features',
-          'Pooling: Shrinking the image to focus on the important parts',
-          'Stride & Padding: Controlling how the filter moves',
-          'ResNet: A famous "Deep" CNN architecture used everywhere',
+          'Invariance: CNNs can find a dog even if it\'s in the corner of the photo',
+          'Pooling: Shorthand for "Shrinking" the image to focus on important parts',
+          'CNNs are the tech behind Self-Driving cars and medical imaging',
         ],
         codeExample: {
           language: 'python',
           code: `import torch.nn as nn
 
-model = nn.Sequential(
-    nn.Conv2d(3, 16, kernel_size=3), # 3 color channels (RGB)
-    nn.MaxPool2d(2),
-    nn.Flatten(),
-    nn.Linear(16 * 14 * 14, 10) # 10 classes
+# A simple Image-Processing layer
+conv_layer = nn.Conv2d(
+    in_channels=3,  # RGB Color
+    out_channels=16, # Search for 16 different clues
+    kernel_size=3   # Look at 3x3 pixel areas
 )`,
         },
       },
@@ -116,25 +105,30 @@ model = nn.Sequential(
     topicId: 't4_6',
     lessons: [
       {
-        title: 'Transformers & Attention',
-        noobDefinition: 'Attention is like "Reading a Sentence and highlighting the important words". In the sentence "The animal didn\'t cross the street because IT was too tired", Attention helps the AI know that "IT" refers to "Animal", not "Street".',
-        realWorldExample: 'Google Translate. Instead of translating one word at a time, it looks at the whole paragraph and gives the most relevant meaning based on the context.',
-        content: `Transformers are the architecture behind ChatGPT (GPT stands for Generative Pre-trained **Transformer**).
-        
-The breakthrough was the **Self-Attention** mechanism, which allows the model to process all parts of a sequence simultaneously rather than one-by-one, making it incredibly fast and smart.`,
+        title: 'Transformers & ChatGPT',
+        noobDefinition: 'Transformers are the "Super-Readers" of AI. Instead of reading a sentence word-by-word (like humans), they see the whole book at once and use "Attention" to focus on the most important words that give a sentence its meaning.',
+        realWorldExample: 'In the sentence: "The boy went to the park because he was bored," the word "he" refers to "boy". Attention is the mechanism that tells the AI to link those two words together.',
+        content: `Transformers are the architecture that changed everything. They power Siri, Claude, Gemini, and ChatGPT.
+
+### Self-Attention: The Secret Sauce
+Before Transformers, AI processed text in a line (RNNs). They often "forgot" the beginning of a long sentence.
+Transformers solve this with **Self-Attention**. Every word in a sentence "looks" at every other word and decides: "How relevant is this word to me right now?"
+
+### Parallelism
+Because Transformers see the whole sentence at once, we can train them on the entire Internet at the same time using thousands of GPUs.`,
+        vizType: 'attention-heatmap',
         keyPoints: [
-          'Self-Attention: Weighing the importance of different parts of the input',
-          'Positional Encoding: Telling the model where words are in a sentence',
-          'Multi-Head Attention: Looking at the same data from different "perspectives"',
-          'Encoder-Decoder: Initial architecture for translation (now mostly Decoder-only for LLMs)',
+          'Attention: Focusing on the most relevant parts of the input',
+          'GPT stands for Generative Pre-trained Transformer',
+          'Transformers are now being used for Images and Sound too!',
         ],
         codeExample: {
           language: 'python',
           code: `from transformers import pipeline
 
-# Use a pre-trained Transformer with 2 lines
-summarizer = pipeline("summarization")
-result = summarizer("The long text goes here...", max_length=50)`,
+# Use a state-of-the-art model in 2 lines!
+translator = pipeline("translation_en_to_fr")
+print(translator("AI is amazing!")) # "L'IA est incroyable!"`,
         },
       },
     ],

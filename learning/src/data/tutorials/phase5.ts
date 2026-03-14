@@ -5,26 +5,57 @@ export const phase5Tutorials: Record<string, TopicTutorial> = {
     topicId: 't5_1',
     lessons: [
       {
-        title: 'Evaluation Metrics',
-        noobDefinition: 'Metrics are like the "Scoreboard" for your AI. Accuracy isn\'t always enough. If you have a test for a rare disease, and you just say "No one has it," you\'ll be 99% accurate but 100% useless! Metrics like Recall help you catch those rare cases.',
-        realWorldExample: 'A spam filter. Precision means: "When I say it\'s spam, am I right?" Recall means: "Did I catch ALL the spam emails?"',
-        content: `Choosing the right metric is critical. 
+        title: 'Precision, Recall, and the Confusion Matrix',
+        noobDefinition: 'Accuracy is a lie! If you have 100 people and only 1 has a disease, and you predict "Everyone is healthy", you are 99% accurate but 100% useless. We use Precision and Recall to see if we actually caught the important stuff.',
+        realWorldExample: 'A airport security scanner. Precision: "If the alarm bleeps, is there actually a threat?" Recall: "Did we catch EVERY person with a threat?"',
+        content: `In the real world, "correct" and "wrong" have different costs. 
         
-For **Classification**, we use a **Confusion Matrix** to see True Positives, False Positives, etc. 
-For **Regression**, we use metrics like **RMSE** (Root Mean Squared Error) to see how many "dollars" or "units" we were off by.`,
+- **True Positive (TP)**: You said "Spam" and it was Spam. (Good!)
+- **False Positive (FP)**: You said "Spam" but it was a work email. (Bad! User missed a meeting).
+- **False Negative (FN)**: You said "Clean" but it was Spam. (Annoying, but less harmful than missing a meeting).
+
+We use the **Confusion Matrix** to visualize these four states.
+
+### Key Metrics:
+- **Precision**: How many of the people we "flagged" were actually positive?
+- **Recall**: How many of the "total actual positives" did we manage to find?`,
+        vizType: 'confusion-matrix',
         keyPoints: [
-          'Accuracy: Total correct / Total samples',
-          'Precision: Quality over quantity',
-          'Recall: Quantity over quality (finding all cases)',
-          'F1-Score: The harmonic mean of Precision and Recall',
+          'Precision = TP / (TP + FP)',
+          'Recall = TP / (TP + FN)',
+          'F1-Score = The balance between the two',
         ],
         codeExample: {
           language: 'python',
-          code: `from sklearn.metrics import classification_report, confusion_matrix
+          code: `from sklearn.metrics import classification_report
 
-# Get a detailed breakdown of performance
-print(classification_report(y_test, predictions))
-print(confusion_matrix(y_test, predictions))`,
+# Get a full report of Precision, Recall, and F1
+print(classification_report(y_true, y_pred))`
+        },
+      },
+      {
+        title: 'ROC Curves & AUC',
+        noobDefinition: 'An ROC curve is a graph that shows how "Separable" two groups are. A perfect model has a curve that hugs the top-left corner (high AUC), while a random guesser is just a diagonal line.',
+        realWorldExample: 'A doctor adjusting a blood test threshold. If they make the test too sensitive, they get false alarms. If they make it too strict, they miss sick people. ROC shows all these trade-offs on one graph.',
+        content: `The **ROC Curve** (Receiver Operating Characteristic) shows the trade-off between the True Positive Rate and the False Positive Rate.
+
+### AUC (Area Under the Curve)
+This is a single number between 0 and 1 that represents the model's quality.
+- **AUC = 1.0**: Perfect model.
+- **AUC = 0.5**: Random guessing (useless).
+- **AUC = 0.8+**: Good, reliable model.`,
+        vizType: 'roc-curve',
+        keyPoints: [
+          'ROC shows performance at ALL classification thresholds',
+          'AUC is independent of the threshold you eventually choose',
+          'A flat diagonal line means the AI is just flipping a coin',
+        ],
+        codeExample: {
+          language: 'python',
+          code: `from sklearn.metrics import roc_auc_score
+
+# Calculate the AUC score
+auc = roc_auc_score(y_true, model_probabilities)`
         },
       },
     ],
@@ -33,15 +64,20 @@ print(confusion_matrix(y_test, predictions))`,
     topicId: 't5_3',
     lessons: [
       {
-        title: 'FastAPI Model Serving',
-        noobDefinition: 'FastAPI is like "Building a Counter" for your AI shop. Your AI lives in the back room, and FastAPI provides a window where people can send data and get a prediction back in milliseconds.',
-        realWorldExample: 'A website like Remove.bg. You upload a photo (the Request), the AI processes it, and 2 seconds later you get the result (the Response).',
-        content: `Once your model is trained, you need to expose it as an API. FastAPI is the go-to for Python because it is extremely fast and handles asynchronous requests perfectly.`,
+        title: 'Serving AI with FastAPI',
+        noobDefinition: 'Training a model is like writing a book. Serving it with FastAPI is like putting that book on Amazon so the whole world can read it.',
+        realWorldExample: 'When you ask ChatGPT a question, your text is sent to an API (like FastAPI), the model processes it, and the answer is sent back via the same "pipe".',
+        content: `Once your model is saved as a file (\`.pkl\` or \`.pt\`), you need to bridge it to the web. **FastAPI** is the modern standard for this.
+
+### The Workflow:
+1. **Load**: Load the model into memory.
+2. **Endpoint**: Create a URL like \`/predict\`.
+3. **Pydantic**: Validate that the data the user sent is in the right format.
+4. **Predict**: Pass the data to the model and return the result as JSON.`,
         keyPoints: [
-          'Pydantic: For validating the data people send to your API',
-          'async/await: Handling many users at once without slowing down',
-          'JSON: The language the web API uses to communicate',
-          'Swagger UI: Automatically generated documentation (/docs)',
+          'FastAPI is extremely fast (uses Python Async)',
+          'Automatically generates documentation (/docs)',
+          'The industry standard for ML Microservices',
         ],
         codeExample: {
           language: 'python',
@@ -49,42 +85,12 @@ print(confusion_matrix(y_test, predictions))`,
 import joblib
 
 app = FastAPI()
-model = joblib.load("my_model.pkl")
+model = joblib.load("model.pkl")
 
 @app.post("/predict")
-def predict(data: dict):
-    prediction = model.predict([data["features"]])
-    return {"prediction": int(prediction[0])}`,
-        },
-      },
-    ],
-  },
-  't5_4': {
-    topicId: 't5_4',
-    lessons: [
-      {
-        title: 'Docker for ML',
-        noobDefinition: 'Docker is like a "Shipping Container". It packs your code, Python version, and libraries into one box that is guaranteed to run perfectly on any computer, anywhere.',
-        realWorldExample: 'The "It works on my machine" problem. Docker solves this by making sure your code runs on the Server exactly like it does on your Laptop.',
-        content: `Machine Learning environments are notoriously fragile. Docker ensures environment consistency. 
-        
-You write a **Dockerfile**, which is a list of instructions to build your "Container".`,
-        keyPoints: [
-          'Image: The "frozen" blueprint of your environment',
-          'Container: The running instance of an image',
-          'Requirements.txt: The list of libraries you need',
-          'Multi-stage builds: Keeping your final container small and fast',
-        ],
-        codeExample: {
-          language: 'dockerfile',
-          code: `FROM python:3.9-slim
-
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
-COPY . .
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0"]`,
+async def predict(data: dict):
+    result = model.predict([data["features"]])
+    return {"prediction": int(result[0])}`
         },
       },
     ],
@@ -93,29 +99,29 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0"]`,
     topicId: 't5_6',
     lessons: [
       {
-        title: 'LLM APIs & RAG',
-        noobDefinition: 'RAG (Retrieval-Augmented Generation) is like "Giving an AI an Open-Book Exam". Instead of just relying on what it learned in school (training), it can look up specific info in your private documents to answer questions.',
-        realWorldExample: 'A customer support bot for a specific company. It looks up the company\'s 500-page manual to answer exactly how to reset your password.',
-        content: `Large Language Models (LLMs) like Claude or GPT-4 are powerful but have a "cut-off" date. 
-        
-RAG solves this by:
-1. Converting your docs into **Embeddings** (numbers)
-2. Storing them in a **Vector Database**
-3. Searching for relevant chunks when a user asks a question`,
+        title: 'RAG (Retrieval-Augmented Generation)',
+        noobDefinition: 'RAG is like giving an AI an "Open-Book Exam". Instead of just relying on its memory, it can look up specific documents (like your companys internal wikis) to answer questions accurately.',
+        realWorldExample: 'A customer support bot for a specific bank. It doesn\'t just "guess" the bank\'s rules; it looks up the 2024 PDF manual to find the exact interest rate before answering.',
+        content: `AI models have a "Cut-off date" (they don't know what happened yesterday). **RAG** solves this by letting the AI search a database before it talks.
+
+### The RAG Pipeline:
+1. **User asks**: "How do I reset my Acme password?"
+2. **Retrieve**: The system searches your private documents for "Acme password reset".
+3. **Augment**: The system takes the user question and the retrieved text and gives them both to the LLM.
+4. **Generate**: The AI says: "According to the manual I just read, you need to click the blue button..."`,
+        vizType: 'rag-arch',
         keyPoints: [
-          'Embeddings: Converting text into mathematical vectors',
-          'Vector DB (like Pinecone/Chroma): A database for searching by meaning',
-          'Prompt Engineering: Crafting the perfect instruction for the LLM',
-          'Semantic Search: Finding info based on intent, not just keywords',
+          'Prevents "Hallucinations" (AI making things up)',
+          'Allows AI to access private, real-time data',
+          'Uses Vector Databases (like Pinecone or Chroma) for search',
         ],
         codeExample: {
           language: 'python',
-          code: `# Simple RAG logic
-query_vector = embed(user_query)
-relevant_docs = vector_db.search(query_vector)
-
-prompt = f"Use these docs: {relevant_docs} to answer: {user_query}"
-response = llm.generate(prompt)`,
+          code: `# The core RAG logic (Simulated)
+docs = vector_db.similarity_search(query)
+context = "\\n".join(docs)
+prompt = f"Using this context: {context}\\nAnswer this: {query}"
+response = llm.invoke(prompt)`
         },
       },
     ],
