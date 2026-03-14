@@ -1,8 +1,31 @@
 import { useState, lazy, Suspense } from 'react';
+import ReactMarkdown, { type Components } from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 // Lazy load syntax highlighter
 const SyntaxHighlighterFull = lazy(() => import('react-syntax-highlighter').then(m => ({ default: m.Prism })));
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { InteractiveViz, type VizType } from './InteractiveViz';
+
+// Inline simple styles for the markdown components to match the app's aesthetic
+const MarkdownComponents = (color: string): Components => ({
+  h3: (props) => <h3 className="text-xl font-bold mt-8 mb-4 tracking-tight" style={{ color }} {...props} />,
+  h4: (props) => <h4 className="text-lg font-bold mt-6 mb-3 tracking-tight text-white/90" {...props} />,
+  p: (props) => <p className="text-lg leading-relaxed text-(--text)/90 mb-4 font-medium tracking-tight" {...props} />,
+  ul: (props) => <ul className="list-none space-y-2 mb-6 ml-1" {...props} />,
+  li: ({ children, ...props }) => (
+    <li className="flex gap-3 items-start text-(--text)/80" {...props}>
+      <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: color }}></span>
+      <span>{children}</span>
+    </li>
+  ),
+  code: (props) => {
+    // @ts-expect-error - node and inline are passed by react-markdown but not in the standard HTML props
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { node: _node, inline: _inline, ...rest } = props;
+    return <code className="px-1.5 py-0.5 rounded bg-white/10 font-mono text-sm border border-white/5" style={{ color }} {...rest} />;
+  },
+  strong: (props) => <strong className="font-bold text-white" {...props} />,
+});
 
 export interface Lesson {
   title: string;
@@ -26,6 +49,7 @@ export function TutorialContent({ color, lessons }: TutorialContentProps) {
   const [codeCopied, setCodeCopied] = useState(false);
 
   const lesson = lessons[activeLesson];
+  const markdownComponents = MarkdownComponents(color);
 
   const copyCode = () => {
     if (lesson.codeExample) {
@@ -101,10 +125,13 @@ export function TutorialContent({ color, lessons }: TutorialContentProps) {
           {/* Main Lesson Content */}
           <div className="mb-12 relative">
             <div className="absolute -left-6 top-0 bottom-0 w-[2px] bg-linear-to-b from-(--accent) via-(--accent)/20 to-transparent"></div>
-            <div className="prose prose-invert max-w-none mb-8">
-              <p className="text-lg leading-relaxed text-(--text)/90 whitespace-pre-wrap font-medium tracking-tight">
+            <div className="mb-8">
+              <ReactMarkdown 
+                remarkPlugins={[remarkGfm]}
+                components={markdownComponents}
+              >
                 {lesson.content}
-              </p>
+              </ReactMarkdown>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

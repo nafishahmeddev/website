@@ -123,7 +123,7 @@ export function Home() {
                   </div>
                   <div className="flex-1 min-w-0 text-left px-2">
                     <div className="flex items-center gap-3 flex-wrap mb-1">
-                      <span className="mono text-[10px] uppercase font-bold tracking-[0.1em]" style={{ color: phase.color }}>{phase.label}</span>
+                      <span className="mono text-[10px] uppercase font-bold tracking-widest" style={{ color: phase.color }}>{phase.label}</span>
                       <span className="mono text-[10px] text-(--muted) font-bold lowercase opacity-60">// {phase.duration}</span>
                     </div>
                     <div className="phase-title text-xl font-extrabold tracking-tight text-white mb-1 leading-tight">{phase.title}</div>

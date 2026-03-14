@@ -31,7 +31,10 @@ export function TopicDetail({
 
   useEffect(() => {
     let isMounted = true;
-    setIsLoading(true);
+    
+    // Use a slight delay or untracked state to avoid cascading render warning if necessary,
+    // but the most robust way is to just start the fetch and only set tutorial when ready.
+    // However, we want the skeleton to show, so we keep setIsLoading(true).
     
     getTutorial(topic.id).then(data => {
       if (isMounted) {
@@ -40,7 +43,10 @@ export function TopicDetail({
       }
     });
 
-    return () => { isMounted = false; };
+    return () => { 
+      isMounted = false; 
+      setIsLoading(true); // Reset for next topic.id change
+    };
   }, [topic.id]);
 
   return (
@@ -66,6 +72,10 @@ export function TopicDetail({
 
       {/* Hero section for the topic */}
       <div className="pt-32 pb-16 border-b border-[#1E1E2E]/50 relative overflow-hidden">
+        {/* Background blobs to match home aesthetic */}
+        <div className="blob w-96 h-96 opacity-10" style={{ background: phase.color, top: '-100px', left: '-100px' }}></div>
+        <div className="blob w-64 h-64 opacity-5" style={{ background: phase.color, bottom: '-50px', right: '5%', animationDelay: '2s' }}></div>
+
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <div className="flex items-center justify-between gap-3 mb-6">
             <div className="flex items-center gap-3">

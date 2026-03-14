@@ -104,11 +104,12 @@
   }
 
   .topic-card:hover .cb {
-    @apply border-[var(--accent)];
+    @apply border-(--accent);
   }
 
   .topic-card.done .cb {
-    @apply bg-[var(--accent)] border-[var(--accent)] shadow-[0_0_10px_var(--accent-glow)];
+    @apply bg-(--accent) border-(--accent);
+    box-shadow: 0 0 10px var(--accent-glow);
   }
 
   .phase-content {
@@ -275,15 +276,15 @@
 
 @layer utilities {
   .resource-chip {
-    @apply inline-flex items-center gap-1.5 bg-[var(--bg3)] border border-[var(--border)] rounded-md px-3 py-1.5 text-xs text-[var(--muted)] no-underline transition-all font-mono;
+    @apply inline-flex items-center gap-1.5 bg-(--bg3) border border-(--border) rounded-md px-3 py-1.5 text-xs text-(--muted) no-underline transition-all font-mono;
   }
 
   .resource-chip:hover {
-    @apply border-[rgba(0,255,157,0.3)] text-[var(--accent)];
+    @apply border-[#00ff9d]/30 text-(--accent);
   }
 
   .tooltip {
-    @apply absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2 bg-[var(--bg3)] border border-[rgba(0,255,157,0.2)] rounded-md px-3 py-2 text-[11px] whitespace-nowrap pointer-events-none transition-opacity z-10 text-[var(--text)] font-mono;
+    @apply absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2 bg-(--bg3) border border-[#00ff9d]/20 rounded-md px-3 py-2 text-[11px] whitespace-nowrap pointer-events-none transition-opacity z-10 text-(--text) font-mono;
   }
 
   .diff {
