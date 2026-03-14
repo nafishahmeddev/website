@@ -5,70 +5,30 @@ export const phase3Tutorials: Record<string, TopicTutorial> = {
     topicId: 't3_1',
     lessons: [
       {
-        title: 'Linear Regression',
-        noobDefinition: 'Linear Regression is like "Connecting the Dots" on a scatter plot to find a trend line. If you know how much a house costs per bedroom, you can predict any house’s price.',
-        realWorldExample: 'Predicting how much weight a baby will gain based on their age. You draw a straight line through the weights from the last 6 months to guess the next month.',
-        content: `Linear Regression predicts a continuous number. It finds the "Line of Best Fit" that minimizes the distance between the line and all data points.`,
-        keyPoints: [
-          'Goal: Minimize Mean Squared Error',
-          'y = mx + b (Simple Linear Regression)',
-          'Assumes a straight-line relationship between variables',
-          'Sensitive to outliers',
-        ],
-        formula: 'y = β₀ + β₁X₁ + ε',
-        codeExample: {
-          language: 'python',
-          code: `from sklearn.linear_model import LinearRegression
+        title: 'Decision Trees (The Logic Flow)',
+        noobDefinition: 'A Decision Tree is basically a giant "Choose Your Own Adventure" game. At every step, the AI asks a question (like "Is it raining?") and moves to the next branch until it finds the final answer.',
+        realWorldExample: 'A bank deciding if you get a loan. 1. Age > 18? (No -> Reject). 2. Income > $50k? (No -> Review). 3. Score > 700? (Yes -> Approve).',
+        content: `Decision Trees are the most "Human-Like" algorithms. They are easy to read and understand.
 
-model = LinearRegression()
-model.fit(X_train, y_train)
-predictions = model.predict(X_test)`,
-        },
-      },
-      {
-        title: 'Logistic Regression',
-        noobDefinition: 'Logistic Regression is for "Yes/No" questions. It doesn\'t give you a straight line; it gives you an S-shaped curve that says "There’s an 80% chance this is a Yes."',
-        realWorldExample: 'Predicting if a student passes or fails an exam. Instead of a score, you get a probability (e.g., 0.9 means they almost certainly passed).',
-        content: `Despite the name, Logistic Regression is for Classification (not regression). It Uses the Sigmoid function to squish any number into a value between 0 and 1.`,
-        keyPoints: [
-          'Binary Classification (Yes/No, 0/1)',
-          'Sigmoid Function: Squishes values to (0, 1)',
-          'Decision Boundary: Usually at 0.5 probability',
-          'Log-Loss: The error metric used for training',
-        ],
-        formula: 'P(y=1) = 1 / (1 + e⁻ᶻ)',
-        codeExample: {
-          language: 'python',
-          code: `from sklearn.linear_model import LogisticRegression
+### How they Split:
+The tree looks for the feature that gives the most information. It uses math like **Gini Impurity** or **Entropy** to decide where to make the split.
+- **Root Node**: The very first question.
+- **Leaf Node**: The final answer (Class or Number).
 
-clf = LogisticRegression()
-clf.fit(X_train, y_train)
-y_prob = clf.predict_proba(X_test)`,
-        },
-      },
-    ],
-  },
-  't3_2': {
-    topicId: 't3_2',
-    lessons: [
-      {
-        title: 'Decision Trees',
-        noobDefinition: 'A Decision Tree is just a game of "20 Questions". You ask Yes/No questions (Is it an animal? Is it bigger than a cat?) until you find the answer.',
-        realWorldExample: 'A bank decided whether to give you a loan. "Is income > $50k?" -> Yes. "Is credit score > 700?" -> Yes. Decision: Give Loan.',
-        content: `Decision Trees handle both numbers and categories. They split the data at each "node" to make the groups as "pure" (similar) as possible.`,
+### The Danger: Overfitting
+Trees can become too complex. If you let a tree grow forever, it will just "memorize" your data. We use **Pruning** to keep them small and smart.`,
         vizType: 'decision-tree',
         keyPoints: [
-          'Root Node: The very first question',
-          'Leaves: The final predictions/answers',
-          'Entropy/Gini: Measuring how "messy" a group is',
-          'Pruning: Cutting off branches that are too specific (to avoid overfitting)',
+          'Highly interpretable (you can explain why a decision was made)',
+          'Handles both numbers and categories out of the box',
+          'Fast to train but prone to overfitting without pruning',
         ],
         codeExample: {
           language: 'python',
           code: `from sklearn.tree import DecisionTreeClassifier
 
-tree = DecisionTreeClassifier(max_depth=3)
-tree.fit(X_train, y_train)`,
+clf = DecisionTreeClassifier(max_depth=3) # Limit depth to avoid overfitting
+clf.fit(X_train, y_train)`,
         },
       },
     ],
@@ -77,22 +37,29 @@ tree.fit(X_train, y_train)`,
     topicId: 't3_3',
     lessons: [
       {
-        title: 'Random Forests',
-        noobDefinition: 'A Random Forest is a "Wisdom of the Crowd". Instead of asking one expert (one tree), you ask 100 experts and take the average answer.',
-        realWorldExample: 'If you want a movie recommendation, you don’t just ask one friend (who might have weird taste). You ask 10 friends and pick the movie most of them liked.',
-        content: `Random Forests are an "Ensemble" of many Decision Trees. They are much more accurate and stable than a single tree because they cancel out each other's mistakes.`,
+        title: 'Random Forests (Wisdom of the Crowd)',
+        noobDefinition: 'One tree might be wrong, but 100 trees are rarely wrong together. A Random Forest asks 100 different trees for their opinion and picks the most popular answer.',
+        realWorldExample: 'If you want a movie recommendation, you don\'t ask one friend (who might have weird taste). You ask 10 friends and pick what most of them liked.',
+        content: `Random Forests are an **Ensemble** method. They use multiple Decision Trees to build a stronger model.
+
+### Key Innovations:
+1. **Bagging (Bootstrap Aggregating)**: Each tree in the forest sees a slightly different "random slice" of the data.
+2. **Feature Randomness**: Each tree is only allowed to look at a few random features. This forces the trees to be different from each other.
+
+By combining many "weak" learners, we get one "strong" learner that is hard to fool!`,
+        vizType: 'random-forest',
         keyPoints: [
-          'Bagging: Training trees on random subsets of data',
-          'Feature Randomness: Each tree only sees some features',
-          'Highly robust to overfitting',
-          'The "Black Box" problem: Harder to explain than a single tree',
+          'Significantly more accurate than a single Decision Tree',
+          'Extremely stable and handles "noisy" data well',
+          'Gives you "Feature Importance" (which columns matters most)',
         ],
         codeExample: {
           language: 'python',
           code: `from sklearn.ensemble import RandomForestClassifier
 
-rf = RandomForestClassifier(n_estimators=100)
-rf.fit(X_train, y_train)`,
+# Create a forest with 100 trees
+model = RandomForestClassifier(n_estimators=100)
+model.fit(X_train, y_train)`,
         },
       },
     ],
@@ -102,49 +69,31 @@ rf.fit(X_train, y_train)`,
     lessons: [
       {
         title: 'K-Means Clustering',
-        noobDefinition: 'K-Means is like "Sorting Laundry". You don’t know what the piles are called, but you put the towels together, the shirts together, and the socks together.',
-        realWorldExample: 'A clothing brand grouping its customers into "Big Spenders", "Discount Hunters", and "Occasional Shoppers" based on their buying habits.',
-        content: `K-Means is Unsupervised. It groups data into 'K' clusters by finding the "center" (centroid) of each group and assigning points to the nearest center.`,
+        noobDefinition: 'K-Means is like telling an AI: "Gather these items into 3 groups based on how similar they are." The AI then moves the "center" of each group until the members are as close as possible.',
+        realWorldExample: 'A clothing brand grouping their customers into "Big Spenders", "Value Seekers", and "Window Shoppers" based on their visit history.',
+        content: `K-Means is the most famous Unsupervised algorithm. It groups data points into **K** clusters.
+
+### The 4-Step Walkthrough:
+1. **Initialization**: Pick K random points as "Centroids" (centers).
+2. **Assignment**: Every data point "joins" the cluster of the nearest centroid.
+3. **Update**: Move the centroids to the mathematical center of their new members.
+4. **Repeat**: Keep moving until the centroids stop changing.
+
+**Choosing K**: We often use the "Elbow Method" to find the perfect number of groups.`,
         vizType: 'kmeans',
         keyPoints: [
-          'Centroids: The "center of mass" for a cluster',
-          'Elbow Method: How to pick the best number for K',
-          'Scaling Matters: Always normalize data before K-Means',
-          'Convergence: The algorithm stops when centers stop moving',
+          'Finds natural patterns without needing labels',
+          'Sensitive to the initial starting points',
+          'Works best when clusters are spherical (blobs)',
         ],
         codeExample: {
           language: 'python',
           code: `from sklearn.cluster import KMeans
 
+# Find 3 groups
 kmeans = KMeans(n_clusters=3)
-clusters = kmeans.fit_predict(X)`,
-        },
-      },
-    ],
-  },
-  't3_4': {
-    topicId: 't3_4',
-    lessons: [
-      {
-        title: 'Gradient Boosting (XGBoost)',
-        noobDefinition: 'Boosting is like a "Team of Interns". The first intern tries to solve the problem and makes mistakes. The second intern focuses ONLY on fixing those specific mistakes. By the 100th intern, the problem is solved perfectly.',
-        realWorldExample: 'A basketball team learning from game tapes. They don\'t just practice everything; they specifically practice the exact plays they messed up in the last game.',
-        content: `Gradient Boosting is currently the most powerful algorithm for tabular (Excel-style) data. 
-        
-It builds trees sequentially. Each new tree is trained to predict the "Residuals" (the errors) of the previous trees combined.`,
-        keyPoints: [
-          'Sequential learning: Trees are built one after another',
-          'Learning Rate: How much we trust each new "intern" tree',
-          'XGBoost: A highly optimized version of Gradient Boosting',
-          'Very sensitive to hyperparameters; needs careful tuning',
-        ],
-        codeExample: {
-          language: 'python',
-          code: `from xgboost import XGBClassifier
-
-model = XGBClassifier(n_estimators=100, learning_rate=0.1)
-model.fit(X_train, y_train)
-predictions = model.predict(X_test)`,
+kmeans.fit(X)
+groups = kmeans.labels_`,
         },
       },
     ],
@@ -154,24 +103,29 @@ predictions = model.predict(X_test)`,
     lessons: [
       {
         title: 'PCA (Dimensionality Reduction)',
-        noobDefinition: 'PCA is like "Shadow Puppets". You have a complex 3D object, but you can understand its shape just by looking at its 2D shadow on the wall.',
-        realWorldExample: 'Condensing a long 10-page resume into a 1-page summary. You lose some details, but the most important info (the "Principal Components") stays.',
-        content: `Principal Component Analysis (PCA) simplifies data with many features (columns) into just a few important ones. 
-        
-It helps visualize high-dimensional data and speed up training by removing "noise" and redundant information.`,
+        noobDefinition: 'PCA is like taking a 3D shadow puppet and finding the best angle to project it onto a 2D wall. You lose some depth, but the "shape" of the data remains clear.',
+        realWorldExample: 'Compressing a 4K movie to 1080p. It takes up much less space, but you can still perfectly understand what\'s happening in the story.',
+        content: `Real-world data often has hundreds of columns (dimensions). Humans can only visualize 2D or 3D. **Principal Component Analysis** simplifies this.
+
+### How it Works:
+It finds new "Directions" (Principal Components) in your data that capture the most variations. 
+- **PC1**: The direction with the most information.
+- **PC2**: The direction with the second most info.
+
+By keeping just PC1 and PC2, you can draw a map of 100-dimensional data on a simple 2D chart!`,
+        vizType: 'pca-viz',
         keyPoints: [
-          'Goal: Reduce features while keeping as much "information" as possible',
-          'Principal Components: The new, condensed features created by PCA',
-          'Explained Variance: A score showing how much info we kept',
-          'Great for pre-processing before other ML algorithms',
+          'Speeds up model training by removing "useless" columns',
+          'Removes "noise" from the data',
+          'Crucial for data visualization',
         ],
         codeExample: {
           language: 'python',
           code: `from sklearn.decomposition import PCA
 
-# Reduce data to only 2 main features
+# Reduce data to 2 main features
 pca = PCA(n_components=2)
-X_reduced = pca.fit_transform(X)`,
+reduced_data = pca.fit_transform(X)`,
         },
       },
     ],

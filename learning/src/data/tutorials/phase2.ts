@@ -5,56 +5,32 @@ export const phase2Tutorials: Record<string, TopicTutorial> = {
     topicId: 't2_1',
     lessons: [
       {
-        title: 'Supervised Learning',
-        noobDefinition: 'Supervised Learning is like learning with flashcards that have the answer on the back.',
-        realWorldExample: 'Teaching a baby what a "dog" is by pointing to a dog and saying "dog". The baby now has a labeled example to learn from.',
-        content: `In Supervised Learning, the algorithm learns from "labeled" data. You provide the input AND the correct answer.
+        title: 'Supervised vs. Unsupervised',
+        noobDefinition: 'Supervised learning is like having a teacher who tells you the answers. Unsupervised learning is like being a detective who has to find patterns in a giant stack of folders with no labels.',
+        realWorldExample: 'Email spam filter (Supervised: user marks spam) vs. Customer Segments (Unsupervised: AI groups users by shopping habits).',
+        content: `The first big fork in the road of AI is deciding if you have "Labels".
 
-Think of it as learning with a teacher. The model makes a prediction, the teacher corrects it, and the model adjusts.`,
-        vizType: 'decision-tree',
+### Supervised Learning
+You feed the model **(Input, Label)** pairs.
+- **Goal**: Learn the mapping from Input to Label.
+- **Example**: Predicting if an image is a "Cat" or "Dog".
+
+### Unsupervised Learning
+You feed the model **Input** only.
+- **Goal**: Find structure, clusters, or simplify the data.
+- **Example**: Grouping news articles into "Sports", "Politics", and "Tech" automatically.`,
         keyPoints: [
-          'Classification: Predicting a label (Spam vs Not Spam)',
-          'Regression: Predicting a number (House price)',
-          'Training set: The data we learn from',
-          'Labels: The "ground truth" answers',
-          'Feature: The input variables used for prediction',
+          'Classification (Labels) and Regression (Numbers) are Supervised',
+          'Clustering and Dimensionality Reduction are Unsupervised',
+          'Reinforcement Learning is a third type (Trial and Error)',
         ],
         codeExample: {
           language: 'python',
-          code: `from sklearn.ensemble import RandomForestClassifier
+          code: `from sklearn.linear_model import LinearRegression
 
-# X = features, y = labels
-model = RandomForestClassifier()
-model.fit(X_train, y_train)
-
-# Predict on new data
-predictions = model.predict(X_test)`,
-        },
-      },
-      {
-        title: 'Unsupervised Learning',
-        noobDefinition: 'Unsupervised Learning is like sorting a giant bin of mixed Legos without an instruction manual.',
-        realWorldExample: 'A recommendation engine on Netflix grouping movies together because they "feel" similar, even if no one told it they were both "Action" movies.',
-        content: `In Unsupervised Learning, there are no labels. The algorithm tries to find hidden patterns or structures in the data on its own.
-
-Common tasks include grouping similar items (Clustering) or simplifying complex data (Dimension Reduction).`,
-        vizType: 'kmeans',
-        keyPoints: [
-          'Clustering: Grouping similar data points',
-          'Anomaly Detection: Finding the "weird" outliers',
-          'Association: Finding rules like "People who buy X also buy Y"',
-          'Dimensionality Reduction: Compressing data without losing info',
-          'No "ground truth" - evaluation is more subjective',
-        ],
-        codeExample: {
-          language: 'python',
-          code: `from sklearn.cluster import KMeans
-
-# Find 3 natural groups in the data
-kmeans = KMeans(n_clusters=3)
-kmeans.fit(X)
-
-clusters = kmeans.labels_`,
+# Supervised: We have X (hours studied) and y (test score)
+model = LinearRegression()
+model.fit(X_train, y_train)`,
         },
       },
     ],
@@ -63,23 +39,32 @@ clusters = kmeans.labels_`,
     topicId: 't2_2',
     lessons: [
       {
-        title: 'Measuring Error: Loss Functions',
-        noobDefinition: 'A Loss Function is a "Scoreboard" that tells the AI how bad its guess was. A high score is bad; a zero score is a perfect bullseye.',
-        realWorldExample: 'Imagine playing darts while blindfolded. Your friend yelling "You missed by 2 feet" is the Loss Function helping you adjust.',
-        content: `A Loss Function calculates how "wrong" a model's prediction is. Our goal is to minimize this loss.
+        title: 'Linear Regression (The Best Fit)',
+        noobDefinition: 'Linear Regression is like drawing a straight line through a bunch of scattered dots to find the general "trend".',
+        realWorldExample: 'Predicting the cost of a house based on its size. Generally, as size goes up, price goes up in a straight-ish line.',
+        content: `Linear Regression is the "Hello World" of Machine Learning. It assumes that your target value (y) can be calculated by multiplying your input (x) by a weight and adding a bias.
 
-Different problems need different loss functions:
-- Regressions use Mean Squared Error (MSE)
-- Classifications use Cross-Entropy Loss`,
-        vizType: 'bias-variance',
+### The Equation:
+\`y = mx + b\`
+- **m (Weight)**: How much the price changes per square foot.
+- **b (Bias)**: The base price of just owning the land.
+
+The goal of the AI is to find the **Best m and b** that minimize the distance between the line and the actual dots (the "Residuals").`,
+        vizType: 'linear-regression',
         keyPoints: [
-          'Loss: The penalty for a single wrong prediction',
-          'Cost: The average loss over the whole dataset',
-          'L2 Loss (MSE): Penalizes large errors heavily',
-          'L1 Loss (MAE): Robust to outliers',
-          'Cross-Entropy: Measuring distance between probability distributions',
+          'Goal: Continuous output (price, temperature, stock price)',
+          'Requires numeric input features',
+          'Sensitive to Outliers (one crazy dot can pull the whole line away)',
         ],
-        formula: 'MSE = (1/n) * Σ(y_actual - y_pred)²',
+        codeExample: {
+          language: 'python',
+          code: `# Predicting House Prices
+from sklearn.linear_model import LinearRegression
+
+model = LinearRegression()
+model.fit(house_sizes, house_prices)
+new_price = model.predict([[2500]]) # Price for 2500 sqft`,
+        },
       },
     ],
   },
@@ -87,27 +72,31 @@ Different problems need different loss functions:
     topicId: 't2_3',
     lessons: [
       {
-        title: 'Gradient Descent Intuition',
-        noobDefinition: 'Gradient Descent is like being at the top of a dark mountain and trying to find the valley by feeling which way is down with your feet.',
-        realWorldExample: 'Adjusting the temperature of your shower. If it\'s too cold, you turn it up a bit (a small step) until it\'s just right (the minimum error).',
-        content: `Gradient Descent is how models actually "learn". Imagine being on a mountain in thick fog. You want to reach the bottom (the minimum loss).
+        title: 'Gradient Descent (The Rollercoaster)',
+        noobDefinition: 'Gradient Descent is the "Engine" that makes AI learn. It is the process of rolling a ball down a hill to find the lowest point (the point where the AI makes the fewest mistakes).',
+        realWorldExample: 'Fixing the focus on a camera. You turn the dial slightly, check the image, and keep turning it in the direction that makes the image clearer.',
+        content: `How does the computer find the "Best Fit" line? It uses **Gradient Descent**.
 
-You feel the ground with your feet and take a step in the steepest direction downward. You repeat this until you reach the valley.`,
+### The Process:
+1. **Start Random**: The AI picks random weights (a random line).
+2. **Calculate Loss**: It measures how far the line is from the dots.
+3. **Calculate Gradient**: It calculates the "slope" of the error.
+4. **Update Weights**: It takes a small step "downhill" (reducing the error).
+5. **Repeat**: It does this thousands of times until it reaches the bottom.
+
+**Learning Rate (α)**: This is crucial!
+- Too large: The ball bounces around and never reaches the bottom.
+- Too small: It takes years to reach the bottom.`,
         vizType: 'gradient-descent',
         keyPoints: [
-          'Learning Rate (α): The size of the steps we take',
-          'The Gradient: The direction to the steepest increase',
-          'Stochastic Gradient Descent (SGD): One data point at a time',
-          'Batch Gradient Descent: Whole dataset at once',
-          'Local Minima: Getting stuck in a small dip instead of the valley',
+          'Gradient = Direction of steepest increase (we go opposite)',
+          'Optimizer = The algorithm handling the descent (e.g., Adam, SGD)',
+          'Loss Function = The terrain/map the ball rolls on',
         ],
         codeExample: {
           language: 'python',
-          code: `# The core update rule
-w = w - learning_rate * gradient
-
-# In libraries like PyTorch:
-optimizer.step()`,
+          code: `# Simple Manual Gradient Update
+weight = weight - learning_rate * gradient`,
         },
       },
     ],
@@ -116,124 +105,31 @@ optimizer.step()`,
     topicId: 't2_4',
     lessons: [
       {
-        title: 'Overfitting vs Underfitting',
-        noobDefinition: 'Overfitting is like memorizing the answers to a test instead of learning the subject. You’ll ace the practice test but fail the real one.',
-        realWorldExample: 'A student who only studies one specific old exam. When the real exam has slightly different questions, they have no idea what to do.',
-        content: `Overfitting happens when a model learns "noise" in the data rather than the actual pattern. 
-        
-Underfitting is the opposite—it's when the model is too simple to learn even the basics (like trying to draw a circle with a straight ruler).`,
-        vizType: 'bias-variance',
+        title: 'Logistic Regression (The Switch)',
+        noobDefinition: 'Despite the name, Logistic Regression is used for COMPARING things (Classifying), not just finding trends. It uses a "S-curve" to squash results between 0 (No) and 1 (Yes).',
+        realWorldExample: 'Predicting if an email is "Spam" (1) or "Not Spam" (0). It\'s either one or the other, not a continuous number.',
+        content: `If Linear Regression gives you a line, Logistic Regression gives you a **Probability**.
+
+### The Sigmoid Function
+The magic happens here. It takes any number and squashes it into the range \`[0, 1]\`.
+- If the result is **0.85**: The AI is 85% sure it's Spam.
+- If the result is **0.12**: The AI is 88% sure it's Not Spam.
+
+**Decision Boundary**: We usually pick a threshold (like 0.5). Above it is Class A, below it is Class B.`,
+        vizType: 'logistic-sigmoid',
         keyPoints: [
-          'Overfitting: High variance, low bias',
-          'Underfitting: Low variance, high bias',
-          'Generalization: The ability to perform on new, unseen data',
-          'Complexity: More parameters usually lead to overfitting',
-        ],
-      },
-      {
-        title: 'Regularization (L1 & L2)',
-        noobDefinition: 'Regularization is like a "simplicity tax". It penalizes the model for having too many complex rules, forcing it to focus on what actually matters.',
-        realWorldExample: 'Editing a long essay. You cut out all the "fluff" words so that the main argument is clearer and stronger.',
-        content: `Regularization prevents overfitting by adding a penalty term to the loss function.
-        
-L1 (Lasso) can shrink some feature weights to zero (feature selection).
-L2 (Ridge) shrinks all weights but keeps them above zero.`,
-        keyPoints: [
-          'L1 Regularization: Adds absolute value of weights to loss',
-          'L2 Regularization: Adds squared value of weights to loss',
-          'Dropout: Randomly "turning off" neurons during training',
-          'Early Stopping: Stopping training when validation error starts to rise',
-        ],
-        formula: 'Cost = Loss + λ * Σ|w| (L1) or λ * Σw² (L2)',
-      },
-    ],
-  },
-  't2_5': {
-    topicId: 't2_5',
-    lessons: [
-      {
-        title: 'The Golden Rule: Data Splitting',
-        noobDefinition: 'Splitting data is like having a "Practice Match" and a "Final Exam". You never use the exam questions for practice, or you\'d be cheating!',
-        realWorldExample: 'A chef tasting the soup (Validation) before serving it to the customers (Testing). If the chef uses the customers\' bowls to taste, there\'s no soup left!',
-        content: `We split data into three sets:
-1. Training Set: What the model learns from.
-2. Validation Set: Used to tune settings (hyperparameters).
-3. Test Set: Final evaluation only. NEVER look at this during training.`,
-        keyPoints: [
-          'Standard split: 70% Train, 15% Val, 15% Test',
-          'Data Leakage: When info from the test set "leaks" into training',
-          'k-Fold Cross Validation: Testing on different "slices" of data',
-          'Stratified Split: Keeping the same ratio of classes in each split',
+          'Used for Classification (Categorical output)',
+          'The output is a probability percentage between 0 and 1',
+          'Sigmoid function: 1 / (1 + e^-z)',
         ],
         codeExample: {
           language: 'python',
-          code: `from sklearn.model_selection import train_test_split
+          code: `from sklearn.linear_model import LogisticRegression
 
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)`,
-        },
-      },
-    ],
-  },
-  't2_6': {
-    topicId: 't2_6',
-    lessons: [
-      {
-        title: 'The Art of Feature Engineering',
-        noobDefinition: 'Feature Engineering is like "prepping ingredients" before cooking. You peel the potatoes and chop the onions so the cooking process is smooth.',
-        realWorldExample: 'Instead of giving a map to a delivery driver, you give them "3 miles North" (a useful feature). It\'s the same info, but much easier to use.',
-        content: `Machine learning models are only as good as the data you feed them.
-        
-Features are the inputs. Engineering means transforming raw data (like text or dates) into numbers the model can understand.`,
-        keyPoints: [
-          'Normalization: Scaling numbers between 0 and 1',
-          'Standardization: Scaling numbers to have mean 0 and std 1',
-          'One-Hot Encoding: Turning categories (Red, Blue) into numbers',
-          'Handling Missing Values: Imputation (filling in the blanks)',
-        ],
-        codeExample: {
-          language: 'python',
-          code: `from sklearn.preprocessing import StandardScaler
-
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X_train)`,
-        },
-      },
-    ],
-  },
-  't2_7': {
-    topicId: 't2_7',
-    lessons: [
-      {
-        title: 'The scikit-learn Workflow',
-        noobDefinition: 'scikit-learn is like a universal "Remote Control". No matter what brand of TV (algorithm) you use, the buttons (Fit, Predict) are always the same.',
-        realWorldExample: 'A standard electrical outlet. Whether you plug in a toaster or a vacuum, the interface is identical. scikit-learn makes algorithms "pluggable".',
-        content: `scikit-learn is the gold standard for classical ML in Python. 
-
-The API is brilliantly consistent:
-1. Instantiate: Choose your model.
-2. Fit: Train on data.
-3. Predict: Use on new data.
-4. Score: Check how well it did.`,
-        keyPoints: [
-          'Consistent API: estimator.fit(X, y)',
-          'Pipelines: Chaining preprocessing and modeling together',
-          'Model Evaluation: confusion_matrix, accuracy_score',
-          'Cross-Validation: cross_val_score(model, X, y, cv=5)',
-        ],
-        codeExample: {
-          language: 'python',
-          code: `from sklearn.pipeline import Pipeline
-from sklearn.svm import SVC
-
-pipeline = Pipeline([
-    ('scaler', StandardScaler()),
-    ('svc', SVC())
-])
-
-pipeline.fit(X_train, y_train)
-score = pipeline.score(X_test, y_test)`,
+# Binary Classification (Spam/Not Spam)
+clf = LogisticRegression()
+clf.fit(X_train, y_train)
+prob = clf.predict_proba(X_test) # [0.1, 0.9]`,
         },
       },
     ],
