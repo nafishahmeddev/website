@@ -1,9 +1,19 @@
 import React from 'react';
 
+interface HeaderProps {
+  title?: string;
+  subtitle?: string;
+  description?: string;
+}
+
 /**
  * Main page header
  */
-export const Header: React.FC = () => {
+export const Header: React.FC<HeaderProps> = ({
+  title = 'Machine Learning',
+  subtitle = 'Roadmap',
+  description = 'A structured path from zero to deployment — built for Node.js & PHP developers who think in APIs, not notebooks.'
+}) => {
   return (
     <div className="mb-12 anim-in">
       <div className="flex items-center gap-3 mb-4">
@@ -18,15 +28,14 @@ export const Header: React.FC = () => {
         className="text-5xl font-extrabold leading-none mb-3"
         style={{ letterSpacing: '-0.03em' }}
       >
-        Machine Learning<br />
-        <span style={{ color: 'var(--accent)' }}>Roadmap</span>
+        {title}<br />
+        <span style={{ color: 'var(--accent)' }}>{subtitle}</span>
       </h1>
       <p
         className="text-[var(--muted)] text-lg max-w-xl"
         style={{ fontWeight: 400 }}
       >
-        A structured path from zero to deployment — built for Node.js & PHP developers
-        who think in APIs, not notebooks.
+        {description}
       </p>
     </div>
   );

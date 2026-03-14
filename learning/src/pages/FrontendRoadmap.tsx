@@ -6,28 +6,41 @@ import {
   ResourcesSection,
   Footer,
 } from '../components';
-import { PHASES, TOTAL_TOPICS, RESOURCES, STORAGE_KEYS } from '../constants';
+import { FRONTEND_PHASES, FRONTEND_TOTAL_TOPICS, FRONTEND_STORAGE_KEYS } from '../constants/frontend-roadmap';
 import {
-  loadDoneTopics,
-  loadCollapsedPhases,
   saveToLocalStorage
 } from '../utils/storage';
 
+interface FrontendRoadmapProps {
+  onBack: () => void;
+}
+
 /**
- * ML Roadmap Page Component
- * Main page that orchestrates the learning roadmap UI
+ * Frontend Roadmap Page Component
  */
-const MLRoadmap: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+const FrontendRoadmap: React.FC<FrontendRoadmapProps> = ({ onBack }) => {
   // State management
-  const [completedTopicIds, setCompletedTopicIds] = useState<Set<string>>(() =>
-    loadDoneTopics()
-  );
-  const [collapsedPhaseIds, setCollapsedPhaseIds] = useState<Set<string>>(() =>
-    loadCollapsedPhases()
-  );
+  const [completedTopicIds, setCompletedTopicIds] = useState<Set<string>>(() => {
+    try {
+      const data = localStorage.getItem(FRONTEND_STORAGE_KEYS.COMPLETED_TOPICS);
+      return data ? new Set(JSON.parse(data)) : new Set();
+    } catch {
+      return new Set();
+    }
+  });
+
+  const [collapsedPhaseIds, setCollapsedPhaseIds] = useState<Set<string>>(() => {
+    try {
+      const data = localStorage.getItem(FRONTEND_STORAGE_KEYS.COLLAPSED_PHASES);
+      return data ? new Set(JSON.parse(data)) : new Set();
+    } catch {
+      return new Set();
+    }
+  });
+
   const [completedSubtopicIds, setCompletedSubtopicIds] = useState<Set<string>>(() => {
     try {
-      const data = localStorage.getItem(STORAGE_KEYS.COMPLETED_SUBTOPICS);
+      const data = localStorage.getItem(FRONTEND_STORAGE_KEYS.COMPLETED_SUBTOPICS);
       return data ? new Set(JSON.parse(data)) : new Set();
     } catch {
       return new Set();
@@ -36,17 +49,17 @@ const MLRoadmap: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
   // Persist completed topics to localStorage
   useEffect(() => {
-    saveToLocalStorage(STORAGE_KEYS.COMPLETED_TOPICS, completedTopicIds);
+    saveToLocalStorage(FRONTEND_STORAGE_KEYS.COMPLETED_TOPICS, completedTopicIds);
   }, [completedTopicIds]);
 
   // Persist collapsed phases to localStorage
   useEffect(() => {
-    saveToLocalStorage(STORAGE_KEYS.COLLAPSED_PHASES, collapsedPhaseIds);
+    saveToLocalStorage(FRONTEND_STORAGE_KEYS.COLLAPSED_PHASES, collapsedPhaseIds);
   }, [collapsedPhaseIds]);
 
   // Persist completed subtopics to localStorage
   useEffect(() => {
-    saveToLocalStorage(STORAGE_KEYS.COMPLETED_SUBTOPICS, completedSubtopicIds);
+    saveToLocalStorage(FRONTEND_STORAGE_KEYS.COMPLETED_SUBTOPICS, completedSubtopicIds);
   }, [completedSubtopicIds]);
 
   // Toggle completion status of a topic
@@ -100,7 +113,7 @@ const MLRoadmap: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       <div
         className="blob w-96 h-96 opacity-10"
         style={{
-          background: '#00ff9d',
+          background: '#ff6b35',
           top: -100,
           left: -100,
           position: 'fixed'
@@ -110,7 +123,7 @@ const MLRoadmap: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       <div
         className="blob w-80 h-80 opacity-5"
         style={{
-          background: '#ff6b35',
+          background: '#00ccff',
           top: '40%',
           right: -80,
           position: 'fixed',
@@ -121,7 +134,7 @@ const MLRoadmap: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       <div
         className="blob w-64 h-64 opacity-5"
         style={{
-          background: '#6b35ff',
+          background: '#00ff9d',
           bottom: '10%',
           left: '30%',
           position: 'fixed',
@@ -133,7 +146,11 @@ const MLRoadmap: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       {/* Main content */}
       <main>
         <div className="mb-6 flex items-center justify-between">
-          <Header />
+          <Header
+            title="Frontend Engineer"
+            subtitle="Roadmap"
+            description="Master HTML, CSS, JavaScript, and React. From zero to full-stack ready in 15-21 weeks."
+          />
           <button
             onClick={onBack}
             className="mono text-sm px-4 py-2 rounded-lg transition-all"
@@ -144,8 +161,8 @@ const MLRoadmap: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             }}
             onMouseEnter={(e) => {
               const el = e.currentTarget;
-              el.style.color = '#00ff9d';
-              el.style.borderColor = 'rgba(0,255,157,0.3)';
+              el.style.color = '#ff6b35';
+              el.style.borderColor = 'rgba(255,107,53,0.3)';
             }}
             onMouseLeave={(e) => {
               const el = e.currentTarget;
@@ -158,15 +175,15 @@ const MLRoadmap: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         </div>
 
         <OverallProgressBar
-          phases={PHASES}
+          phases={FRONTEND_PHASES}
           completedTopicIds={completedTopicIds}
           completedSubtopicIds={completedSubtopicIds}
-          totalTopics={TOTAL_TOPICS}
+          totalTopics={FRONTEND_TOTAL_TOPICS}
         />
 
         {/* Phases container */}
         <div className="space-y-3">
-          {PHASES.map((phase, index) => (
+          {FRONTEND_PHASES.map((phase, index) => (
             <React.Fragment key={phase.id}>
               {index > 0 && <div className="phase-connector" />}
               <PhaseBlock
@@ -183,14 +200,23 @@ const MLRoadmap: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           ))}
         </div>
 
-        <ResourcesSection resources={RESOURCES} />
-
-        <Footer onResetProgress={handleResetProgress} />
+        <div className="mt-8">
+          <ResourcesSection
+            resources={[
+              { href: 'https://developer.mozilla.org', label: '📚 MDN Web Docs' },
+              { href: 'https://react.dev', label: '⚛️ React Docs' },
+              { href: 'https://javascript.info', label: '📖 JavaScript.info' },
+              { href: 'https://www.youtube.com/@KevinPowell', label: '🎬 Kevin Powell (CSS)' },
+              { href: 'https://frontendmasters.com', label: '🔗 Frontend Masters' },
+              { href: 'https://testing-library.com', label: '🧪 Testing Library' },
+            ]}
+          />
+        </div>
       </main>
+
+      <Footer onResetProgress={handleResetProgress} />
     </div>
   );
 };
 
-MLRoadmap.displayName = 'MLRoadmap';
-
-export default MLRoadmap;
+export default FrontendRoadmap;
