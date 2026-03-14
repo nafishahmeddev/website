@@ -1,30 +1,581 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nafish Ahmed — Senior Software Developer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0A0A0F;
+      --surface: #111118;
+      --border: #1E1E2E;
+      --accent: #6EE7B7;
+      --accent2: #3B82F6;
+      --text: #E2E8F0;
+      --muted: #64748B;
+      --subtle: #94A3B8;
+    }
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Inconsolata:wght@200..900&family=Karla:ital,wght@0,200..800;1,200..800&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css"
-    />
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <link href="/src/styles/style.css" rel="stylesheet" />
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
 
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      Nafish Ahmed - Full Stack Developer(ReactJS, ExpressJS & MySQL)
-    </title>
-    <link rel="icon" href="assets/images/n..svg" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+    h1, h2, h3, h4 { font-family: 'Syne', sans-serif; }
+
+    /* Grain */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* Ambient blobs */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Nav */
+    .nav-link {
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: color 0.25s;
+      position: relative;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: var(--accent);
+      transition: width 0.25s;
+    }
+    .nav-link:hover { color: var(--accent); }
+    .nav-link:hover::after { width: 100%; }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.65s ease forwards; }
+    .d1 { animation-delay: 0.05s; opacity: 0; }
+    .d2 { animation-delay: 0.18s; opacity: 0; }
+    .d3 { animation-delay: 0.31s; opacity: 0; }
+    .d4 { animation-delay: 0.44s; opacity: 0; }
+    .d5 { animation-delay: 0.57s; opacity: 0; }
+    .d6 { animation-delay: 0.70s; opacity: 0; }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Cards */
+    .card {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 14px;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(110,231,183,0.04) 0%, transparent 55%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .card:hover {
+      border-color: rgba(110,231,183,0.25);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+    }
+    .card:hover::before { opacity: 1; }
+
+    /* Tags */
+    .tag {
+      display: inline-block;
+      padding: 0.28rem 0.8rem;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      font-size: 0.74rem;
+      color: var(--muted);
+      background: var(--surface);
+      transition: border-color 0.2s, color 0.2s;
+      letter-spacing: 0.02em;
+    }
+    .tag:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Section label */
+    .label {
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .label::before {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1.5px;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    /* Btn primary */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.85rem 1.8rem;
+      border-radius: 100px;
+      background: var(--accent);
+      color: #0A0A0F;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.88rem;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(110,231,183,0.28);
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.85rem 1.8rem;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 0.88rem;
+      transition: border-color 0.25s, color 0.25s;
+    }
+    .btn-ghost:hover { border-color: rgba(110,231,183,0.4); color: var(--accent); }
+
+    /* Exp arrow */
+    .exp-arrow {
+      color: var(--accent);
+      flex-shrink: 0;
+      margin-top: 2px;
+      font-style: normal;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Blobs -->
+  <div class="blob w-96 h-96" style="background:rgba(110,231,183,0.055);top:-80px;left:30%;"></div>
+  <div class="blob w-72 h-72" style="background:rgba(59,130,246,0.045);top:60%;right:-60px;"></div>
+  <div class="blob w-64 h-64" style="background:rgba(110,231,183,0.035);bottom:10%;left:-40px;"></div>
+
+  <!-- NAV -->
+  <header class="fixed top-0 left-0 right-0 z-50" style="background:rgba(10,10,15,0.85);backdrop-filter:blur(18px);border-bottom:1px solid rgba(30,30,46,0.7);">
+    <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+      <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:white;letter-spacing:-0.5px;">
+        NA<span style="color:var(--accent)">.</span>
+      </span>
+      <nav class="hidden md:flex items-center gap-8">
+        <a href="#about" class="nav-link">About</a>
+        <a href="#experience" class="nav-link">Experience</a>
+        <a href="#skills" class="nav-link">Skills</a>
+        <a href="#projects" class="nav-link">Projects</a>
+      </nav>
+      <a href="mailto:nafish.ahmed.dev@gmail.com" class="btn-ghost" style="padding:0.5rem 1.2rem;font-size:0.8rem;">
+        Hire me
+      </a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section id="about" class="relative min-h-screen flex items-center pt-24 pb-16 overflow-hidden z-10">
+    <div class="max-w-5xl mx-auto px-6 w-full">
+
+      <p class="label fade-up d1 mb-7">Based in India · Open to opportunities</p>
+
+      <h1 class="fade-up d2 leading-none mb-6" style="font-size:clamp(44px,7.5vw,88px);font-weight:800;letter-spacing:-2.5px;color:white;">
+        I'm Nafish<br/>
+        <span style="color:var(--accent);">Ahmed.</span>
+      </h1>
+
+      <p class="fade-up d3 mb-4" style="font-size:clamp(1rem,2vw,1.25rem);color:var(--subtle);max-width:600px;line-height:1.7;font-weight:300;">
+        I'm a Senior Software Developer from India. I build scalable web applications, backend systems, and integrations that solve real problems. I care about clean code, thoughtful architecture, and shipping things that work.
+      </p>
+
+      <p class="fade-up d4 mb-10" style="font-size:1rem;color:var(--muted);max-width:540px;line-height:1.75;font-weight:300;">
+        I've spent the last few years working across the full stack — from crafting responsive UIs to engineering high-performance APIs and complex third-party integrations. I thrive in environments where the problems are hard and the standards are high.
+      </p>
+
+      <div class="fade-up d5 flex flex-wrap gap-3 mb-16">
+        <a href="mailto:nafish.ahmed.dev@gmail.com" class="btn-primary">
+          Get in touch
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="https://github.com/nafishahmeddev" target="_blank" class="btn-ghost">GitHub</a>
+        <a href="https://linkedin.com/in/nafish-ahmed-dev" target="_blank" class="btn-ghost">LinkedIn</a>
+      </div>
+
+
+
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience" class="py-24 relative z-10">
+    <div class="max-w-5xl mx-auto px-6">
+
+      <div class="reveal mb-14">
+        <p class="label mb-4">Career</p>
+        <h2 style="font-size:clamp(28px,4vw,44px);font-weight:800;color:white;letter-spacing:-1px;">Where I've worked</h2>
+      </div>
+
+      <div class="space-y-5">
+
+        <!-- Vimo current -->
+        <div class="reveal card p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+            <div>
+              <h3 style="font-size:1.1rem;font-weight:700;color:white;margin-bottom:4px;">Senior Full Stack Developer</h3>
+              <p style="font-size:0.88rem;color:var(--accent);">Vimo Software Development Pvt. Ltd.</p>
+            </div>
+            <span style="font-size:0.75rem;padding:4px 14px;border-radius:100px;border:1px solid var(--border);color:var(--muted);white-space:nowrap;">Feb 2025 – Present</span>
+          </div>
+          <ul class="space-y-2.5" style="font-size:0.88rem;line-height:1.65;color:var(--subtle);">
+            <li class="flex gap-3"><i class="exp-arrow">→</i>Built an on-chain deposit confirmation engine that monitors the Ethereum mempool, handles chain reorgs, and credits user accounts after a safe number of confirmations.</li>
+            <li class="flex gap-3"><i class="exp-arrow">→</i>Integrated the Binance API to automate USDC acquisition — managing the full order lifecycle, wallet transfers, and real-time rate propagation across the system.</li>
+            <li class="flex gap-3"><i class="exp-arrow">→</i>Implemented cross-chain token swaps by interacting directly with Uniswap (EVM) and SunSwap (Tron) smart contracts, handling routing, slippage, and confirmation.</li>
+            <li class="flex gap-3"><i class="exp-arrow">→</i>Built and maintained wallet infrastructure with encrypted key management and secure secrets handling via an internally developed tool.</li>
+            <li class="flex gap-3"><i class="exp-arrow">→</i>Engineered a high-throughput gateway service using a microservices pattern to reliably route third-party client traffic to external provider APIs.</li>
+            <li class="flex gap-3"><i class="exp-arrow">→</i>Led the full-stack migration of the legacy Pinex reseller system to a modern React.js / Node.js / TypeScript stack, improving performance and reliability significantly.</li>
+          </ul>
+          <div class="flex flex-wrap gap-2 mt-5">
+            <span class="tag">Node.js</span><span class="tag">TypeScript</span><span class="tag">React.js</span><span class="tag">ethers.js</span><span class="tag">Ethereum</span><span class="tag">Tron</span><span class="tag">Binance API</span>
+          </div>
+        </div>
+
+        <!-- Softway -->
+        <div class="reveal card p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+            <div>
+              <h3 style="font-size:1.1rem;font-weight:700;color:white;margin-bottom:4px;">Software Engineer</h3>
+              <p style="font-size:0.88rem;color:var(--accent);">Softway Solutions</p>
+            </div>
+            <span style="font-size:0.75rem;padding:4px 14px;border-radius:100px;border:1px solid var(--border);color:var(--muted);white-space:nowrap;">Mar 2024 – Jan 2025</span>
+          </div>
+          <ul class="space-y-2.5" style="font-size:0.88rem;line-height:1.65;color:var(--subtle);">
+            <li class="flex gap-3"><i class="exp-arrow">→</i>Cut report generation time from 45–60 minutes down to 3–5 seconds — a 99%+ improvement — by restructuring queries and introducing batch processing.</li>
+            <li class="flex gap-3"><i class="exp-arrow">→</i>Identified and resolved stateful data bottlenecks in Daikin Cloud Services using Redis caching, dramatically improving dashboard load times.</li>
+          </ul>
+          <div class="flex flex-wrap gap-2 mt-5">
+            <span class="tag">Node.js</span><span class="tag">Redis</span><span class="tag">MySQL</span><span class="tag">Performance Engineering</span>
+          </div>
+        </div>
+
+        <!-- Vimo old -->
+        <div class="reveal card p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+            <div>
+              <h3 style="font-size:1.1rem;font-weight:700;color:white;margin-bottom:4px;">Full Stack Developer</h3>
+              <p style="font-size:0.88rem;color:var(--accent);">Vimo Software Development Pvt. Ltd.</p>
+            </div>
+            <span style="font-size:0.75rem;padding:4px 14px;border-radius:100px;border:1px solid var(--border);color:var(--muted);white-space:nowrap;">Apr 2022 – Feb 2024</span>
+          </div>
+          <ul class="space-y-2.5" style="font-size:0.88rem;line-height:1.65;color:var(--subtle);">
+            <li class="flex gap-3"><i class="exp-arrow">→</i>Maintained and optimised the backend infrastructure of AmanaWallet, a digital money wallet trusted by over 1 million customers.</li>
+            <li class="flex gap-3"><i class="exp-arrow">→</i>Integrated the Kraken API for automated USDC acquisition, handling the full order lifecycle, settlement confirmation, and wallet funding flows.</li>
+            <li class="flex gap-3"><i class="exp-arrow">→</i>Built and scaled backend systems for Sarraf & Sendony, integrating multiple payment gateways for fiat transaction processing.</li>
+          </ul>
+          <div class="flex flex-wrap gap-2 mt-5">
+            <span class="tag">Node.js</span><span class="tag">React.js</span><span class="tag">Kraken API</span><span class="tag">MySQL</span><span class="tag">TypeScript</span>
+          </div>
+        </div>
+
+        <!-- Avital -->
+        <div class="reveal card p-7">
+          <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+            <div>
+              <h3 style="font-size:1.1rem;font-weight:700;color:white;margin-bottom:4px;">Full Stack Developer</h3>
+              <p style="font-size:0.88rem;color:var(--accent);">Avital Software Development Pvt. Ltd.</p>
+            </div>
+            <span style="font-size:0.75rem;padding:4px 14px;border-radius:100px;border:1px solid var(--border);color:var(--muted);white-space:nowrap;">Aug 2021 – Mar 2022</span>
+          </div>
+          <ul class="space-y-2.5" style="font-size:0.88rem;line-height:1.65;color:var(--subtle);">
+            <li class="flex gap-3"><i class="exp-arrow">→</i>Built the core backend services and admin panel for SuperMD, a teleconsultation platform — covering secure data handling, role-based access control, and API performance.</li>
+          </ul>
+          <div class="flex flex-wrap gap-2 mt-5">
+            <span class="tag">Node.js</span><span class="tag">React.js</span><span class="tag">MongoDB</span><span class="tag">PHP</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" class="py-24 relative z-10" style="background:linear-gradient(to bottom,transparent,rgba(17,17,24,0.6),transparent);">
+    <div class="max-w-5xl mx-auto px-6">
+
+      <div class="reveal mb-14">
+        <p class="label mb-4">Toolbox</p>
+        <h2 style="font-size:clamp(28px,4vw,44px);font-weight:800;color:white;letter-spacing:-1px;">What I work with</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+        <div class="reveal card p-6">
+          <p class="label mb-4" style="font-size:0.65rem;">Languages & Runtime</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag">Node.js</span>
+            <span class="tag">TypeScript</span>
+            <span class="tag">JavaScript</span>
+            <span class="tag">PHP</span>
+          </div>
+        </div>
+
+        <div class="reveal card p-6">
+          <p class="label mb-4" style="font-size:0.65rem;">Frontend</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag">React.js</span>
+            <span class="tag">Svelte</span>
+            <span class="tag">Redux</span>
+            <span class="tag">Tailwind CSS</span>
+            <span class="tag">SASS</span>
+          </div>
+        </div>
+
+        <div class="reveal card p-6">
+          <p class="label mb-4" style="font-size:0.65rem;">Backend & APIs</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag">Express.js</span>
+            <span class="tag">REST APIs</span>
+            <span class="tag">Microservices</span>
+            <span class="tag">Serverless</span>
+            <span class="tag">JWT</span>
+          </div>
+        </div>
+
+        <div class="reveal card p-6">
+          <p class="label mb-4" style="font-size:0.65rem;">Blockchain & Web3</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag">Ethereum</span>
+            <span class="tag">EVM</span>
+            <span class="tag">Tron</span>
+            <span class="tag">ethers.js</span>
+            <span class="tag">Uniswap</span>
+            <span class="tag">SunSwap</span>
+            <span class="tag">Binance API</span>
+            <span class="tag">Kraken API</span>
+          </div>
+        </div>
+
+        <div class="reveal card p-6">
+          <p class="label mb-4" style="font-size:0.65rem;">Databases</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag">MySQL</span>
+            <span class="tag">MongoDB</span>
+            <span class="tag">Redis</span>
+          </div>
+        </div>
+
+        <div class="reveal card p-6">
+          <p class="label mb-4" style="font-size:0.65rem;">Cloud & DevOps</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag">AWS EC2 / S3</span>
+            <span class="tag">Docker</span>
+            <span class="tag">CI/CD</span>
+          </div>
+        </div>
+
+        <div class="reveal card p-6">
+          <p class="label mb-4" style="font-size:0.65rem;">Mobile</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag">Flutter</span>
+            <span class="tag">Android</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects" class="py-24 relative z-10">
+    <div class="max-w-5xl mx-auto px-6">
+
+      <div class="reveal mb-14">
+        <p class="label mb-4">Work</p>
+        <h2 style="font-size:clamp(28px,4vw,44px);font-weight:800;color:white;letter-spacing:-1px;">Things I've built</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+        <div class="reveal card p-6">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:rgba(110,231,183,0.1);">
+              <svg width="16" height="16" fill="none" stroke="#6EE7B7" stroke-width="2" viewBox="0 0 24 24"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>
+            </div>
+            
+          </div>
+          <h3 style="font-weight:700;font-size:1rem;color:white;margin-bottom:8px;">AmanaWallet</h3>
+          <p style="font-size:0.83rem;line-height:1.65;color:var(--muted);margin-bottom:16px;">A digital money wallet that lets people send remittances worldwide for free. I worked on the backend infrastructure and admin systems.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag">Node.js</span><span class="tag">React.js</span><span class="tag">TypeScript</span>
+          </div>
+        </div>
+
+        <div class="reveal card p-6">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:rgba(59,130,246,0.1);">
+              <svg width="16" height="16" fill="none" stroke="#3B82F6" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01-0 1.13 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14h.01v2.92z"/></svg>
+            </div>
+            
+          </div>
+          <h3 style="font-weight:700;font-size:1rem;color:white;margin-bottom:8px;">SuperMD</h3>
+          <p style="font-size:0.83rem;line-height:1.65;color:var(--muted);margin-bottom:16px;">A teleconsultation app that connects patients with healthcare professionals for virtual medical advice and prescriptions — anytime, anywhere.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag">Node.js</span><span class="tag">React.js</span><span class="tag">MongoDB</span>
+          </div>
+        </div>
+
+        <div class="reveal card p-6">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:rgba(110,231,183,0.1);">
+              <svg width="16" height="16" fill="none" stroke="#6EE7B7" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+            </div>
+            
+          </div>
+          <h3 style="font-weight:700;font-size:1rem;color:white;margin-bottom:8px;">dVal</h3>
+          <p style="font-size:0.83rem;line-height:1.65;color:var(--muted);margin-bottom:16px;">A lightweight, schema-based data validation library for Node.js and TypeScript backends. Simple API, no bloat.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag">Node.js</span><span class="tag">TypeScript</span><span class="tag">NPM</span>
+          </div>
+        </div>
+
+        <div class="reveal card p-6">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:rgba(59,130,246,0.1);">
+              <svg width="16" height="16" fill="none" stroke="#3B82F6" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2a3 3 0 013 3v7a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </div>
+            
+          </div>
+          <h3 style="font-weight:700;font-size:1rem;color:white;margin-bottom:8px;">Haaki</h3>
+          <p style="font-size:0.83rem;line-height:1.65;color:var(--muted);margin-bottom:16px;">An audiobook and audiodrama platform in Turkish. Built for immersive storytelling with a large content library and smooth listening experience.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag">React.js</span><span class="tag">Node.js</span><span class="tag">TypeScript</span>
+          </div>
+        </div>
+
+        <div class="reveal card p-6">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:rgba(110,231,183,0.1);">
+              <svg width="16" height="16" fill="none" stroke="#6EE7B7" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            </div>
+            
+          </div>
+          <h3 style="font-weight:700;font-size:1rem;color:white;margin-bottom:8px;">Secretly</h3>
+          <p style="font-size:0.83rem;line-height:1.65;color:var(--muted);margin-bottom:16px;">An internal tool I built to manage environment variables securely across multiple production services — improving security and deployment consistency.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag">Node.js</span><span class="tag">TypeScript</span>
+          </div>
+        </div>
+
+        <div class="reveal card p-6">
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:rgba(59,130,246,0.1);">
+              <svg width="16" height="16" fill="none" stroke="#3B82F6" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            </div>
+            
+          </div>
+          <h3 style="font-weight:700;font-size:1rem;color:white;margin-bottom:8px;">FinTracker</h3>
+          <p style="font-size:0.83rem;line-height:1.65;color:var(--muted);margin-bottom:16px;">A personal finance app for tracking daily expenses and income, with monthly insights to help people stay on top of their money.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag">Flutter</span><span class="tag">Dart</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="py-24 relative z-10">
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="reveal card p-12 text-center">
+        <p class="label mb-5 justify-center">Contact</p>
+        <h2 style="font-size:clamp(28px,4.5vw,52px);font-weight:800;color:white;letter-spacing:-1.5px;margin-bottom:16px;">
+          Got a project in mind?
+        </h2>
+        <p style="font-size:1rem;color:var(--muted);max-width:440px;margin:0 auto 36px;line-height:1.7;font-weight:300;">
+          I'm open to full-time roles and freelance projects. If you think we'd work well together, I'd love to hear from you.
+        </p>
+        <a href="mailto:nafish.ahmed.dev@gmail.com" class="btn-primary" style="font-size:0.9rem;">
+          nafish.ahmed.dev@gmail.com
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="py-8 relative z-10" style="border-top:1px solid var(--border);">
+    <div class="max-w-5xl mx-auto px-6 flex flex-wrap items-center justify-between gap-4">
+      <span style="font-family:'Syne',sans-serif;font-weight:800;color:white;">NA<span style="color:var(--accent);">.</span></span>
+      <p style="font-size:0.8rem;color:var(--muted);">© 2025 Nafish Ahmed. All rights reserved.</p>
+      <div class="flex gap-5">
+        <a href="https://github.com/nafishahmeddev" target="_blank" style="font-size:0.8rem;color:var(--muted);transition:color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">GitHub</a>
+        <a href="https://linkedin.com/in/nafish-ahmed-dev" target="_blank" style="font-size:0.8rem;color:var(--muted);transition:color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">LinkedIn</a>
+        <a href="https://nafish.me" target="_blank" style="font-size:0.8rem;color:var(--muted);transition:color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">nafish.me</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          e.target.style.transitionDelay = `${(Array.from(reveals).indexOf(e.target) % 3) * 0.07}s`;
+          e.target.classList.add('visible');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+    reveals.forEach(r => io.observe(r));
+  </script>
+</body>
 </html>
