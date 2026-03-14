@@ -1,4 +1,17 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { 
+  ReactFlow, 
+  Background, 
+  Position,
+  Handle,
+  type Node, 
+  type Edge,
+} from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
+import { ResponsiveLine } from '@nivo/line';
+import { ResponsiveScatterPlot } from '@nivo/scatterplot';
+import { ResponsiveHeatMap } from '@nivo/heatmap';
+import * as d3 from 'd3';
 
 export type VizType =
   | 'gradient-descent'
@@ -25,260 +38,244 @@ interface InteractiveVizProps {
   color?: string;
 }
 
-/* ─── Gradient Descent ─── */
+/* ─── Gradient Descent (D3) ─── */
 function GradientDescentViz({ color }: { color: string }) {
-  const [step, setStep] = useState(0);
+  const svgRef = useRef<SVGSVGElement>(null);
   const [running, setRunning] = useState(false);
-  const lr = 0.15;
-  const maxSteps = 30;
+  
+  const W = 400, H = 250;
+  const margin = { top: 20, right: 20, bottom: 40, left: 50 };
+  const innerW = W - margin.left - margin.right;
+  const innerH = H - margin.top - margin.bottom;
 
-  // Loss fn: f(x) = x^2, starting at x=-2.5
-  const startX = -2.5;
-  const getX = (s: number) => {
-    let x = startX;
-    for (let i = 0; i < s; i++) x = x - lr * 2 * x;
-    return x;
-  };
+  const xScale = d3.scaleLinear().domain([-3, 3]).range([0, innerW]);
+  const yScale = d3.scaleLinear().domain([0, 9]).range([innerH, 0]);
+
+  const lossFn = (x: number) => x * x;
+  const derivative = (x: number) => 2 * x;
 
   useEffect(() => {
-    if (!running) return;
-    const t = setTimeout(() => {
-      if (step >= maxSteps) {
-        setRunning(false);
-      } else {
-        setStep(s => s + 1);
-      }
-    }, 100);
-    return () => clearTimeout(t);
-  }, [running, step]);
+    if (!svgRef.current) return;
+    const svg = d3.select(svgRef.current);
+    svg.selectAll("*").remove();
 
-  const x = getX(step);
-  const loss = x * x;
+    const g = svg.append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
 
-  const W = 360, H = 220;
-  const cx = (v: number) => W / 2 + v * 55;
-  const cy = (v: number) => H - 20 - v * 30;
+    // Grid
+    g.append("g")
+      .attr("class", "grid")
+      .attr("stroke", "rgba(255,255,255,0.05)")
+      .call(d3.axisLeft(yScale).tickSize(-innerW).tickFormat(() => ""));
 
-  const pathPoints = Array.from({ length: 61 }, (_, i) => {
-    const px = -3 + i * 0.1;
-    return `${i === 0 ? 'M' : 'L'}${cx(px)},${cy(px * px)}`;
-  }).join(' ');
+    // Axes
+    g.append("g")
+      .attr("transform", `translate(0,${innerH})`)
+      .call(d3.axisBottom(xScale).ticks(5))
+      .attr("color", "rgba(255,255,255,0.2)");
+    g.append("g")
+      .call(d3.axisLeft(yScale).ticks(5))
+      .attr("color", "rgba(255,255,255,0.2)");
 
-  const trailPoints = Array.from({ length: step + 1 }, (_, i) => {
-    const tx = getX(i);
-    return `${i === 0 ? 'M' : 'L'}${cx(tx)},${cy(tx * tx)}`;
-  }).join(' ');
+    // Curve
+    const line = d3.line<number>()
+      .x((d: number) => xScale(d))
+      .y((d: number) => yScale(lossFn(d)))
+      .curve(d3.curveBasis);
+
+    const points = d3.range(-3, 3.1, 0.1);
+    g.append("path")
+      .datum(points)
+      .attr("fill", "none")
+      .attr("stroke", `${color}40`)
+      .attr("stroke-width", 2)
+      .attr("d", line);
+
+    // Ball
+    const ball = g.append("circle")
+      .attr("r", 8)
+      .attr("fill", color)
+      .attr("stroke", "white")
+      .attr("stroke-width", 2)
+      .attr("cx", xScale(-2.5))
+      .attr("cy", yScale(lossFn(-2.5)));
+
+    if (running) {
+      let currentX = -2.5;
+      const lr = 0.1;
+      const steps = 20;
+
+      const animate = (step: number) => {
+        if (step >= steps) {
+          setRunning(false);
+          return;
+        }
+        const grad = derivative(currentX);
+        currentX = currentX - lr * grad;
+
+        ball.transition()
+          .duration(300)
+          .attr("cx", xScale(currentX))
+          .attr("cy", yScale(lossFn(currentX)))
+          .on("end", () => animate(step + 1));
+      };
+      animate(0);
+    }
+  }, [running, color, innerH, innerW, xScale, yScale, margin.left, margin.top]);
 
   return (
     <div className="text-center">
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', maxWidth: W, borderRadius: '12px', background: 'var(--bg3)' }}>
-        {/* Axes */}
-        <line x1={20} y1={H - 20} x2={W - 10} y2={H - 20} stroke="rgba(255,255,255,0.1)" strokeWidth={1} />
-        <line x1={W / 2} y1={10} x2={W / 2} y2={H - 20} stroke="rgba(255,255,255,0.1)" strokeWidth={1} />
-        {/* Loss curve */}
-        <path d={pathPoints} fill="none" stroke={`${color}40`} strokeWidth={2} />
-        {/* Trail */}
-        {step > 0 && <path d={trailPoints} fill="none" stroke={color} strokeWidth={1.5} strokeDasharray="3,3" opacity={0.6} />}
-        {/* Gradient tangent */}
-        <line
-          x1={cx(x - 0.6)} y1={cy((x - 0.6) * (x - 0.6))}
-          x2={cx(x + 0.6)} y2={cy((x + 0.6) * (x + 0.6))}
-          stroke="#ff6b35" strokeWidth={1.5} opacity={0.7}
-        />
-        {/* Ball */}
-        <circle cx={cx(x)} cy={cy(loss)} r={7} fill={color} />
-        <text x={cx(x)} y={cy(loss) - 14} textAnchor="middle" fill={color} fontSize={11} fontFamily="Space Mono">
-          loss={loss.toFixed(3)}
-        </text>
-        {/* Labels */}
-        <text x={W / 2 + 5} y={15} fill="rgba(255,255,255,0.3)" fontSize={10} fontFamily="Space Mono">loss</text>
-        <text x={W - 25} y={H - 5} fill="rgba(255,255,255,0.3)" fontSize={10} fontFamily="Space Mono">w</text>
-        <text x={12} y={H - 5} fill={color} fontSize={10} fontFamily="Space Mono">step:{step}</text>
-      </svg>
+      <div className="bg-[#0a0a0f] rounded-xl p-4 border border-white/5 inline-block">
+        <svg ref={svgRef} width={W} height={H} className="max-w-full" />
+      </div>
       <div className="flex gap-3 justify-center mt-4">
         <button
-          onClick={() => { setStep(0); setRunning(true); }}
-          style={{ padding: '6px 18px', borderRadius: '8px', background: `${color}20`, color, border: `1px solid ${color}40`, cursor: 'pointer', fontFamily: 'Space Mono', fontSize: '12px' }}
+          onClick={() => setRunning(true)}
+          disabled={running}
+          className="px-6 py-2 rounded-lg font-mono text-xs transition-all active:scale-95 disabled:opacity-50"
+          style={{ background: `${color}20`, color, border: `1px solid ${color}40` }}
         >
-          ▶ Run
-        </button>
-        <button
-          onClick={() => { setRunning(false); setStep(0); }}
-          style={{ padding: '6px 18px', borderRadius: '8px', background: 'var(--bg2)', color: 'var(--muted)', border: '1px solid var(--border)', cursor: 'pointer', fontFamily: 'Space Mono', fontSize: '12px' }}
-        >
-          ↺ Reset
+          {running ? '⚙ Optimizing...' : '▶ Start Gradient Descent'}
         </button>
       </div>
-      <p style={{ color: 'var(--muted)', fontSize: '11px', marginTop: '8px', fontFamily: 'Space Mono' }}>
-        Click Run to watch the ball roll down the loss surface using gradient descent
-      </p>
     </div>
   );
 }
 
-/* ─── Neural Network ─── */
+/* ─── Neural Network (XYFlow) ─── */
+const NodeComponent = ({ data }: { data: { color: string } }) => (
+  <div className="flex items-center justify-center w-8 h-8 rounded-full shadow-lg border-2" 
+       style={{ background: `${data.color}20`, borderColor: data.color }}>
+    <div className="w-2 h-2 rounded-full" style={{ background: data.color }} />
+    <Handle type="target" position={Position.Left} style={{ visibility: 'hidden' }} />
+    <Handle type="source" position={Position.Right} style={{ visibility: 'hidden' }} />
+  </div>
+);
+
+const nodeTypes = { custom: NodeComponent };
+
 function NeuralNetworkViz({ color }: { color: string }) {
-  const [animStep, setAnimStep] = useState(-1);
-  const [running, setRunning] = useState(false);
-  const layerSizes = [4, 5, 3, 2];
-  const maxLayer = layerSizes.length;
+  const layerSizes = useMemo(() => [4, 5, 3, 2], []);
+  
+  const { nodes, edges } = useMemo(() => {
+    const initialNodes: Node[] = [];
+    const initialEdges: Edge[] = [];
+    
+    layerSizes.forEach((size, l) => {
+      for (let i = 0; i < size; i++) {
+        const id = `l${l}-n${i}`;
+        initialNodes.push({
+          id,
+          type: 'custom',
+          position: { x: l * 100, y: i * 50 - (size * 25) + 120 },
+          data: { color },
+        });
 
-  useEffect(() => {
-    if (!running) return;
-    const t = setTimeout(() => {
-      if (animStep >= maxLayer - 1) {
-        setRunning(false);
-        setAnimStep(-1);
-      } else {
-        setAnimStep(s => s + 1);
+        if (l > 0) {
+          for (let prevIdx = 0; prevIdx < layerSizes[l-1]; prevIdx++) {
+            initialEdges.push({
+              id: `e-l${l-1}n${prevIdx}-l${l}n${i}`,
+              source: `l${l-1}-n${prevIdx}`,
+              target: id,
+              animated: true,
+              style: { stroke: `${color}40`, strokeWidth: 1 },
+            });
+          }
+        }
       }
-    }, 600);
-    return () => clearTimeout(t);
-  }, [running, animStep, maxLayer]);
-
-  const W = 380, H = 240;
-  const layerX = (i: number) => 50 + i * (W - 80) / (maxLayer - 1);
-  const nodeY = (layer: number, idx: number) => {
-    const n = layerSizes[layer];
-    const spacing = Math.min(44, (H - 40) / n);
-    return H / 2 - ((n - 1) * spacing) / 2 + idx * spacing;
-  };
+    });
+    return { nodes: initialNodes, edges: initialEdges };
+  }, [color, layerSizes]);
 
   return (
-    <div className="text-center">
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', maxWidth: W, borderRadius: '12px', background: 'var(--bg3)' }}>
-        {/* Connections */}
-        {layerSizes.slice(0, -1).map((n, li) =>
-          Array.from({ length: n }, (_, ni) =>
-            Array.from({ length: layerSizes[li + 1] }, (_, nj) => (
-              <line
-                key={`${li}-${ni}-${nj}`}
-                x1={layerX(li)} y1={nodeY(li, ni)}
-                x2={layerX(li + 1)} y2={nodeY(li + 1, nj)}
-                stroke={animStep > li ? `${color}50` : 'rgba(255,255,255,0.06)'}
-                strokeWidth={animStep > li ? 1.2 : 0.8}
-              />
-            ))
-          )
-        )}
-        {/* Nodes */}
-        {layerSizes.map((n, li) =>
-          Array.from({ length: n }, (_, ni) => {
-            const active = animStep >= li;
-            return (
-              <g key={`${li}-${ni}`}>
-                <circle
-                  cx={layerX(li)} cy={nodeY(li, ni)} r={10}
-                  fill={active ? `${color}30` : 'var(--bg2)'}
-                  stroke={active ? color : 'rgba(255,255,255,0.15)'}
-                  strokeWidth={active ? 1.5 : 1}
-                />
-                {active && <circle cx={layerX(li)} cy={nodeY(li, ni)} r={4} fill={color} opacity={0.8} />}
-              </g>
-            );
-          })
-        )}
-        {/* Layer labels */}
-        {['Input', 'Hidden', 'Hidden', 'Output'].map((label, i) => (
-          <text key={i} x={layerX(i)} y={H - 8} textAnchor="middle" fill="rgba(255,255,255,0.3)" fontSize={10} fontFamily="Space Mono">
-            {label}
-          </text>
-        ))}
-      </svg>
-      <div className="flex gap-3 justify-center mt-4">
-        <button
-          onClick={() => { setAnimStep(0); setRunning(true); }}
-          style={{ padding: '6px 18px', borderRadius: '8px', background: `${color}20`, color, border: `1px solid ${color}40`, cursor: 'pointer', fontFamily: 'Space Mono', fontSize: '12px' }}
-        >
-          ▶ Forward Pass
-        </button>
-        <button
-          onClick={() => { setRunning(false); setAnimStep(-1); }}
-          style={{ padding: '6px 18px', borderRadius: '8px', background: 'var(--bg2)', color: 'var(--muted)', border: '1px solid var(--border)', cursor: 'pointer', fontFamily: 'Space Mono', fontSize: '12px' }}
-        >
-          ↺ Reset
-        </button>
-      </div>
-      <p style={{ color: 'var(--muted)', fontSize: '11px', marginTop: '8px', fontFamily: 'Space Mono' }}>
-        Watch signal propagate layer-by-layer during the forward pass
-      </p>
+    <div className="h-[300px] w-full bg-[#0a0a0f] rounded-xl overflow-hidden border border-white/5">
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={nodeTypes}
+        fitView
+        proOptions={{ hideAttribution: true }}
+        zoomOnScroll={false}
+        panOnScroll={false}
+        draggable={false}
+        nodesConnectable={false}
+        nodesDraggable={false}
+      >
+        <Background gap={20} color="#ffffff05" />
+      </ReactFlow>
     </div>
   );
 }
 
-/* ─── Linear Regression ─── */
+/* ─── Linear Regression (Nivo) ─── */
 function LinearRegressionViz({ color }: { color: string }) {
-  const [showLine, setShowLine] = useState(true);
-  const [showResiduals, setShowResiduals] = useState(false);
-
-  const W = 360, H = 220;
   const data = [
-    [30, 120], [50, 160], [70, 200], [90, 195], [110, 240],
-    [130, 280], [150, 310], [170, 330], [40, 100], [80, 175],
-    [120, 260], [160, 350],
+    { x: 30, y: 120 }, { x: 50, y: 160 }, { x: 70, y: 200 }, { x: 90, y: 195 }, 
+    { x: 110, y: 240 }, { x: 130, y: 280 }, { x: 150, y: 310 }, { x: 170, y: 330 }, 
+    { x: 40, y: 100 }, { x: 80, y: 175 }, { x: 120, y: 260 }, { x: 160, y: 350 },
   ];
-  const minX = 20, maxX = 180, minY = 80, maxY = 370;
-  const px = (x: number) => 30 + ((x - minX) / (maxX - minX)) * (W - 50);
-  const py = (y: number) => H - 20 - ((y - minY) / (maxY - minY)) * (H - 40);
 
-  // Simple linear regression
+  // Best fit line calculation
   const n = data.length;
-  const sumX = data.reduce((s, d) => s + d[0], 0);
-  const sumY = data.reduce((s, d) => s + d[1], 0);
-  const sumXY = data.reduce((s, d) => s + d[0] * d[1], 0);
-  const sumX2 = data.reduce((s, d) => s + d[0] * d[0], 0);
+  const sumX = data.reduce((s, d) => s + d.x, 0);
+  const sumY = data.reduce((s, d) => s + d.y, 0);
+  const sumXY = data.reduce((s, d) => s + d.x * d.y, 0);
+  const sumX2 = data.reduce((s, d) => s + d.x * d.x, 0);
   const m = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
   const b = (sumY - m * sumX) / n;
-  const lineY = (x: number) => m * x + b;
+
+  const lineData = [
+    { x: 20, y: m * 20 + b },
+    { x: 180, y: m * 180 + b },
+  ];
 
   return (
-    <div className="text-center">
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', maxWidth: W, borderRadius: '12px', background: 'var(--bg3)' }}>
-        {/* Axes */}
-        <line x1={30} y1={H - 20} x2={W - 10} y2={H - 20} stroke="rgba(255,255,255,0.1)" strokeWidth={1} />
-        <line x1={30} y1={10} x2={30} y2={H - 20} stroke="rgba(255,255,255,0.1)" strokeWidth={1} />
-        {/* Residuals */}
-        {showResiduals && data.map(([x, y], i) => (
-          <line
-            key={i}
-            x1={px(x)} y1={py(y)}
-            x2={px(x)} y2={py(lineY(x))}
-            stroke="#ff6b35" strokeWidth={1.5} opacity={0.6}
-          />
-        ))}
-        {/* Regression line */}
-        {showLine && (
-          <line
-            x1={px(minX)} y1={py(lineY(minX))}
-            x2={px(maxX)} y2={py(lineY(maxX))}
-            stroke={color} strokeWidth={2}
-          />
-        )}
-        {/* Data points */}
-        {data.map(([x, y], i) => (
-          <circle key={i} cx={px(x)} cy={py(y)} r={5} fill={`${color}60`} stroke={color} strokeWidth={1} />
-        ))}
-        {/* Formula */}
-        <text x={W - 120} y={25} fill={color} fontSize={10} fontFamily="Space Mono">
-          y = {m.toFixed(2)}x + {b.toFixed(0)}
-        </text>
-        <text x={35} y={20} fill="rgba(255,255,255,0.3)" fontSize={10} fontFamily="Space Mono">y</text>
-        <text x={W - 20} y={H - 5} fill="rgba(255,255,255,0.3)" fontSize={10} fontFamily="Space Mono">x</text>
-      </svg>
-      <div className="flex gap-3 justify-center mt-4 flex-wrap">
-        <button
-          onClick={() => setShowLine(v => !v)}
-          style={{ padding: '6px 18px', borderRadius: '8px', background: showLine ? `${color}20` : 'var(--bg2)', color: showLine ? color : 'var(--muted)', border: `1px solid ${showLine ? color + '40' : 'var(--border)'}`, cursor: 'pointer', fontFamily: 'Space Mono', fontSize: '12px' }}
-        >
-          {showLine ? '✓' : '○'} Best-fit line
-        </button>
-        <button
-          onClick={() => setShowResiduals(v => !v)}
-          style={{ padding: '6px 18px', borderRadius: '8px', background: showResiduals ? 'rgba(255,107,53,0.2)' : 'var(--bg2)', color: showResiduals ? '#ff6b35' : 'var(--muted)', border: `1px solid ${showResiduals ? '#ff6b3540' : 'var(--border)'}`, cursor: 'pointer', fontFamily: 'Space Mono', fontSize: '12px' }}
-        >
-          {showResiduals ? '✓' : '○'} Residuals
-        </button>
+    <div className="h-[260px] w-full bg-[#0a0a0f] rounded-xl p-4 border border-white/5 relative">
+      <div className="absolute top-4 right-4 text-[10px] font-mono text-white/40">
+        y = {m.toFixed(2)}x + {b.toFixed(0)}
       </div>
+      <ResponsiveScatterPlot
+        data={[{ id: 'points', data }]}
+        margin={{ top: 20, right: 20, bottom: 40, left: 50 }}
+        xScale={{ type: 'linear', min: 0, max: 200 }}
+        yScale={{ type: 'linear', min: 0, max: 400 }}
+        colors={[color]}
+        nodeSize={8}
+        theme={{
+          grid: { line: { stroke: '#ffffff10' } },
+          axis: {
+            domain: { line: { stroke: '#ffffff20' } },
+            ticks: { text: { fill: '#ffffff40', fontSize: 10, fontFamily: 'Space Mono' } }
+          }
+        }}
+        axisBottom={{
+          legend: 'Square Footage',
+          legendPosition: 'middle',
+          legendOffset: 32,
+        }}
+        axisLeft={{
+          legend: 'Price ($k)',
+          legendPosition: 'middle',
+          legendOffset: -40,
+        }}
+        layers={[
+          'grid',
+          'axes',
+          ({ xScale, yScale }) => (
+            <line
+              x1={xScale(lineData[0].x)}
+              y1={yScale(lineData[0].y)}
+              x2={xScale(lineData[1].x)}
+              y2={yScale(lineData[1].y)}
+              stroke={color}
+              strokeWidth={3}
+              strokeOpacity={0.8}
+            />
+          ),
+          'nodes',
+          'mesh',
+        ]}
+      />
     </div>
   );
 }
@@ -335,67 +332,52 @@ function LogisticSigmoidViz({ color }: { color: string }) {
   );
 }
 
-/* ─── Decision Tree ─── */
+/* ─── Decision Tree (XYFlow) ─── */
+const TreeLeafNode = ({ data }: { data: { color: string, label: string, isRoot?: boolean } }) => (
+  <div className={`px-4 py-2 rounded-full border shadow-sm ${data.isRoot ? 'bg-indigo-500/20 border-indigo-500' : 'bg-white/5 border-white/10'}`} 
+       style={{ minWidth: '100px', textAlign: 'center' }}>
+    <div className="text-[10px] font-bold" style={{ color: data.color }}>{data.label}</div>
+    <Handle type="target" position={Position.Top} className="w-2 h-2 bg-white/20!" />
+    <Handle type="source" position={Position.Bottom} className="w-2 h-2 bg-white/20!" />
+  </div>
+);
+
+const treeNodeTypes = { custom: TreeLeafNode };
+
 function DecisionTreeViz({ color }: { color: string }) {
-  const W = 380, H = 240;
-  const nodes = [
-    { x: 190, y: 30, label: 'age > 30?', isLeaf: false },
-    { x: 90, y: 100, label: 'income > 50k?', isLeaf: false },
-    { x: 290, y: 100, label: 'credit > 700?', isLeaf: false },
-    { x: 40, y: 175, label: 'Reject', isLeaf: true, cls: false },
-    { x: 140, y: 175, label: 'Approve', isLeaf: true, cls: true },
-    { x: 240, y: 175, label: 'Review', isLeaf: true, cls: null },
-    { x: 340, y: 175, label: 'Approve', isLeaf: true, cls: true },
+  const nodes: Node[] = [
+    { id: '1', type: 'custom', position: { x: 150, y: 0 }, data: { label: 'Age > 30?', color, isRoot: true } },
+    { id: '2', type: 'custom', position: { x: 50, y: 100 }, data: { label: 'Income > 50k?', color } },
+    { id: '3', type: 'custom', position: { x: 250, y: 100 }, data: { label: 'Credit > 700?', color } },
+    { id: '4', type: 'custom', position: { x: 0, y: 200 }, data: { label: 'Reject', color: '#ff6b35' } },
+    { id: '5', type: 'custom', position: { x: 100, y: 200 }, data: { label: 'Approve', color } },
+    { id: '6', type: 'custom', position: { x: 200, y: 200 }, data: { label: 'Review', color: '#ffbe00' } },
+    { id: '7', type: 'custom', position: { x: 300, y: 200 }, data: { label: 'Approve', color } },
   ];
-  const edges = [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6]];
-  const edgeLabels = ['No', 'Yes', 'No', 'Yes', 'No', 'Yes'];
+  
+  const edges: Edge[] = [
+    { id: 'e1-2', source: '1', target: '2', label: 'No' },
+    { id: 'e1-3', source: '1', target: '3', label: 'Yes' },
+    { id: 'e2-4', source: '2', target: '4', label: 'No' },
+    { id: 'e2-5', source: '2', target: '5', label: 'Yes' },
+    { id: 'e3-6', source: '3', target: '6', label: 'No' },
+    { id: 'e3-7', source: '3', target: '7', label: 'Yes' },
+  ].map(e => ({ ...e, type: 'smoothstep', style: { stroke: 'rgba(255,255,255,0.1)' }, labelStyle: { fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontFamily: 'Space Mono' } }));
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', maxWidth: W, borderRadius: '12px', background: 'var(--bg3)' }}>
-      {edges.map(([from, to], i) => (
-        <g key={i}>
-          <line
-            x1={nodes[from].x} y1={nodes[from].y + 16}
-            x2={nodes[to].x} y2={nodes[to].y - 16}
-            stroke="rgba(255,255,255,0.2)" strokeWidth={1.5}
-          />
-          <text
-            x={(nodes[from].x + nodes[to].x) / 2 + (i % 2 === 0 ? -14 : 8)}
-            y={(nodes[from].y + nodes[to].y) / 2}
-            fill="rgba(255,255,255,0.4)" fontSize={9} fontFamily="Space Mono"
-          >
-            {edgeLabels[i]}
-          </text>
-        </g>
-      ))}
-      {nodes.map((node, i) => (
-        <g key={i}>
-          {node.isLeaf ? (
-            <>
-              <rect
-                x={node.x - 32} y={node.y - 14} width={64} height={28} rx={14}
-                fill={node.cls === true ? `${color}30` : node.cls === false ? 'rgba(255,107,53,0.3)' : 'rgba(255,190,0,0.3)'}
-                stroke={node.cls === true ? color : node.cls === false ? '#ff6b35' : '#ffbe00'}
-                strokeWidth={1.5}
-              />
-              <text x={node.x} y={node.y + 5} textAnchor="middle" fill={node.cls === true ? color : node.cls === false ? '#ff6b35' : '#ffbe00'} fontSize={10} fontWeight="bold" fontFamily="Space Mono">
-                {node.label}
-              </text>
-            </>
-          ) : (
-            <>
-              <rect
-                x={node.x - 52} y={node.y - 16} width={104} height={32} rx={8}
-                fill="var(--bg2)" stroke={color} strokeWidth={1.5}
-              />
-              <text x={node.x} y={node.y + 5} textAnchor="middle" fill={color} fontSize={11} fontFamily="Space Mono">
-                {node.label}
-              </text>
-            </>
-          )}
-        </g>
-      ))}
-    </svg>
+    <div className="h-[300px] w-full bg-[#0a0a0f] rounded-xl overflow-hidden border border-white/5">
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={treeNodeTypes}
+        fitView
+        proOptions={{ hideAttribution: true }}
+        draggable={false}
+        nodesDraggable={false}
+      >
+        <Background gap={20} color="#ffffff05" />
+      </ReactFlow>
+    </div>
   );
 }
 
@@ -637,95 +619,108 @@ function CNNConvViz({ color }: { color: string }) {
   );
 }
 
-/* ─── Attention Heatmap ─── */
+/* ─── Attention Heatmap (Nivo) ─── */
 function AttentionHeatmapViz({ color }: { color: string }) {
   const tokens = ['The', 'cat', 'sat', 'on', 'mat'];
-  const n = tokens.length;
-  const attention = [
-    [0.8, 0.1, 0.05, 0.03, 0.02],
-    [0.2, 0.6, 0.1, 0.05, 0.05],
-    [0.05, 0.25, 0.55, 0.1, 0.05],
-    [0.05, 0.05, 0.15, 0.65, 0.1],
-    [0.05, 0.05, 0.1, 0.1, 0.7],
-  ];
-
-  const W = 320, H = 280;
-  const cellSize = 44;
-  const offsetX = 60, offsetY = 60;
-
-  const hexColor = color.replace('#', '');
-  const r = parseInt(hexColor.slice(0, 2), 16);
-  const g = parseInt(hexColor.slice(2, 4), 16);
-  const b = parseInt(hexColor.slice(4, 6), 16);
+  const data = tokens.map((t1, i) => ({
+    id: t1,
+    data: tokens.map((t2, j) => {
+      const weights = [
+        [0.8, 0.1, 0.05, 0.03, 0.02],
+        [0.2, 0.6, 0.1, 0.05, 0.05],
+        [0.05, 0.25, 0.55, 0.1, 0.05],
+        [0.05, 0.05, 0.15, 0.65, 0.1],
+        [0.05, 0.05, 0.1, 0.1, 0.7],
+      ];
+      return { x: t2, y: weights[i][j] };
+    })
+  }));
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', maxWidth: W, borderRadius: '12px', background: 'var(--bg3)' }}>
-      <text x={W / 2} y={15} textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize={10} fontFamily="Space Mono">Attention Weights</text>
-      {/* Col headers (key) */}
-      {tokens.map((tok, j) => (
-        <text key={j} x={offsetX + j * cellSize + cellSize / 2} y={48}
-          textAnchor="middle" fill="rgba(255,255,255,0.5)" fontSize={10} fontFamily="Space Mono">
-          {tok}
-        </text>
-      ))}
-      {/* Row headers (query) + cells */}
-      {attention.map((row, i) => (
-        <g key={i}>
-          <text x={offsetX - 5} y={offsetY + i * cellSize + cellSize / 2 + 4}
-            textAnchor="end" fill="rgba(255,255,255,0.5)" fontSize={10} fontFamily="Space Mono">
-            {tokens[i]}
-          </text>
-          {row.map((val, j) => (
-            <g key={j}>
-              <rect
-                x={offsetX + j * cellSize} y={offsetY + i * cellSize}
-                width={cellSize} height={cellSize}
-                fill={`rgba(${r},${g},${b},${val})`}
-                stroke="rgba(255,255,255,0.05)" strokeWidth={0.5}
-              />
-              <text
-                x={offsetX + j * cellSize + cellSize / 2} y={offsetY + i * cellSize + cellSize / 2 + 4}
-                textAnchor="middle" fill={val > 0.4 ? '#0a0a0f' : 'rgba(255,255,255,0.6)'}
-                fontSize={10} fontFamily="Space Mono">
-                {val.toFixed(2)}
-              </text>
-            </g>
-          ))}
-        </g>
-      ))}
-      <text x={offsetX + n * cellSize / 2} y={H - 5} textAnchor="middle" fill="rgba(255,255,255,0.25)" fontSize={9} fontFamily="Space Mono">
-        Key tokens →
-      </text>
-    </svg>
+    <div className="h-[300px] w-full bg-[#0a0a0f] rounded-xl p-2 border border-white/5">
+      <ResponsiveHeatMap
+        data={data}
+        margin={{ top: 40, right: 40, bottom: 40, left: 60 }}
+        valueFormat=">-.2f"
+        axisTop={{ tickSize: 5, tickPadding: 5, tickRotation: 0, legend: 'Key Tokens', legendOffset: -30 }}
+        axisLeft={{ tickSize: 5, tickPadding: 5, tickRotation: 0, legend: 'Query Tokens', legendOffset: -50 }}
+        colors={{
+          type: 'sequential',
+          scheme: 'greens',
+          minValue: 0,
+          maxValue: 1,
+        }}
+        emptyColor="#555555"
+        labelTextColor={{ from: 'color', modifiers: [['darker', 2]] }}
+        theme={{
+          axis: {
+            domain: { line: { stroke: `${color}40` } },
+            ticks: { text: { fill: '#ffffff40', fontSize: 10, fontFamily: 'Space Mono' } },
+            legend: { text: { fill: color, fontSize: 12, fontFamily: 'Space Mono' } }
+          }
+        }}
+      />
+    </div>
   );
 }
 
-/* ─── ROC Curve ─── */
+/* ─── ROC Curve (Nivo) ─── */
 function ROCCurveViz({ color }: { color: string }) {
-  const W = 280, H = 240;
-  const off = 30;
-  const pts = [[0, 0], [0.1, 0.5], [0.2, 0.75], [0.35, 0.88], [0.5, 0.93], [0.7, 0.97], [1, 1]];
-  const rocPath = pts.map(([x, y], i) =>
-    `${i === 0 ? 'M' : 'L'}${off + x * (W - off - 10)},${H - off - y * (H - off - 10)}`
-  ).join(' ');
+  const data = [
+    {
+      id: "ROC",
+      color,
+      data: [
+        { x: 0, y: 0 }, { x: 0.1, y: 0.5 }, { x: 0.2, y: 0.75 }, 
+        { x: 0.35, y: 0.88 }, { x: 0.5, y: 0.93 }, { x: 0.7, y: 0.97 }, { x: 1, y: 1 }
+      ]
+    },
+    {
+      id: "Random",
+      color: "#ffffff20",
+      data: [{ x: 0, y: 0 }, { x: 1, y: 1 }]
+    }
+  ];
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', maxWidth: W, borderRadius: '12px', background: 'var(--bg3)' }}>
-      {/* AUC area */}
-      <path d={`${rocPath} L${W - 10},${H - off} L${off},${H - off} Z`} fill={`${color}15`} />
-      {/* Diagonal */}
-      <line x1={off} y1={H - off} x2={W - 10} y2={off + (H - off - 10) * 0 + 9} stroke="rgba(255,255,255,0.2)" strokeWidth={1} strokeDasharray="4,3" />
-      {/* Axes */}
-      <line x1={off} y1={off} x2={off} y2={H - off} stroke="rgba(255,255,255,0.2)" strokeWidth={1} />
-      <line x1={off} y1={H - off} x2={W - 10} y2={H - off} stroke="rgba(255,255,255,0.2)" strokeWidth={1} />
-      {/* ROC curve */}
-      <path d={rocPath} fill="none" stroke={color} strokeWidth={2.5} />
-      {/* Labels */}
-      <text x={off + (W - off) / 2} y={H - 5} textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize={10} fontFamily="Space Mono">FPR →</text>
-      <text x={12} y={H / 2} fill="rgba(255,255,255,0.4)" fontSize={10} fontFamily="Space Mono" transform={`rotate(-90, 12, ${H / 2})`}>TPR →</text>
-      <text x={W - 80} y={80} fill={color} fontSize={10} fontFamily="Space Mono">AUC ≈ 0.88</text>
-      <text x={W - 100} y={H - 40} fill="rgba(255,255,255,0.3)" fontSize={9} fontFamily="Space Mono">random (0.5)</text>
-    </svg>
+    <div className="h-[260px] w-full bg-[#0a0a0f] rounded-xl p-4 border border-white/5 relative">
+      <div className="absolute top-4 right-4 text-[10px] font-mono text-white/40">
+        AUC ≈ 0.88
+      </div>
+      <ResponsiveLine
+        data={data}
+        margin={{ top: 20, right: 20, bottom: 40, left: 50 }}
+        xScale={{ type: 'linear', min: 0, max: 1 }}
+        yScale={{ type: 'linear', min: 0, max: 1 }}
+        axisBottom={{
+          legend: 'False Positive Rate',
+          legendPosition: 'middle',
+          legendOffset: 32,
+        }}
+        axisLeft={{
+          legend: 'True Positive Rate',
+          legendPosition: 'middle',
+          legendOffset: -40,
+        }}
+        enablePoints={true}
+        pointSize={6}
+        pointColor={{ from: 'color' }}
+        pointBorderWidth={2}
+        pointBorderColor={{ from: 'serieColor' }}
+        useMesh={true}
+        enableArea={true}
+        areaOpacity={0.1}
+        colors={(d) => d.color}
+        theme={{
+          grid: { line: { stroke: '#ffffff10' } },
+          axis: {
+            domain: { line: { stroke: '#ffffff20' } },
+            ticks: { text: { fill: '#ffffff40', fontSize: 10, fontFamily: 'Space Mono' } },
+            legend: { text: { fill: '#ffffff60', fontSize: 11, fontFamily: 'Space Mono' } }
+          }
+        }}
+      />
+    </div>
   );
 }
 
@@ -1097,65 +1092,50 @@ function RNNUnrollViz({ color }: { color: string }) {
   );
 }
 
-/* ─── RAG Architecture ─── */
+/* ─── RAG Architecture (XYFlow) ─── */
+const RAGNode = ({ data }: { data: { icon: string, color: string, label: string, sub?: string } }) => (
+  <div className="px-3 py-2 rounded-lg border bg-white/5 border-white/10 shadow-xl flex items-center gap-3 min-w-[140px]">
+    <span className="text-xl">{data.icon}</span>
+    <div className="flex flex-col">
+      <span className="text-[10px] font-bold" style={{ color: data.color }}>{data.label}</span>
+      {data.sub && <span className="text-[8px] text-white/40">{data.sub}</span>}
+    </div>
+    <Handle type="target" position={Position.Left} className="w-1 h-1" />
+    <Handle type="source" position={Position.Right} className="w-1 h-1" />
+  </div>
+);
+
+const ragNodeTypes = { custom: RAGNode };
+
 function RAGArchViz({ color }: { color: string }) {
-  const [activeStep, setActiveStep] = useState(-1);
-  const steps = [
-    { label: 'User Query', icon: '💬', x: 20, y: 90 },
-    { label: 'Embed Query', icon: '🔢', x: 100, y: 90 },
-    { label: 'Vector Search', icon: '🔍', x: 190, y: 90 },
-    { label: 'Retrieved Docs', icon: '📄', x: 270, y: 90 },
-    { label: 'LLM', icon: '🤖', x: 270, y: 30 },
-    { label: 'Response', icon: '✅', x: 180, y: 30 },
+  const nodes: Node[] = [
+    { id: 'q', type: 'custom', position: { x: 0, y: 50 }, data: { label: 'User Query', icon: '💬', color } },
+    { id: 'e', type: 'custom', position: { x: 180, y: 50 }, data: { label: 'Embedding', icon: '🔢', color } },
+    { id: 'v', type: 'custom', position: { x: 360, y: 50 }, data: { label: 'Vector Search', icon: '🔍', color, sub: 'FAISS/Pinecone' } },
+    { id: 'c', type: 'custom', position: { x: 360, y: 150 }, data: { label: 'Context', icon: '📄', color } },
+    { id: 'l', type: 'custom', position: { x: 180, y: 150 }, data: { label: 'LLM Gen', icon: '🤖', color } },
+    { id: 'r', type: 'custom', position: { x: 0, y: 150 }, data: { label: 'Final Answer', icon: '✅', color } },
   ];
-  const arrows = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]];
 
-  const W = 380, H = 160;
-
-  const sx = (i: number) => steps[i].x + 35;
-  const sy = (i: number) => steps[i].y + 20;
+  const edges: Edge[] = [
+    { id: 'e1', source: 'q', target: 'e', animated: true },
+    { id: 'e2', source: 'e', target: 'v', animated: true },
+    { id: 'e3', source: 'v', target: 'c', animated: true },
+    { id: 'e4', source: 'c', target: 'l', animated: true },
+    { id: 'e5', source: 'l', target: 'r', animated: true },
+  ].map(e => ({ ...e, style: { stroke: color, strokeWidth: 2 } }));
 
   return (
-    <div className="text-center">
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', maxWidth: W, borderRadius: '12px', background: 'var(--bg3)' }}>
-        {arrows.map(([from, to], i) => (
-          <line key={i}
-            x1={sx(from)} y1={sy(from)} x2={sx(to) - 5} y2={sy(to)}
-            stroke={activeStep >= i ? color : 'rgba(255,255,255,0.15)'}
-            strokeWidth={activeStep >= i ? 2 : 1}
-          />
-        ))}
-        {steps.map((step, i) => (
-          <g key={i} onClick={() => setActiveStep(i)} style={{ cursor: 'pointer' }}>
-            <rect x={step.x} y={step.y} width={70} height={40} rx={8}
-              fill={activeStep >= i ? `${color}20` : 'var(--bg2)'}
-              stroke={activeStep >= i ? color : 'rgba(255,255,255,0.15)'}
-              strokeWidth={activeStep >= i ? 1.5 : 1}
-            />
-            <text x={step.x + 35} y={step.y + 15} textAnchor="middle" fontSize={14}>{step.icon}</text>
-            <text x={step.x + 35} y={step.y + 32} textAnchor="middle" fill={activeStep >= i ? color : 'rgba(255,255,255,0.4)'} fontSize={8} fontFamily="Space Mono">
-              {step.label}
-            </text>
-          </g>
-        ))}
-        {/* Vector DB */}
-        <rect x={190} y={120} width={70} height={30} rx={6}
-          fill="rgba(184,85,255,0.1)" stroke="#b855ff" strokeWidth={1}
-        />
-        <text x={225} y={139} textAnchor="middle" fill="#b855ff" fontSize={9} fontFamily="Space Mono">Vector DB</text>
-        <line x1={225} y1={120} x2={225} y2={110} stroke="#b855ff" strokeWidth={1} strokeDasharray="3,2" />
-        <text x={W / 2} y={H - 5} textAnchor="middle" fill="rgba(255,255,255,0.25)" fontSize={9} fontFamily="Space Mono">
-          Click steps to highlight the RAG pipeline
-        </text>
-      </svg>
-      <div className="flex gap-3 justify-center mt-4">
-        <button
-          onClick={() => setActiveStep(-1)}
-          style={{ padding: '6px 18px', borderRadius: '8px', background: 'var(--bg2)', color: 'var(--muted)', border: '1px solid var(--border)', cursor: 'pointer', fontFamily: 'Space Mono', fontSize: '12px' }}
-        >
-          ↺ Reset
-        </button>
-      </div>
+    <div className="h-[280px] w-full bg-[#0a0a0f] rounded-xl overflow-hidden border border-white/5">
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={ragNodeTypes}
+        fitView
+        proOptions={{ hideAttribution: true }}
+      >
+        <Background gap={20} color="#ffffff05" />
+      </ReactFlow>
     </div>
   );
 }

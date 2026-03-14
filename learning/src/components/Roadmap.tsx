@@ -54,6 +54,9 @@ export function Roadmap() {
   const currentPhase = PHASES.find((p) => p.id === currentTopicData.phaseId) || PHASES[0];
   const currentTopic = currentPhase.topics.find((t) => t.id === currentTopicData.id) || currentPhase.topics[0];
 
+  const prevTopic = selectedTopicIndex > 0 ? FLAT_TOPICS[selectedTopicIndex - 1] : null;
+  const nextTopic = selectedTopicIndex < FLAT_TOPICS.length - 1 ? FLAT_TOPICS[selectedTopicIndex + 1] : null;
+
   return (
     <TopicDetail
       topic={currentTopic}
@@ -64,6 +67,8 @@ export function Roadmap() {
       onPrev={handlePrevTopic}
       isFirst={selectedTopicIndex === 0}
       isLast={selectedTopicIndex === FLAT_TOPICS.length - 1}
+      prevLabel={prevTopic?.title}
+      nextLabel={nextTopic?.title}
     />
   );
 }

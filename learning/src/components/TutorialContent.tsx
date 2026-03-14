@@ -42,9 +42,20 @@ export interface Lesson {
 interface TutorialContentProps {
   color: string;
   lessons: Lesson[];
+  onNextTopic?: () => void;
+  onPrevTopic?: () => void;
+  isLastTopic?: boolean;
+  nextTopicLabel?: string;
 }
 
-export function TutorialContent({ color, lessons }: TutorialContentProps) {
+export function TutorialContent({ 
+  color, 
+  lessons, 
+  onNextTopic, 
+  onPrevTopic, 
+  isLastTopic,
+  nextTopicLabel 
+}: TutorialContentProps) {
   const [activeLesson, setActiveLesson] = useState(0);
   const [codeCopied, setCodeCopied] = useState(false);
 
@@ -166,54 +177,58 @@ export function TutorialContent({ color, lessons }: TutorialContentProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-12">
-            {/* Left Column: Media & Key Points */}
-            <div className="space-y-8">
-              {/* Interactive Visualization */}
-              {lesson.vizType && (
-                <div className="p-1 rounded-3xl bg-white/5 border border-white/10 overflow-hidden">
+          {/* VERTICAL STACKED LAYOUT */}
+          <div className="space-y-12 mb-12">
+            {/* 1. Interactive Visualization (Full Width) */}
+            {lesson.vizType && (
+              <div className="space-y-4">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-(--muted) flex items-center gap-2 px-1">
+                  Interactive Visualization
+                </h3>
+                <div className="p-1 rounded-3xl bg-white/5 border border-white/10 overflow-hidden shadow-2xl">
                   <InteractiveViz type={lesson.vizType} color={color} />
                 </div>
-              )}
+              </div>
+            )}
 
-              {/* Formula if available */}
-              {lesson.formula && (
-                <div className="p-8 rounded-3xl bg-black/40 border border-white/5 backdrop-blur-xl relative overflow-hidden">
-                  <div className="absolute top-0 right-0 p-4 opacity-10 text-4xl">∑</div>
-                  <h4 className="text-[10px] font-bold uppercase tracking-widest mb-4 text-(--muted)">Mathematical Foundation</h4>
-                  <p className="text-2xl font-bold mono tracking-tighter text-white">
-                    {lesson.formula}
-                  </p>
-                </div>
-              )}
-
-              {/* Key Points */}
-              {lesson.keyPoints && lesson.keyPoints.length > 0 && (
-                <div className="space-y-4">
-                  <h3 className="text-sm font-bold uppercase tracking-widest text-(--accent) flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-(--accent) animate-pulse"></span>
-                    Key Takeaways
-                  </h3>
-                  <div className="grid gap-3">
-                    {lesson.keyPoints.map((point, idx) => (
-                      <div
-                        key={idx}
-                        className="p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-(--accent)/30 transition-colors flex gap-4 items-start"
-                      >
-                        <span className="text-(--accent) mt-0.5">✦</span>
-                        <span className="text-sm text-(--muted) leading-relaxed">{point}</span>
-                      </div>
-                    ))}
+            {/* 2. Key Takeaways & Formula (Full Width) */}
+            {(lesson.formula || (lesson.keyPoints && lesson.keyPoints.length > 0)) && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {lesson.formula && (
+                  <div className="p-8 rounded-3xl bg-black/40 border border-white/5 backdrop-blur-xl relative overflow-hidden flex flex-col justify-center">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 text-4xl">∑</div>
+                    <h4 className="text-[10px] font-bold uppercase tracking-widest mb-4 text-(--muted)">Mathematical Foundation</h4>
+                    <p className="text-2xl font-bold mono tracking-tighter text-white">
+                      {lesson.formula}
+                    </p>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+                {lesson.keyPoints && lesson.keyPoints.length > 0 && (
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-(--accent) flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-(--accent) animate-pulse"></span>
+                      Key Takeaways
+                    </h3>
+                    <div className="grid gap-3">
+                      {lesson.keyPoints.map((point, idx) => (
+                        <div
+                          key={idx}
+                          className="p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-(--accent)/30 transition-colors flex gap-4 items-start"
+                        >
+                          <span className="text-(--accent) mt-0.5">✦</span>
+                          <span className="text-sm text-(--muted) leading-relaxed">{point}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
-            {/* Right Column: Code & Video */}
+            {/* 3. Code Example & Video (Full Width) */}
             <div className="space-y-8">
-              {/* Code Example */}
               {lesson.codeExample && (
-                <div className="rounded-3xl bg-[#0a0a0f] border border-white/5 overflow-hidden flex flex-col h-full shadow-2xl">
+                <div className="rounded-3xl bg-[#0a0a0f] border border-white/5 overflow-hidden flex flex-col shadow-2xl min-h-[400px]">
                   <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between bg-white/2">
                     <div className="flex items-center gap-4">
                       <div className="flex gap-1.5">
@@ -259,7 +274,6 @@ export function TutorialContent({ color, lessons }: TutorialContentProps) {
                 </div>
               )}
 
-              {/* Video Embed */}
               {lesson.videoUrl && (
                 <div className="space-y-4">
                   <h3 className="text-sm font-bold uppercase tracking-widest text-(--muted) flex items-center gap-2 px-1">
@@ -282,18 +296,36 @@ export function TutorialContent({ color, lessons }: TutorialContentProps) {
           {/* Navigation */}
           <div className="pt-12 border-t border-white/5 flex gap-4">
             <button
-              onClick={() => setActiveLesson(Math.max(0, activeLesson - 1))}
-              disabled={activeLesson === 0}
-              className="flex-1 py-5 rounded-2xl transition-all disabled:opacity-20 border border-white/5 bg-white/5 hover:bg-white/10 font-bold uppercase tracking-widest text-[11px] mono disabled:cursor-not-allowed"
+              onClick={() => {
+                if (activeLesson === 0) {
+                  onPrevTopic?.();
+                } else {
+                  setActiveLesson(activeLesson - 1);
+                  window.scrollTo(0, 0);
+                }
+              }}
+              className="flex-1 py-5 rounded-2xl transition-all border border-white/5 bg-white/5 hover:bg-white/10 font-bold uppercase tracking-widest text-[11px] mono cursor-pointer"
             >
               PREVIOUS
             </button>
             <button
-              onClick={() => setActiveLesson(Math.min(lessons.length - 1, activeLesson + 1))}
-              disabled={activeLesson === lessons.length - 1}
-              className="flex-1 py-5 rounded-2xl transition-all disabled:opacity-20 bg-(--accent) hover:brightness-110 text-black font-bold uppercase tracking-widest text-[11px] mono shadow-[0_0_20px_rgba(var(--accent-rgb),0.3)] disabled:cursor-not-allowed"
+              onClick={() => {
+                if (activeLesson === lessons.length - 1) {
+                  onNextTopic?.();
+                } else {
+                  setActiveLesson(activeLesson + 1);
+                  window.scrollTo(0, 0);
+                }
+              }}
+              className={`flex-1 py-5 rounded-2xl transition-all font-bold uppercase tracking-widest text-[11px] mono cursor-pointer ${
+                activeLesson === lessons.length - 1 && !isLastTopic
+                  ? 'bg-(--accent)/20 text-(--accent) border border-(--accent)/30'
+                  : 'bg-(--accent) text-black shadow-[0_0_20px_rgba(var(--accent-rgb),0.3)] hover:brightness-110'
+              }`}
             >
-              NEXT LESSON
+              {activeLesson === lessons.length - 1 
+                ? (isLastTopic ? 'FINISHED' : `NEXT: ${nextTopicLabel || 'PHASE'}`)
+                : 'NEXT LESSON'}
             </button>
           </div>
         </div>

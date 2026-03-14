@@ -14,6 +14,8 @@ interface TopicDetailProps {
   onPrev: () => void;
   isFirst: boolean;
   isLast: boolean;
+  prevLabel?: string;
+  nextLabel?: string;
 }
 
 export function TopicDetail({ 
@@ -24,7 +26,9 @@ export function TopicDetail({
   onNext, 
   onPrev, 
   isFirst, 
-  isLast 
+  isLast,
+  prevLabel,
+  nextLabel
 }: TopicDetailProps) {
   const [tutorial, setTutorial] = useState<TopicTutorial | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -120,7 +124,14 @@ export function TopicDetail({
             </div>
           </div>
         ) : tutorial ? (
-          <TutorialContent color={phase.color} lessons={tutorial.lessons} />
+          <TutorialContent 
+            color={phase.color} 
+            lessons={tutorial.lessons} 
+            onNextTopic={onNext}
+            onPrevTopic={onPrev}
+            isLastTopic={isLast}
+            nextTopicLabel={nextLabel}
+          />
         ) : (
           <div>
             <p className="mono font-bold text-[10px] uppercase tracking-widest text-(--muted) mb-6 opacity-60">
@@ -186,8 +197,8 @@ export function TopicDetail({
             <div style={{ fontSize: '11px', color: 'var(--muted)', marginBottom: '8px', fontFamily: 'Space Mono', letterSpacing: '0.1em' }}>
               PREVIOUS
             </div>
-            <div style={{ fontWeight: 700, fontSize: '18px', fontFamily: 'Syne, sans-serif' }}>
-              {isFirst ? 'Start' : 'Backtrack'}
+             <div style={{ fontWeight: 700, fontSize: '18px', fontFamily: 'Syne, sans-serif' }}>
+              {isFirst ? 'Start' : (prevLabel || 'Backtrack')}
             </div>
           </button>
 
@@ -220,7 +231,7 @@ export function TopicDetail({
               NEXT →
             </div>
             <div style={{ fontWeight: 700, fontSize: '18px', fontFamily: 'Syne, sans-serif' }}>
-              {isLast ? 'Finish' : 'Advance'}
+              {isLast ? 'Finish' : (nextLabel || 'Advance')}
             </div>
           </button>
         </div>
