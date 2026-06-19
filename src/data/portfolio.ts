@@ -8,8 +8,8 @@ export const profile = {
   email: 'hello@nafish.me',
   location: 'India',
   github: 'https://github.com/nafishahmeddev',
-  linkedin: 'https://in.linkedin.com/in/nafish-ahmed-dev',
-  product: 'https://tryluno.app',
+  linkedin: 'https://www.linkedin.com/in/nafish-ahmed-dev',
+  product: 'https://keeep.idexa.app/',
 };
 
 export const navItems = [
@@ -38,7 +38,7 @@ export const products = [
   {
     title: 'Keeep',
     status: 'Live on Play Store',
-    href: 'https://tryluno.app',
+    href: 'https://keeep.idexa.app/',
     summary:
       'Privacy-first personal finance app. Local-first data, no accounts, no cloud, no tracking.',
     stack: ['React Native', 'Expo', 'SQLite', 'Android'],
@@ -46,7 +46,7 @@ export const products = [
   {
     title: 'Sitee',
     status: 'Personal project',
-    href: '#contact',
+    href: 'http://sitee.idexa.app/',
     summary:
       'Flutter app for tracking labour, expenses, material stock, and daily work activity across project sites.',
     stack: ['Flutter', 'Dart', 'Project tracking', 'Inventory'],

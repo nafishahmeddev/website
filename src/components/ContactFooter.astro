@@ -22,7 +22,7 @@ import { profile } from '../data/portfolio';
       </a>
     </div>
     <div class="mt-10 flex flex-col gap-3 border-t border-[color-mix(in_srgb,var(--surface)_18%,transparent)] pt-6 text-sm text-[color-mix(in_srgb,var(--surface)_66%,transparent)] sm:flex-row sm:items-center sm:justify-between dark:text-[var(--text-muted)]">
-      <p>{profile.site}</p>
+      <p>{profile.name} · {profile.site}</p>
       <div class="flex flex-wrap gap-4">
         <a href={profile.github} target="_blank" rel="noreferrer" class="hover:text-[var(--surface)] dark:hover:text-[var(--accent)]">GitHub</a>
         <a href={profile.linkedin} target="_blank" rel="noreferrer" class="hover:text-[var(--surface)] dark:hover:text-[var(--accent)]">LinkedIn</a>
