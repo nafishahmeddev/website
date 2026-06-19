@@ -27,6 +27,12 @@ const heroGrid = [
   <div class="kinetic-grid absolute inset-0 opacity-25" aria-hidden="true">
   </div>
   <div
+    class="pointer-events-none absolute left-[15vw] top-24 h-px w-[70vw] bg-gradient-to-r from-transparent via-[var(--accent)] to-transparent opacity-30"
+    data-parallax="-0.04"
+    aria-hidden="true"
+  >
+  </div>
+  <div
     class="mx-auto grid min-h-[calc(100dvh-72px)] max-w-7xl items-center gap-8 lg:grid-cols-[minmax(0,1fr)_440px]"
   >
     <div class="max-w-[46rem]">
@@ -34,13 +40,13 @@ const heroGrid = [
         class="mb-5 flex flex-wrap items-center gap-3 text-sm text-[var(--text-muted)]"
       >
         <span
-          class="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface-elevated)] px-3 py-2 font-mono text-xs font-semibold text-[var(--accent)]"
+          class="motion-lift inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface-elevated)] px-3 py-2 font-mono text-xs font-semibold text-[var(--accent)]"
         >
           <BriefcaseBusiness size={16} />
           {profile.role}
         </span>
         <span
-          class="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface-elevated)] px-3 py-2 font-mono text-xs font-semibold"
+          class="motion-lift inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface-elevated)] px-3 py-2 font-mono text-xs font-semibold"
         >
           <MapPin size={16} />
           {profile.location}
@@ -62,7 +68,7 @@ const heroGrid = [
       <div class="mt-8 flex flex-col gap-3 sm:flex-row">
         <a
           href={`mailto:${profile.email}`}
-          class="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[var(--text)] px-6 text-sm font-bold text-[var(--surface)] transition hover:-translate-y-0.5 active:translate-y-px dark:bg-[var(--accent)] dark:text-[var(--surface)]"
+          class="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[var(--text)] px-6 text-sm font-bold text-[var(--surface)] transition hover:-translate-y-0.5 active:translate-y-px dark:bg-[var(--accent)] dark:text-[var(--on-accent)]"
         >
           <Mail size={18} />
           Hire me
@@ -84,14 +90,15 @@ const heroGrid = [
       style="transition-delay: 120ms"
     >
       <div
-        class="signal-sweep relative overflow-hidden rounded-[28px] border border-[var(--line)] bg-[color-mix(in_srgb,var(--surface-elevated)_88%,transparent)] p-3 shadow-[0_28px_90px_color-mix(in_srgb,var(--accent)_14%,transparent)] backdrop-blur"
+        class="signal-sweep premium-panel tilt-card relative overflow-hidden rounded-[28px] border border-[var(--line)] bg-[color-mix(in_srgb,var(--surface-elevated)_88%,transparent)] p-3 shadow-[0_28px_90px_color-mix(in_srgb,var(--accent)_14%,transparent)] backdrop-blur"
+        data-tilt
       >
         <div
-          class="rounded-[22px] bg-[var(--text)] p-5 text-[var(--surface)] dark:border dark:border-[color-mix(in_srgb,var(--accent)_22%,var(--line))] dark:bg-[color-mix(in_srgb,var(--accent)_12%,var(--surface-soft))] dark:text-[var(--text)]"
+          class="relative rounded-[22px] bg-[var(--text)] p-5 text-[var(--surface)] dark:border dark:border-[color-mix(in_srgb,var(--accent)_22%,var(--line))] dark:bg-[color-mix(in_srgb,var(--accent)_12%,var(--surface-soft))] dark:text-[var(--text)]"
         >
           <div class="flex items-center justify-between gap-4">
             <p
-              class="font-mono text-xs text-[color-mix(in_srgb,var(--surface)_64%,transparent)]"
+              class="font-mono text-xs text-[color-mix(in_srgb,var(--surface)_64%,transparent)] dark:text-[var(--text-muted)]"
             >
               current focus
             </p>
@@ -107,7 +114,7 @@ const heroGrid = [
             heroGrid.map((item) => {
               const Icon = item.icon;
               return (
-                <div class="min-h-[104px] rounded-[18px] border border-[var(--line)] bg-[var(--surface)] p-4">
+                <div class="motion-lift min-h-[104px] rounded-[18px] border border-[var(--line)] bg-[var(--surface)] p-4">
                   <span class="inline-flex size-8 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[var(--accent)]">
                     <Icon size={17} />
                   </span>
@@ -128,7 +135,7 @@ const heroGrid = [
             stats.slice(0, 2).map((stat, index) => {
               const Icon = statIcons[index] ?? Activity;
               return (
-                <div class="flex items-center gap-3 rounded-[18px] border border-[var(--line)] bg-[var(--surface)] px-3 py-3">
+                <div class="motion-lift flex items-center gap-3 rounded-[18px] border border-[var(--line)] bg-[var(--surface)] px-3 py-3">
                   <span class="inline-flex size-8 items-center justify-center rounded-full bg-[var(--surface-soft)] text-[var(--accent)]">
                     <Icon size={17} />
                   </span>
@@ -150,7 +157,7 @@ const heroGrid = [
   </div>
 
   <div
-    class="relative mx-auto mt-2 max-w-7xl overflow-hidden rounded-full border border-[var(--line)] bg-[color-mix(in_srgb,var(--surface-elevated)_82%,transparent)] py-3 backdrop-blur"
+    class="premium-panel relative mx-auto mt-2 max-w-7xl overflow-hidden rounded-full border border-[var(--line)] bg-[color-mix(in_srgb,var(--surface-elevated)_82%,transparent)] py-3 backdrop-blur"
   >
     <div
       class="marquee-track flex w-max gap-8 px-4 font-mono text-xs font-semibold text-[var(--text-muted)]"

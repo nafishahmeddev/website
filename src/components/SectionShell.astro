@@ -6,7 +6,7 @@ const { id, title, lead, class: className = '' } = Astro.props;
   <div class="mx-auto max-w-7xl">
     {
       title && (
-        <div class="max-w-3xl">
+        <div class="reveal max-w-3xl" data-reveal="clip">
           <h2 class="text-3xl font-semibold leading-tight text-[var(--text)] md:text-5xl">{title}</h2>
           {lead && <p class="mt-4 max-w-2xl text-base leading-7 text-[var(--text-muted)]">{lead}</p>}
         </div>

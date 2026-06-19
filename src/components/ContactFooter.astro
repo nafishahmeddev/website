@@ -3,10 +3,10 @@ import { profile } from '../data/portfolio';
 ---
 
 <footer id="contact" class="px-4 py-16 sm:px-6 lg:px-8">
-  <div class="mx-auto max-w-7xl overflow-hidden rounded-[32px] border border-[var(--line)] bg-[var(--text)] p-6 text-[var(--surface)] md:p-10 dark:bg-[var(--surface-elevated)] dark:text-[var(--text)]">
+  <div class="premium-panel border-run mx-auto max-w-7xl overflow-hidden rounded-[32px] border border-[var(--line)] bg-[var(--text)] p-6 text-[var(--surface)] md:p-10 dark:bg-[var(--surface-elevated)] dark:text-[var(--text)]">
     <div class="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
       <div>
-        <p class="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-[color-mix(in_srgb,var(--accent)_75%,white)]">Contact</p>
+        <p class="font-mono text-xs font-semibold uppercase tracking-[0.22em] text-[color-mix(in_srgb,var(--accent)_75%,white)] dark:text-[var(--accent-2)]">Contact</p>
         <h2 class="mt-5 max-w-3xl text-4xl font-black leading-tight md:text-6xl">
           Let's build something.
         </h2>
@@ -16,7 +16,7 @@ import { profile } from '../data/portfolio';
       </div>
       <a
         href={`mailto:${profile.email}`}
-        class="inline-flex h-12 items-center justify-center rounded-full bg-[var(--surface)] px-6 text-sm font-bold text-[var(--text)] transition hover:-translate-y-0.5 active:translate-y-px dark:bg-[var(--accent)] dark:text-[var(--surface)]"
+        class="motion-lift inline-flex h-12 items-center justify-center rounded-full bg-[var(--surface)] px-6 text-sm font-bold text-[var(--text)] transition hover:-translate-y-0.5 active:translate-y-px dark:bg-[var(--accent)] dark:text-[var(--on-accent)]"
       >
         Get in touch
       </a>

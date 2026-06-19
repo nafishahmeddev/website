@@ -11,7 +11,7 @@ import { experience } from '../data/portfolio';
   <div class="mt-10 grid gap-4">
     {
       experience.map((item, index) => (
-        <article class="reveal grid gap-5 rounded-[28px] border border-[var(--line)] bg-[color-mix(in_srgb,var(--surface-elevated)_78%,transparent)] p-6 md:grid-cols-[16rem_1fr]" style={`transition-delay:${index * 80}ms`}>
+        <article class="reveal border-run motion-lift grid gap-5 rounded-[28px] border border-[var(--line)] bg-[color-mix(in_srgb,var(--surface-elevated)_78%,transparent)] p-6 md:grid-cols-[16rem_1fr]" style={`transition-delay:${index * 80}ms`}>
           <div>
             <p class="font-mono text-sm font-semibold text-[var(--accent)]">{item.period}</p>
             <h3 class="mt-2 text-xl font-semibold text-[var(--text)]">{item.role}</h3>

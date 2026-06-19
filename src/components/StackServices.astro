@@ -7,7 +7,7 @@ import { stackGroups } from '../data/portfolio';
   <div class="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
     {
       stackGroups.map((group, index) => (
-        <article class="reveal rounded-[28px] border border-[var(--line)] bg-[var(--surface-elevated)] p-5" style={`transition-delay:${index * 55}ms`}>
+        <article class="reveal border-run motion-lift rounded-[28px] border border-[var(--line)] bg-[var(--surface-elevated)] p-5" style={`transition-delay:${index * 55}ms`}>
           <h3 class="font-mono text-sm font-semibold text-[var(--accent)]">{group.label}</h3>
           <div class="mt-5 flex flex-wrap gap-2">
             {group.items.map((item) => <span class="rounded-full bg-[var(--surface-soft)] px-3 py-1.5 text-sm font-semibold text-[var(--text)]">{item}</span>)}

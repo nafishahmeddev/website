@@ -17,12 +17,12 @@ const choices = [
       <button
         type="button"
         data-theme-choice={choice.key}
-        class="inline-flex size-8 items-center justify-center rounded-full text-[var(--text-muted)] transition hover:text-[var(--text)] active:translate-y-px data-[active=true]:bg-[var(--accent)] data-[active=true]:text-[var(--surface)]"
+        class="inline-flex size-8 items-center justify-center rounded-full text-[var(--text-muted)] transition hover:text-[var(--text)] active:translate-y-px data-[active=true]:bg-[var(--accent)] data-[active=true]:text-[var(--on-accent)]"
         aria-pressed="false"
         aria-label={choice.label}
         title={choice.label}
       >
-        <choice.icon size={16} strokeWidth={2} />
+        <choice.icon size={16} stroke-width={2} />
       </button>
     ))
   }

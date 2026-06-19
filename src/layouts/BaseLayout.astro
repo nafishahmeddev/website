@@ -12,7 +12,7 @@ const {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#1f6f4a" />
+    <meta name="theme-color" content="#1967ff" />
     <meta name="description" content={description} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -29,6 +29,8 @@ const {
     </script>
   </head>
   <body class="antialiased">
+    <div class="scroll-progress" aria-hidden="true"></div>
+    <div class="pointer-light" aria-hidden="true"></div>
     <slot />
     <script is:inline>
       const buttons = document.querySelectorAll('[data-theme-choice]');
@@ -59,6 +61,70 @@ const {
         { threshold: 0.18 }
       );
       revealItems.forEach((item) => revealObserver.observe(item));
+
+      const progress = document.querySelector('.scroll-progress');
+      const pointerLight = document.querySelector('.pointer-light');
+      const parallaxItems = document.querySelectorAll('[data-parallax]');
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const updateMotion = () => {
+        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+        const ratio = scrollable > 0 ? window.scrollY / scrollable : 0;
+        if (progress) progress.style.transform = `scaleX(${ratio})`;
+        if (reduceMotion) return;
+        parallaxItems.forEach((item) => {
+          const speed = Number(item.dataset.parallax || 0.08);
+          item.style.transform = `translate3d(0, ${window.scrollY * speed}px, 0)`;
+        });
+      };
+      updateMotion();
+      window.addEventListener('scroll', updateMotion, { passive: true });
+
+      window.addEventListener('pointermove', (event) => {
+        if (!pointerLight || reduceMotion) return;
+        pointerLight.style.setProperty('--x', `${event.clientX}px`);
+        pointerLight.style.setProperty('--y', `${event.clientY}px`);
+      });
+
+      document.querySelectorAll('[data-tilt]').forEach((card) => {
+        card.addEventListener('pointermove', (event) => {
+          if (reduceMotion) return;
+          const rect = card.getBoundingClientRect();
+          const x = (event.clientX - rect.left) / rect.width - 0.5;
+          const y = (event.clientY - rect.top) / rect.height - 0.5;
+          card.style.setProperty('--rx', `${y * -4}deg`);
+          card.style.setProperty('--ry', `${x * 5}deg`);
+        });
+        card.addEventListener('pointerleave', () => {
+          card.style.setProperty('--rx', '0deg');
+          card.style.setProperty('--ry', '0deg');
+        });
+      });
+
+      const shineCards = [...document.querySelectorAll('.premium-panel, .border-run')];
+      let shineFrame = 0;
+      const updateShine = (event) => {
+        if (reduceMotion) return;
+        cancelAnimationFrame(shineFrame);
+        shineFrame = requestAnimationFrame(() => {
+          shineCards.forEach((card) => {
+            const rect = card.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            const inside = x >= 0 && x <= rect.width && y >= 0 && y <= rect.height;
+            card.style.setProperty('--mx', `${x}px`);
+            card.style.setProperty('--my', `${y}px`);
+            card.dataset.hot = String(inside);
+          });
+        });
+      };
+      window.addEventListener('pointermove', updateShine, { passive: true });
+      window.addEventListener('pointerleave', () => {
+        shineCards.forEach((card) => {
+          card.style.setProperty('--mx', '50%');
+          card.style.setProperty('--my', '50%');
+          card.dataset.hot = 'false';
+        });
+      });
     </script>
   </body>
 </html>
