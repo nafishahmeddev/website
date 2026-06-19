@@ -1,0 +1,29 @@
+---
+import { Monitor, Moon, Sun } from '@lucide/astro';
+
+const choices = [
+  { key: 'system', label: 'System', icon: Monitor },
+  { key: 'light', label: 'Light', icon: Sun },
+  { key: 'dark', label: 'Dark', icon: Moon },
+];
+---
+
+<div
+  class="grid grid-cols-3 rounded-full border border-[var(--line)] bg-[color-mix(in_srgb,var(--surface-elevated)_82%,transparent)] p-1 text-[0.72rem] font-semibold shadow-sm backdrop-blur"
+  aria-label="Theme"
+>
+  {
+    choices.map((choice) => (
+      <button
+        type="button"
+        data-theme-choice={choice.key}
+        class="inline-flex size-8 items-center justify-center rounded-full text-[var(--text-muted)] transition hover:text-[var(--text)] active:translate-y-px data-[active=true]:bg-[var(--accent)] data-[active=true]:text-[var(--surface)]"
+        aria-pressed="false"
+        aria-label={choice.label}
+        title={choice.label}
+      >
+        <choice.icon size={16} strokeWidth={2} />
+      </button>
+    ))
+  }
+</div>

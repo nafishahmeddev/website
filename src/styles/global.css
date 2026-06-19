@@ -1,0 +1,173 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Geist", "Avenir Next", "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono", "SFMono-Regular", "Roboto Mono", monospace;
+  --color-ink: #111315;
+  --color-paper: #eef2f0;
+  --color-muted: #67706c;
+  --color-line: #ccd5d0;
+  --color-panel: #f8faf8;
+  --color-volt: #57f287;
+  --color-signal: #1967ff;
+  --color-night: #0a0d0f;
+  --color-night-panel: #11161a;
+}
+
+:root {
+  color-scheme: light;
+  --surface: #eef2f0;
+  --surface-elevated: #f8faf8;
+  --surface-soft: #dfe6e2;
+  --text: #111315;
+  --text-muted: #67706c;
+  --line: #ccd5d0;
+  --accent: #1967ff;
+  --accent-2: #1c8b4f;
+  --accent-soft: #dce8ff;
+}
+
+.dark {
+  color-scheme: dark;
+  --surface: #070a0d;
+  --surface-elevated: #10171d;
+  --surface-soft: #17222a;
+  --text: #edf4ef;
+  --text-muted: #9dadac;
+  --line: #24313a;
+  --accent: #74f2a7;
+  --accent-2: #7ea7ff;
+  --accent-soft: #102b1d;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--surface);
+}
+
+body {
+  min-height: 100dvh;
+  margin: 0;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--line) 40%, transparent) 1px, transparent 1px),
+    linear-gradient(color-mix(in srgb, var(--line) 32%, transparent) 1px, transparent 1px),
+    radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 24rem),
+    radial-gradient(circle at 86% 12%, color-mix(in srgb, var(--accent-2) 16%, transparent), transparent 25rem),
+    linear-gradient(135deg, var(--surface) 0%, var(--surface-soft) 52%, var(--surface) 100%);
+  background-size: 72px 72px, 72px 72px, auto, auto, auto;
+  color: var(--text);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+}
+
+.dark body {
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--line) 30%, transparent) 1px, transparent 1px),
+    linear-gradient(color-mix(in srgb, var(--line) 24%, transparent) 1px, transparent 1px),
+    radial-gradient(circle at 14% 14%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 25rem),
+    radial-gradient(circle at 86% 8%, color-mix(in srgb, var(--accent-2) 10%, transparent), transparent 26rem),
+    linear-gradient(135deg, #070a0d 0%, #0d1318 52%, #070a0d 100%);
+  background-size: 72px 72px, 72px 72px, auto, auto, auto;
+}
+
+body::before {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  content: "";
+  background-image: linear-gradient(rgba(20, 23, 21, 0.035) 1px, transparent 1px);
+  background-size: 100% 6px;
+  mix-blend-mode: multiply;
+}
+
+.dark body::before {
+  mix-blend-mode: screen;
+  opacity: 0.13;
+}
+
+::selection {
+  color: var(--surface);
+  background: var(--accent);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.kinetic-grid {
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 16%, transparent) 1px, transparent 1px),
+    linear-gradient(color-mix(in srgb, var(--accent-2) 12%, transparent) 1px, transparent 1px);
+  background-size: 72px 72px;
+  animation: kinetic-pan 18s linear infinite;
+}
+
+.signal-sweep::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(110deg, transparent 0%, color-mix(in srgb, var(--accent) 18%, transparent) 45%, transparent 58%);
+  transform: translateX(-100%);
+  animation: signal-sweep 4.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.marquee-track {
+  animation: marquee 24s linear infinite;
+}
+
+@keyframes kinetic-pan {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 72px 72px;
+  }
+}
+
+@keyframes signal-sweep {
+  0%,
+  38% {
+    transform: translateX(-100%);
+  }
+  72%,
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

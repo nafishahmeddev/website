@@ -1,0 +1,17 @@
+---
+const { id, title, lead, class: className = '' } = Astro.props;
+---
+
+<section id={id} class={`px-4 py-16 sm:px-6 lg:px-8 lg:py-24 ${className}`}>
+  <div class="mx-auto max-w-7xl">
+    {
+      title && (
+        <div class="max-w-3xl">
+          <h2 class="text-3xl font-semibold leading-tight text-[var(--text)] md:text-5xl">{title}</h2>
+          {lead && <p class="mt-4 max-w-2xl text-base leading-7 text-[var(--text-muted)]">{lead}</p>}
+        </div>
+      )
+    }
+    <slot />
+  </div>
+</section>

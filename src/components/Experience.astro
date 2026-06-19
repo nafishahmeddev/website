@@ -1,0 +1,30 @@
+---
+import SectionShell from './SectionShell.astro';
+import { experience } from '../data/portfolio';
+---
+
+<SectionShell
+  id="experience"
+  title="Experience built around shipping"
+  lead="Simple process, readable systems, and work that remains editable after launch."
+>
+  <div class="mt-10 grid gap-4">
+    {
+      experience.map((item, index) => (
+        <article class="reveal grid gap-5 rounded-[28px] border border-[var(--line)] bg-[color-mix(in_srgb,var(--surface-elevated)_78%,transparent)] p-6 md:grid-cols-[16rem_1fr]" style={`transition-delay:${index * 80}ms`}>
+          <div>
+            <p class="font-mono text-sm font-semibold text-[var(--accent)]">{item.period}</p>
+            <h3 class="mt-2 text-xl font-semibold text-[var(--text)]">{item.role}</h3>
+            <p class="mt-1 text-sm text-[var(--text-muted)]">{item.company}, {item.location}</p>
+          </div>
+          <div>
+            <p class="max-w-4xl leading-7 text-[var(--text-muted)]">{item.details}</p>
+            <div class="mt-5 flex flex-wrap gap-2">
+              {item.stack.map((tech) => <span class="rounded-full border border-[var(--line)] px-3 py-1.5 font-mono text-xs text-[var(--text)]">{tech}</span>)}
+            </div>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</SectionShell>
