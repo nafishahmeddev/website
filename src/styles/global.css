@@ -18,6 +18,7 @@
 
 :root {
   color-scheme: light;
+  --header-height: 5.5rem;
   --surface: #eef2f0;
   --surface-elevated: #f8faf8;
   --surface-soft: #dfe6e2;
@@ -32,15 +33,15 @@
 
 .dark {
   color-scheme: dark;
-  --surface: #060a12;
-  --surface-elevated: #0d1420;
-  --surface-soft: #162237;
-  --text: #f3f7ff;
-  --text-muted: #b4c0d2;
-  --line: #26364d;
-  --accent: #1967ff;
-  --accent-2: #3ee88f;
-  --accent-soft: #122a58;
+  --surface: #07111d;
+  --surface-elevated: #0e1a2a;
+  --surface-soft: #16263d;
+  --text: #eef4ff;
+  --text-muted: #a7b6cc;
+  --line: #29415f;
+  --accent: #4c8dff;
+  --accent-2: #59e6a4;
+  --accent-soft: #173669;
   --on-accent: #ffffff;
 }
 
@@ -73,12 +74,13 @@ body {
 
 .dark body {
   background:
-    linear-gradient(90deg, color-mix(in srgb, var(--line) 38%, transparent) 1px, transparent 1px),
-    linear-gradient(color-mix(in srgb, var(--line) 28%, transparent) 1px, transparent 1px),
-    radial-gradient(circle at 14% 14%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 25rem),
-    radial-gradient(circle at 86% 8%, color-mix(in srgb, var(--accent-2) 12%, transparent), transparent 26rem),
-    linear-gradient(135deg, #060a12 0%, #0b1220 52%, #060a12 100%);
-  background-size: 72px 72px, 72px 72px, auto, auto, auto;
+    linear-gradient(90deg, color-mix(in srgb, var(--line) 32%, transparent) 1px, transparent 1px),
+    linear-gradient(color-mix(in srgb, var(--line) 24%, transparent) 1px, transparent 1px),
+    radial-gradient(circle at 16% 12%, color-mix(in srgb, var(--accent) 24%, transparent), transparent 24rem),
+    radial-gradient(circle at 84% 10%, color-mix(in srgb, var(--accent-2) 16%, transparent), transparent 24rem),
+    radial-gradient(circle at 50% 120%, color-mix(in srgb, #7fb7ff 10%, transparent), transparent 34rem),
+    linear-gradient(145deg, #07111d 0%, #0a1524 44%, #0d1b2d 100%);
+  background-size: 72px 72px, 72px 72px, auto, auto, auto, auto;
 }
 
 body::before {
@@ -127,7 +129,7 @@ body > :not(.pointer-light):not(.scroll-progress) {
 
 .dark body::before {
   mix-blend-mode: screen;
-  opacity: 0.13;
+  opacity: 0.09;
 }
 
 ::selection {
@@ -168,8 +170,9 @@ body > :not(.pointer-light):not(.scroll-progress) {
 
 .dark .premium-panel {
   box-shadow:
-    0 1px 0 color-mix(in srgb, white 7%, transparent) inset,
-    0 32px 90px color-mix(in srgb, black 34%, transparent);
+    0 1px 0 color-mix(in srgb, white 10%, transparent) inset,
+    0 28px 90px color-mix(in srgb, black 42%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--accent) 7%, transparent);
 }
 
 .premium-panel::before {

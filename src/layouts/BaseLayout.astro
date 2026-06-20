@@ -30,11 +30,17 @@ const {
     <link rel="manifest" href="/site.webmanifest" />
     <title>{title}</title>
     <script is:inline>
+      const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+      const syncThemeColor = (isDark) => {
+        themeColorMeta?.setAttribute('content', isDark ? '#07111d' : '#eef2f0');
+      };
       const storedTheme = localStorage.getItem('theme');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       const activeTheme = storedTheme || 'system';
-      document.documentElement.classList.toggle('dark', activeTheme === 'dark' || (activeTheme === 'system' && prefersDark));
+      const resolvedDark = activeTheme === 'dark' || (activeTheme === 'system' && prefersDark);
+      document.documentElement.classList.toggle('dark', resolvedDark);
       document.documentElement.dataset.theme = activeTheme;
+      syncThemeColor(resolvedDark);
     </script>
   </head>
   <body class="antialiased">
@@ -43,11 +49,14 @@ const {
     <slot />
     <script is:inline>
       const buttons = document.querySelectorAll('[data-theme-choice]');
+      const themeColorMetaEl = document.querySelector('meta[name="theme-color"]');
       const applyTheme = (theme) => {
         localStorage.setItem('theme', theme);
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        document.documentElement.classList.toggle('dark', theme === 'dark' || (theme === 'system' && prefersDark));
+        const resolvedDark = theme === 'dark' || (theme === 'system' && prefersDark);
+        document.documentElement.classList.toggle('dark', resolvedDark);
         document.documentElement.dataset.theme = theme;
+        themeColorMetaEl?.setAttribute('content', resolvedDark ? '#07111d' : '#eef2f0');
         buttons.forEach((button) => {
           const active = button.dataset.themeChoice === theme;
           button.setAttribute('aria-pressed', String(active));
