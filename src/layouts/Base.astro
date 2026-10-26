@@ -4,7 +4,7 @@ import '@fontsource-variable/geist-mono/wght.css';
 import '@fontsource/instrument-serif/latin-400-italic.css';
 import 'lenis/dist/lenis.css';
 import '../styles/system.css';
-import { profile, knowsAbout, work, faqs } from '../data/profile';
+import { profile, knowsAbout, work, faqs, education, experience } from '../data/profile';
 
 interface Props {
   title?: string;
@@ -37,7 +37,8 @@ const graph = {
       email: `mailto:${profile.email}`,
       jobTitle: profile.currentTitle,
       description,
-      worksFor: { '@type': 'Organization', name: profile.currentCompany },
+      worksFor: { '@type': 'Organization', name: experience[0].legalName, alternateName: profile.currentCompany },
+      alumniOf: education.map((e) => ({ '@type': 'EducationalOrganization', name: e.school })),
       founder: { '@type': 'Organization', '@id': `${profile.studio.url}/#organization`, name: profile.studio.name, url: profile.studio.url },
       address: { '@type': 'PostalAddress', addressLocality: profile.city, addressRegion: profile.region, addressCountry: profile.countryCode },
       knowsAbout,

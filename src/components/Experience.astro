@@ -1,7 +1,7 @@
 ---
 import Eyebrow from './Eyebrow.astro';
 import Split from './Split.astro';
-import { experience, stack, profile } from '../data/profile';
+import { experience, education, stack } from '../data/profile';
 ---
 
 <section class="section" id="experience" aria-labelledby="exp-title">
@@ -10,7 +10,7 @@ import { experience, stack, profile } from '../data/profile';
     <div class="exp">
       <div class="exp__aside">
         <Split id="exp-title" class="heading" lines={['Where I have', '*worked.*']} />
-        <p class="lead" data-reveal>Vimo Software, Softway Solutions and Avital Software: fintech, cloud dashboards and healthcare, newest first.</p>
+        <p class="lead" data-reveal>Vimo Software, Softway and Avital Software: fintech, audio streaming, cloud dashboards and telemedicine. Newest first.</p>
       </div>
 
       <ol class="tl">
@@ -18,8 +18,21 @@ import { experience, stack, profile } from '../data/profile';
           <li class="tl__item" data-reveal style={`--i:${i}`}>
             <p class="tl__period mono"><time datetime={e.start}>{e.period.split(' — ')[0]}</time> — {e.end ? <time datetime={e.end}>{e.period.split(' — ')[1]}</time> : 'now'}</p>
             <h3 class="tl__role">{e.role}</h3>
-            <p class="tl__co">{e.company}</p>
+            <p class="tl__co">{e.company} <span class="tl__meta">· {e.type} · {e.place}</span></p>
             <p class="tl__sum">{e.summary}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+
+    <div class="edu" aria-labelledby="edu-title">
+      <h3 id="edu-title" class="label edu__title" data-reveal>Education</h3>
+      <ol class="edu__list">
+        {education.map((e, i) => (
+          <li class="edu__item" data-reveal style={`--i:${i}`}>
+            <p class="mono edu__period"><time datetime={e.start}>{e.start}</time> — <time datetime={e.end}>{e.end}</time></p>
+            <p class="edu__school">{e.school}</p>
+            <p class="edu__degree">{e.degree}</p>
           </li>
         ))}
       </ol>
@@ -118,6 +131,37 @@ import { experience, stack, profile } from '../data/profile';
   }
   .tl__co {
     color: var(--c-accent-hi);
+  }
+  .tl__meta {
+    color: var(--c-mute);
+  }
+  .edu {
+    margin-top: var(--section);
+    padding-top: var(--s-6);
+    border-top: 1px solid var(--c-line-strong);
+  }
+  .edu__title {
+    font: inherit;
+    margin-bottom: var(--s-6);
+  }
+  .edu__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: var(--s-6) var(--s-5);
+  }
+  .edu__item {
+    display: grid;
+    gap: var(--s-1);
+  }
+  .edu__period {
+    color: var(--c-mute);
+  }
+  .edu__school {
+    font-size: var(--t-lead);
+    letter-spacing: -0.01em;
+  }
+  .edu__degree {
+    color: var(--c-text-soft);
   }
   .tl__sum {
     color: var(--c-text-soft);

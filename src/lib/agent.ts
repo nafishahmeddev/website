@@ -1,7 +1,7 @@
 // The whole profile as Markdown, for AI agents and answer engines. Served at
 // /llms.txt, at /index.md, and at / to any client that asks for text/markdown.
 // Built from src/data/profile.ts, so it never disagrees with the page.
-import { profile, hero, work, studioApps, experience, stack, faqs } from '../data/profile';
+import { profile, hero, work, studioApps, experience, education, stack, faqs } from '../data/profile';
 
 export function profileMarkdown() {
   return `# ${profile.name}
@@ -21,7 +21,11 @@ ${work.map((w) => `### ${w.name}: ${w.what}\n\n${[w.where, w.period, w.role].fil
 
 ## Experience
 
-${experience.map((e) => `- **${e.role}, ${e.company}** (${e.period}). ${e.summary}`).join('\n')}
+${experience.map((e) => `- **${e.role}, ${e.legalName}** (${e.period}; ${e.type}; ${e.place}). ${e.summary}`).join('\n')}
+
+## Education
+
+${education.map((e) => `- ${e.degree}, ${e.school} (${e.period})`).join('\n')}
 
 ## ${profile.studio.name} apps
 

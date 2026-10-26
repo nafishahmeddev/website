@@ -67,7 +67,7 @@ export const work: Work[] = [
     name: 'Vimo',
     what: 'Digital wallet and remittance platform',
     where: 'Vimo Software',
-    period: '2022 — now',
+    period: '2022 — 24, 2025 — now',
     role: 'Full Stack → Senior Full Stack Developer',
     points: [
       'Maintain the wallet and remittance infrastructure in production.',
@@ -83,7 +83,7 @@ export const work: Work[] = [
     slug: 'daikin',
     name: 'Daikin Cloud Services',
     what: 'Cloud dashboards for Daikin',
-    where: 'Softway Solutions',
+    where: 'Softway',
     period: '2024 — 2025',
     role: 'Software Engineer',
     points: [
@@ -114,7 +114,7 @@ export const work: Work[] = [
     name: 'Haaki',
     what: 'Turkish audiobook and audio drama platform',
     where: 'Vimo Software',
-    period: '',
+    period: '2022 — 2024',
     role: 'Full Stack Developer',
     points: [
       'Built the web app and backend of a Turkish-language audiobook and audio drama service at Vimo.',
@@ -138,28 +138,32 @@ export const studioApps: StudioApp[] = [
   { slug: 'dishdash', name: 'Dish Dash', kind: 'Food puzzle game', line: 'Chain dishes against the clock and build a restaurant.', live: true },
   { slug: 'tilewit', name: 'Tilewit', kind: 'Puzzle duels', line: 'Two players, the same puzzle, on the clock.', live: true },
   { slug: 'twinstep', name: 'Twin Step', kind: 'Mirror puzzle', line: 'One move steers two twins, mirrored.', live: true },
-  { slug: 'lifio', name: 'Lifio', kind: 'Habit and mood tracker', line: 'Habits, mood and a one-minute evening check-in.', live: true },
-  { slug: 'yumly', name: 'Yumly', kind: 'Recipes and meal planner', line: 'Recipes, a week planner and one grocery list.', live: true },
-  { slug: 'docease', name: 'DocEase', kind: 'PDF reader and scanner', line: 'Sign, scan and merge PDFs without uploading them.', live: false },
   { slug: 'grau', name: 'Grau', kind: 'Jiu-jitsu journal', line: 'Training log and belt timeline for BJJ.', live: false },
   { slug: 'fuzzlets', name: 'Fuzzlets', kind: 'Cozy sort puzzle', line: 'Sort the fluffs and tuck them in for the night.', live: false },
   { slug: 'loose-ends', name: 'Loose Ends', kind: 'Thread puzzle', line: 'Pull every thread free.', live: false },
 ];
 
+/** As on LinkedIn (linkedin.com/in/nafish-ahmed-dev), newest first. */
 export const experience = [
-  { company: 'Vimo Software', role: 'Senior Full Stack Developer', period: 'Feb 2025 — now', start: '2025-02', summary: 'Real-time transaction confirmation, financial and blockchain API integrations, encrypted secrets infrastructure, API gateway services, and the move from legacy code to React, Node.js and TypeScript.' },
-  { company: 'Softway Solutions', role: 'Software Engineer', period: 'Mar 2024 — Jan 2025', start: '2024-03', end: '2025-01', summary: 'Backend services and Redis-cached dashboards for Daikin Cloud Services, on AWS AppSync, Lambda and ECS.' },
-  { company: 'Vimo Software', role: 'Full Stack Developer', period: 'Apr 2022 — Feb 2024', start: '2022-04', end: '2024-02', summary: 'Wallet infrastructure, ETH, Binance, Kraken and TRON integrations, and the Sarraf and Sendony fiat systems.' },
-  { company: 'Avital Software', role: 'Full Stack Developer', period: 'Aug 2021 — Mar 2022', start: '2021-08', end: '2022-03', summary: 'Core backend and admin panel for SuperMD: secure data handling, role-based access control and API performance.' },
+  { company: 'Vimo Software', legalName: 'Vimo Software Development Pvt. Ltd.', role: 'Senior Full Stack Developer', type: 'Full-time', place: 'Bengaluru', period: 'Feb 2025 — now', start: '2025-02', summary: 'Rejoined Vimo after Softway. Real-time transaction confirmation, financial and blockchain API integrations, encrypted secrets infrastructure, API gateway services, and the move from legacy code to React, Node.js and TypeScript.' },
+  { company: 'Softway', legalName: 'Softway', role: 'Software Engineer', type: 'Full-time, hybrid', place: 'Bengaluru', period: 'Mar 2024 — Jan 2025', start: '2024-03', end: '2025-01', summary: 'Backend services and Redis-cached dashboards for Daikin Cloud Services, built with the Serverless Framework on AWS Lambda, AppSync and ECS.' },
+  { company: 'Vimo Software', legalName: 'Vimo Software Development Pvt. Ltd.', role: 'Full Stack Developer', type: 'Full-time', place: 'Bengaluru', period: 'Mar 2022 — Mar 2024', start: '2022-03', end: '2024-03', summary: 'The Haaki audiobook platform, wallet infrastructure, ETH, Binance, Kraken and TRON integrations, and the Sarraf and Sendony fiat systems. Angular, Next.js, React and Node.js.' },
+  { company: 'Avital Software', legalName: 'Avital Software Development Pvt Ltd', role: 'Full Stack Developer', type: 'Full-time', place: 'India', period: 'Aug 2021 — Mar 2022', start: '2021-08', end: '2022-03', summary: 'Core backend and admin panel for SuperMD: RESTful web services, secure data handling and role-based access control, with Next.js.' },
+  { company: 'Internshala', legalName: 'Internshala', role: 'Internshala Student Partner', type: 'Internship', place: 'Kolkata', period: 'Aug 2019 — Feb 2020', start: '2019-08', end: '2020-02', summary: 'Student partner programme for Internshala, the internship and training platform.' },
+];
+
+export const education = [
+  { school: 'Camellia Institute of Technology', degree: 'Bachelor of Technology, Civil Engineering', period: '2017 — 2020', start: '2017', end: '2020' },
+  { school: 'Dumkal Polytechnic', degree: 'Diploma, Civil Engineering', period: '2014 — 2017', start: '2014', end: '2017' },
 ];
 
 export const stack = [
   { label: 'Languages', items: ['TypeScript', 'JavaScript', 'Dart', 'PHP'] },
-  { label: 'Backend', items: ['Node.js', 'Express', 'Hono', 'REST APIs', 'Microservices'] },
-  { label: 'Frontend', items: ['React', 'Next.js', 'Svelte', 'Astro'] },
+  { label: 'Backend', items: ['Node.js', 'Express', 'Hono', 'REST APIs', 'WebSocket', 'MQTT', 'Microservices'] },
+  { label: 'Frontend', items: ['React', 'Next.js', 'Angular', 'Svelte', 'Astro', 'WordPress', 'jQuery'] },
   { label: 'Mobile', items: ['React Native', 'Expo', 'Flutter'] },
   { label: 'Data', items: ['MongoDB', 'MySQL', 'Redis', 'SQLite'] },
-  { label: 'Cloud', items: ['AWS EC2 and S3', 'AppSync', 'Lambda', 'ECS', 'Docker', 'Cloudflare'] },
+  { label: 'Cloud', items: ['AWS Lambda', 'AppSync', 'ECS', 'EC2 and S3', 'Serverless Framework', 'Docker', 'Cloudflare'] },
   { label: 'Money', items: ['Wallet ledgers', 'Fiat transfers', 'ETH', 'Binance', 'Kraken', 'TRON'] },
 ];
 
@@ -179,7 +183,7 @@ export const faqs = [
   },
   {
     q: 'What is IDEXA?',
-    a: `${profile.studio.name} (idexa.app) is an independent app studio owned by Nafish Ahmed. It publishes apps for money, paperwork, habits, cooking and play, including Fintraq, Orbit, Dish Dash and Tilewit. Most of its apps keep data on the phone and need no account.`,
+    a: `${profile.studio.name} (idexa.app) is an independent app studio owned by Nafish Ahmed. It publishes apps for money, reminders and puzzle games, including Fintraq, Orbit, Dish Dash, Tilewit and Twin Step. Most of its apps keep data on the phone and need no account.`,
   },
   {
     q: 'How can I contact Nafish?',
