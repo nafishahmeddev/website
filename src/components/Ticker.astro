@@ -1,0 +1,62 @@
+---
+import { stack } from '../data/profile';
+const ticker = stack.flatMap((g) => g.items);
+---
+
+<section class="nums" id="numbers" aria-label="Stack">
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker__track">
+      {[0, 1].map(() => (
+        <div class="ticker__set">
+          {ticker.map((t) => <span class="ticker__item">{t}<span class="ticker__sep">✦</span></span>)}
+        </div>
+      ))}
+    </div>
+  </div>
+
+</section>
+
+<style>
+  .nums {
+    position: relative;
+    z-index: var(--z-page);
+  }
+  .ticker {
+    overflow: hidden;
+    border-block: 1px solid var(--c-line);
+    padding-block: var(--s-5);
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  }
+  .ticker__track {
+    display: flex;
+    width: max-content;
+    animation: ticker 60s linear infinite;
+    /* Scroll speed leans the type: set by motion.ts. */
+    transform: skewX(calc(var(--velocity, 0) * -8deg));
+    transition: transform 300ms var(--ease-out);
+  }
+  .ticker:hover .ticker__track {
+    animation-play-state: paused;
+  }
+  .ticker__set {
+    display: flex;
+    flex: none;
+  }
+  .ticker__item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-6);
+    padding-right: var(--s-6);
+    font-size: var(--t-title);
+    letter-spacing: var(--tr-snug);
+    color: var(--c-text-soft);
+    white-space: nowrap;
+  }
+  .ticker__sep {
+    font-size: 0.5em;
+    color: var(--c-accent-hi);
+  }
+  @keyframes ticker {
+    to { translate: -50% 0; }
+  }
+</style>

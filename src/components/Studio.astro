@@ -2,7 +2,6 @@
 import Eyebrow from './Eyebrow.astro';
 import Split from './Split.astro';
 import { profile, studioApps } from '../data/profile';
-const live = studioApps.filter((a) => a.live).length;
 ---
 
 <section class="section studio" id="studio" aria-labelledby="studio-title">
@@ -11,7 +10,7 @@ const live = studioApps.filter((a) => a.live).length;
     <div class="studio__head">
       <Split id="studio-title" class="heading" lines={['My own apps,', '*on your phone.*']} />
       <div class="studio__intro" data-reveal>
-        <p class="lead">I founded <a class="link" href={profile.studio.url}>{profile.studio.name}</a>, an independent app studio in {profile.city}. It has {live} apps live on Google Play and {studioApps.length - live} more in progress. Most keep your data on the phone and need no account.</p>
+        <p class="lead">I founded <a class="link" href={profile.studio.url}>{profile.studio.name}</a>, an independent app studio in {profile.city}. Its apps cover money, paperwork, habits, cooking and play. Most keep your data on the phone and need no account.</p>
         <a class="btn btn--ghost" href={profile.studio.url} data-magnetic="0.2" data-cursor="Visit">idexa.app <svg class="btn__arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 11 11 3M5 3h6v6" fill="none" stroke="currentColor" stroke-width="1.5" /></svg></a>
       </div>
     </div>

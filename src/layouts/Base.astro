@@ -4,7 +4,7 @@ import '@fontsource-variable/geist-mono/wght.css';
 import '@fontsource/instrument-serif/latin-400-italic.css';
 import 'lenis/dist/lenis.css';
 import '../styles/system.css';
-import { profile, knowsAbout, work, faqs, side } from '../data/profile';
+import { profile, knowsAbout, work, faqs } from '../data/profile';
 
 interface Props {
   title?: string;
@@ -14,7 +14,7 @@ interface Props {
 
 const {
   title = `${profile.name} — ${profile.role} (Node.js, TypeScript, React) in ${profile.city}`,
-  description = `${profile.name} is a ${profile.role.toLowerCase()} in ${profile.city}: ${profile.years} years of Node.js, TypeScript and React, wallet backends for 1M+ customers at ${profile.currentCompany}, and founder of the ${profile.studio.name} app studio.`,
+  description = `${profile.name} is a ${profile.role.toLowerCase()} in ${profile.city} working in Node.js, TypeScript and React: wallet and remittance backends at ${profile.currentCompany}, and founder of the ${profile.studio.name} app studio.`,
   noindex = false,
 } = Astro.props;
 
@@ -73,9 +73,6 @@ const graph = {
         item: { '@type': 'CreativeWork', name: w.name, description: `${w.what}. ${w.points.join(' ')}`, creator: { '@id': person }, keywords: w.stack.join(', ') },
       })),
     },
-    ...side
-      .filter((s) => s.href?.includes('github.com'))
-      .map((s) => ({ '@type': 'SoftwareSourceCode', name: s.name, description: s.detail, codeRepository: s.href, author: { '@id': person }, programmingLanguage: s.stack[0] })),
     {
       '@type': 'FAQPage',
       '@id': `${canonical}#faq`,

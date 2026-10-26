@@ -1,12 +1,12 @@
 import type { APIRoute } from 'astro';
-import { profile, hero, work, studioApps, side, experience, stack, faqs } from '../data/profile';
+import { profile, hero, work, studioApps, experience, stack, faqs } from '../data/profile';
 
 // A plain-text profile for AI assistants (https://llmstxt.org), written from
 // the same data as the page so the two never disagree.
 export const GET: APIRoute = () => {
   const body = `# ${profile.name}
 
-> ${profile.role} in ${profile.city}, ${profile.country}. ${profile.currentTitle} at ${profile.currentCompany} since ${profile.currentSince}. Founder of ${profile.studio.name} (${profile.studio.url}). ${profile.years} years of production Node.js, TypeScript and React.
+> ${profile.role} in ${profile.city}, ${profile.country}. ${profile.currentTitle} at ${profile.currentCompany} since ${profile.currentSince}. Founder of ${profile.studio.name} (${profile.studio.url}). Works in Node.js, TypeScript and React.
 
 ${hero.summary.replace(/\*/g, '')}
 
@@ -26,10 +26,6 @@ ${experience.map((e) => `- ${e.period}: ${e.role}, ${e.company}. ${e.summary}`).
 ## ${profile.studio.name} apps
 
 ${studioApps.map((a) => `- [${a.name}](${profile.studio.url}/${a.slug}/): ${a.kind}. ${a.line} ${a.live ? 'Live on Google Play.' : 'In progress.'}`).join('\n')}
-
-## Libraries and side projects
-
-${side.map((s) => `- ${s.name}: ${s.detail}${s.href ? ` ${s.href}` : ''}`).join('\n')}
 
 ## Stack
 

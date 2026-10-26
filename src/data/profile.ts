@@ -2,10 +2,6 @@
 // sitemap and the llms.txt files all read from this file, so a fact changed
 // here changes everywhere. Keep it factual: no claim that is not true today.
 
-/** First full-time engineering role (Avital Software, August 2021). */
-const careerStart = new Date('2021-08-01');
-const yearsIn = (from: Date) => Math.floor((Date.now() - from.getTime()) / (365.25 * 24 * 3600 * 1000));
-
 export const profile = {
   name: 'Nafish Ahmed',
   givenName: 'Nafish',
@@ -25,7 +21,6 @@ export const profile = {
   github: 'https://github.com/nafishahmeddev',
   linkedin: 'https://www.linkedin.com/in/nafish-ahmed-dev',
   studio: { name: 'IDEXA', url: 'https://idexa.app', role: 'Founder & Owner' },
-  years: yearsIn(careerStart),
   /** When the facts on this page were last checked; used by the sitemap. */
   updated: '2026-10-26',
 };
@@ -51,16 +46,9 @@ export const knowsAbout = [
 ];
 
 export const hero = {
-  lines: ['I build the backend', 'behind a 1M+ customer', '*wallet,* and ship', 'my own *apps.*'],
-  summary: `${profile.years} years of Node.js, TypeScript and React in production. By day I'm ${profile.currentTitle} at ${profile.currentCompany}, working on transaction confirmation, exchange integrations and API gateways. The rest of the time I run ${profile.studio.name}, an independent app studio with 7 apps on Google Play.`,
+  lines: ['I build *wallet* backends', 'by day, and ship', 'my own *apps*', 'the rest of the time.'],
+  summary: `Node.js, TypeScript and React engineer. At ${profile.currentCompany} I'm ${profile.currentTitle}, working on transaction confirmation, exchange integrations and API gateways for a digital wallet. Outside it I run ${profile.studio.name}, an independent studio that publishes local-first apps on Google Play.`,
 };
-
-export const numbers = [
-  { value: profile.years, suffix: '', label: 'years shipping production code', note: 'Since August 2021' },
-  { value: 1, suffix: 'M+', label: 'wallet customers on systems I maintain', note: 'Vimo, 2022 to now' },
-  { value: 4, suffix: '', label: 'exchange and chain networks integrated', note: 'ETH, Binance, Kraken, TRON' },
-  { value: 7, suffix: '', label: 'studio apps live on Google Play', note: 'IDEXA, 4 more in progress' },
-];
 
 export interface Work {
   slug: string;
@@ -82,7 +70,7 @@ export const work: Work[] = [
     period: '2022 — now',
     role: 'Full Stack → Senior Full Stack Developer',
     points: [
-      'Maintain the wallet infrastructure used by more than 1 million customers.',
+      'Maintain the wallet and remittance infrastructure in production.',
       'Designed the real-time transaction confirmation system.',
       'Integrated the ETH, Binance, Kraken and TRON network APIs.',
       'Built the Sarraf and Sendony fiat transaction systems.',
@@ -125,11 +113,11 @@ export const work: Work[] = [
     slug: 'haaki',
     name: 'Haaki',
     what: 'Turkish audiobook and audio drama platform',
-    where: 'Work project',
+    where: 'Vimo Software',
     period: '',
     role: 'Full Stack Developer',
     points: [
-      'Worked on the web app and backend of a Turkish-language audiobook and audio drama service.',
+      'Built the web app and backend of a Turkish-language audiobook and audio drama service at Vimo.',
     ],
     stack: ['React', 'Node.js', 'TypeScript'],
   },
@@ -148,62 +136,20 @@ export const studioApps: StudioApp[] = [
   { slug: 'fintraq', name: 'Fintraq', kind: 'Offline money tracker', line: 'Accounts, budgets and loans in an on-device database. No sign-up.', live: true },
   { slug: 'orbit', name: 'Orbit', kind: 'Bill and life reminders', line: 'Bills, renewals and documents for your home, car and family.', live: true },
   { slug: 'dishdash', name: 'Dish Dash', kind: 'Food puzzle game', line: 'Chain dishes against the clock and build a restaurant.', live: true },
-  { slug: 'tilewit', name: 'Tilewit', kind: 'Puzzle duels', line: 'Two players, the same puzzle, five rounds for the board.', live: true },
+  { slug: 'tilewit', name: 'Tilewit', kind: 'Puzzle duels', line: 'Two players, the same puzzle, on the clock.', live: true },
   { slug: 'twinstep', name: 'Twin Step', kind: 'Mirror puzzle', line: 'One move steers two twins, mirrored.', live: true },
   { slug: 'lifio', name: 'Lifio', kind: 'Habit and mood tracker', line: 'Habits, mood and a one-minute evening check-in.', live: true },
-  { slug: 'yumly', name: 'Yumly', kind: 'Recipes and meal planner', line: '200+ recipes, a week planner and one grocery list.', live: true },
+  { slug: 'yumly', name: 'Yumly', kind: 'Recipes and meal planner', line: 'Recipes, a week planner and one grocery list.', live: true },
   { slug: 'docease', name: 'DocEase', kind: 'PDF reader and scanner', line: 'Sign, scan and merge PDFs without uploading them.', live: false },
   { slug: 'grau', name: 'Grau', kind: 'Jiu-jitsu journal', line: 'Training log and belt timeline for BJJ.', live: false },
   { slug: 'fuzzlets', name: 'Fuzzlets', kind: 'Cozy sort puzzle', line: 'Sort the fluffs and tuck them in for the night.', live: false },
   { slug: 'loose-ends', name: 'Loose Ends', kind: 'Thread puzzle', line: 'Pull every thread free.', live: false },
 ];
 
-export interface Side {
-  name: string;
-  what: string;
-  detail: string;
-  stack: string[];
-  href?: string;
-  linkLabel?: string;
-}
-
-export const side: Side[] = [
-  {
-    name: 'dVal',
-    what: 'Schema validation library',
-    detail: 'A small schema-based validator for Node.js and TypeScript backends, published on npm.',
-    stack: ['TypeScript', 'Node.js', 'npm'],
-    href: 'https://github.com/nafishahmeddev/dval',
-    linkLabel: 'Source on GitHub',
-  },
-  {
-    name: 'Secretly',
-    what: 'Environment variable manager',
-    detail: 'An internal tool for managing environment variables securely across several production services.',
-    stack: ['Node.js', 'TypeScript'],
-  },
-  {
-    name: 'Sitee',
-    what: 'Construction site tracker',
-    detail: 'A Flutter app for logging labour, expenses, material stock and daily work across project sites.',
-    stack: ['Flutter', 'Dart'],
-    href: 'http://sitee.idexa.app/',
-    linkLabel: 'Visit Sitee',
-  },
-  {
-    name: 'FinTracker',
-    what: 'The first version of Fintraq',
-    detail: 'A Flutter expense and income tracker with monthly insights. Archived; Fintraq replaced it.',
-    stack: ['Flutter', 'Dart'],
-    href: 'https://github.com/nafishahmeddev/fintracker',
-    linkLabel: 'Archived source',
-  },
-];
-
 export const experience = [
   { company: 'Vimo Software', role: 'Senior Full Stack Developer', period: 'Feb 2025 — now', start: '2025-02', summary: 'Real-time transaction confirmation, financial and blockchain API integrations, encrypted secrets infrastructure, API gateway services, and the move from legacy code to React, Node.js and TypeScript.' },
   { company: 'Softway Solutions', role: 'Software Engineer', period: 'Mar 2024 — Jan 2025', start: '2024-03', end: '2025-01', summary: 'Backend services and Redis-cached dashboards for Daikin Cloud Services, on AWS AppSync, Lambda and ECS.' },
-  { company: 'Vimo Software', role: 'Full Stack Developer', period: 'Apr 2022 — Feb 2024', start: '2022-04', end: '2024-02', summary: 'Wallet infrastructure for 1M+ customers, ETH, Binance, Kraken and TRON integrations, and the Sarraf and Sendony fiat systems.' },
+  { company: 'Vimo Software', role: 'Full Stack Developer', period: 'Apr 2022 — Feb 2024', start: '2022-04', end: '2024-02', summary: 'Wallet infrastructure, ETH, Binance, Kraken and TRON integrations, and the Sarraf and Sendony fiat systems.' },
   { company: 'Avital Software', role: 'Full Stack Developer', period: 'Aug 2021 — Mar 2022', start: '2021-08', end: '2022-03', summary: 'Core backend and admin panel for SuperMD: secure data handling, role-based access control and API performance.' },
 ];
 
@@ -221,7 +167,7 @@ export const stack = [
 export const faqs = [
   {
     q: 'Who is Nafish Ahmed?',
-    a: `Nafish Ahmed is a ${profile.role.toLowerCase()} based in ${profile.city}, ${profile.country}. He is ${profile.currentTitle} at ${profile.currentCompany}, where he has worked on a digital wallet used by more than 1 million customers, and the founder of ${profile.studio.name}, an independent studio that publishes mobile apps on Google Play.`,
+    a: `Nafish Ahmed is a ${profile.role.toLowerCase()} based in ${profile.city}, ${profile.country}. He is ${profile.currentTitle} at ${profile.currentCompany}, where he works on a digital wallet and remittance platform, and the founder of ${profile.studio.name}, an independent studio that publishes mobile apps on Google Play.`,
   },
   {
     q: 'What technologies does Nafish work with?',
