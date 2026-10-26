@@ -1,6 +1,6 @@
 # nafish.me
 
-Personal site of Nafish Ahmed. Astro, no UI framework, one page.
+Personal site of Nafish Ahmed. Astro with server rendering on Cloudflare Workers, no UI framework, one page.
 
 ## Where things are
 
@@ -12,7 +12,11 @@ Personal site of Nafish Ahmed. Astro, no UI framework, one page.
 | `src/scripts/gl.ts` | The WebGL topographic field (one fragment shader, no library). |
 | `src/scripts/sfx.ts` | Interface sound, synthesised with Web Audio. Off by default. |
 | `src/scripts/motion.ts` | Smooth scroll (Lenis), reveals, cursor, magnetic buttons, counters, toggles. Each is opt-in via a `data-*` attribute. |
-| `src/pages/llms.txt.ts`, `robots.txt.ts`, `sitemap.xml.ts` | Search and AI-assistant files, generated from `profile.ts`. |
+| `src/lib/agent.ts` | The profile as Markdown, for AI agents. Served at `/llms.txt`, `/index.md`, and at `/` when a client sends `Accept: text/markdown`. |
+| `src/middleware.ts` | Runs on the Worker: Markdown for agents, security and cache headers, `www` to bare domain. |
+| `src/pages/robots.txt.ts`, `sitemap.xml.ts`, `llms.txt.ts`, `index.md.ts` | Search and agent files, prerendered at build time. |
+| `public/_headers` | Headers for files served straight from Cloudflare assets. |
+| `wrangler.jsonc` | Cloudflare Workers configuration. |
 
 ## Design rules
 
@@ -27,5 +31,17 @@ Personal site of Nafish Ahmed. Astro, no UI framework, one page.
 ```bash
 npm install
 npm run dev      # localhost:4321
-npm run build    # static site in dist/
+npm run build    # Worker in dist/server, static files in dist/client
+npm run check    # astro check
+npx wrangler dev # run the built Worker locally, as Cloudflare will
 ```
+
+## Deploy (Cloudflare Workers Builds)
+
+Cloudflare builds and deploys every push to `master`.
+
+1. Cloudflare dashboard → **Workers & Pages → Create → Import a repository** → `nafishahmeddev/website`.
+2. Build command `npm run build`, deploy command `npx wrangler deploy`, root `/`, Node 22 or newer.
+3. **Settings → Domains & Routes**: add `nafish.me` and `www.nafish.me` as custom domains. The Worker redirects `www` to the bare domain.
+
+The Worker is named `nafish-website` (see `wrangler.jsonc`).

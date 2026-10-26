@@ -5,6 +5,8 @@ import { profile } from '../data/profile';
 // so a stricter default added later cannot shut one out by accident.
 const assistants = ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-SearchBot', 'Claude-User', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Applebot', 'Applebot-Extended', 'Bingbot', 'DuckAssistBot', 'Meta-ExternalAgent', 'Amazonbot', 'MistralAI-User', 'CCBot'];
 
+export const prerender = true;
+
 export const GET: APIRoute = () =>
   new Response(
     [`User-agent: *\nAllow: /`, ...assistants.map((b) => `User-agent: ${b}\nAllow: /`), `Sitemap: ${profile.url}/sitemap.xml`].join('\n\n') + '\n',

@@ -1,0 +1,30 @@
+# Headers for files Cloudflare serves straight from assets (everything
+# prerendered). Pages rendered by the Worker get theirs from src/middleware.ts.
+/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
+
+/apps/*
+  Cache-Control: public, max-age=2592000
+
+/nafish.webp
+  Cache-Control: public, max-age=2592000
+
+/og.png
+  Cache-Control: public, max-age=86400
+
+/llms.txt
+  Cache-Control: public, max-age=600, s-maxage=3600
+
+/index.md
+  Cache-Control: public, max-age=600, s-maxage=3600
+  X-Robots-Tag: noindex
+
+/robots.txt
+  Cache-Control: public, max-age=3600
+
+/sitemap.xml
+  Cache-Control: public, max-age=3600

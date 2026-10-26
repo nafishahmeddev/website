@@ -1,39 +1,8 @@
 import type { APIRoute } from 'astro';
-import { profile, hero, work, studioApps, experience, stack, faqs } from '../data/profile';
+import { profileMarkdown } from '../lib/agent';
 
-// A plain-text profile for AI assistants (https://llmstxt.org), written from
-// the same data as the page so the two never disagree.
-export const GET: APIRoute = () => {
-  const body = `# ${profile.name}
+export const prerender = true;
 
-> ${profile.role} in ${profile.city}, ${profile.country}. ${profile.currentTitle} at ${profile.currentCompany} since ${profile.currentSince}. Founder of ${profile.studio.name} (${profile.studio.url}). Works in Node.js, TypeScript and React.
-
-${hero.summary.replace(/\*/g, '')}
-
-Contact: ${profile.email}
-GitHub: ${profile.github}
-LinkedIn: ${profile.linkedin}
-Website: ${profile.url}/
-
-## Selected work
-
-${work.map((w) => `### ${w.name}: ${w.what}\n${[w.where, w.period, w.role].filter(Boolean).join(' · ')}\n${w.points.map((p) => `- ${p}`).join('\n')}\nStack: ${w.stack.join(', ')}`).join('\n\n')}
-
-## Experience
-
-${experience.map((e) => `- ${e.period}: ${e.role}, ${e.company}. ${e.summary}`).join('\n')}
-
-## ${profile.studio.name} apps
-
-${studioApps.map((a) => `- [${a.name}](${profile.studio.url}/${a.slug}/): ${a.kind}. ${a.line} ${a.live ? 'Live on Google Play.' : 'In progress.'}`).join('\n')}
-
-## Stack
-
-${stack.map((g) => `- ${g.label}: ${g.items.join(', ')}`).join('\n')}
-
-## Questions
-
-${faqs.map((f) => `Q: ${f.q}\nA: ${f.a}`).join('\n\n')}
-`;
-  return new Response(body, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
-};
+// The profile for AI assistants (https://llmstxt.org).
+export const GET: APIRoute = () =>
+  new Response(profileMarkdown(), { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });

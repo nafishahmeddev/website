@@ -1,0 +1,16 @@
+// Cloudflare Workers configuration for nafish.me.
+// Kept in the repository so every build on Cloudflare uses the same settings.
+// Workers Builds: build command `npm run build`, deploy command `npx wrangler deploy`.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "nafish-website",
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "compatibility_date": "2026-09-17",
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./dist"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

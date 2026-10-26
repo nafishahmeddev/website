@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro';
 import { profile } from '../data/profile';
 
+export const prerender = true;
+
 export const GET: APIRoute = () =>
   new Response(
     `<?xml version="1.0" encoding="UTF-8"?>
