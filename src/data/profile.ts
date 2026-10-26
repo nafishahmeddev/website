@@ -138,6 +138,7 @@ export const studioApps: StudioApp[] = [
   { slug: 'dishdash', name: 'Dish Dash', kind: 'Food puzzle game', line: 'Chain dishes against the clock and build a restaurant.', live: true },
   { slug: 'tilewit', name: 'Tilewit', kind: 'Puzzle duels', line: 'Two players, the same puzzle, on the clock.', live: true },
   { slug: 'twinstep', name: 'Twin Step', kind: 'Mirror puzzle', line: 'One move steers two twins, mirrored.', live: true },
+  { slug: 'neon-widgets', name: 'Neon Widgets', kind: 'Home screen widgets', line: 'Countdown, weather, note, photo and to-do widgets in bold neon colours.', live: false },
   { slug: 'tailstamp', name: 'Tailstamp', kind: 'Pet health records', line: 'Medicine reminders, vaccines and vet visits for dogs, cats and rabbits.', live: false },
   { slug: 'grau', name: 'Grau', kind: 'Jiu-jitsu journal', line: 'Training log and belt timeline for BJJ.', live: false },
   { slug: 'fuzzlets', name: 'Fuzzlets', kind: 'Cozy sort puzzle', line: 'Sort the fluffs and tuck them in for the night.', live: false },
@@ -184,7 +185,7 @@ export const faqs = [
   },
   {
     q: 'What is IDEXA?',
-    a: `${profile.studio.name} (idexa.app) is an independent app studio owned by Nafish Ahmed. It publishes apps for money, reminders, pet health and puzzle games, including Fintraq, Orbit, Tailstamp, Dish Dash, Tilewit and Twin Step. Most of its apps keep data on the phone and need no account.`,
+    a: `${profile.studio.name} (idexa.app) is an independent app studio owned by Nafish Ahmed. It publishes apps for money, reminders, pet health, home screen widgets and puzzle games, including Fintraq, Orbit, Tailstamp, Neon Widgets, Dish Dash, Tilewit and Twin Step. Most of its apps keep data on the phone and need no account.`,
   },
   {
     q: 'How can I contact Nafish?',
