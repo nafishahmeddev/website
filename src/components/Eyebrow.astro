@@ -1,0 +1,6 @@
+---
+interface Props { n: string; label: string; }
+const { n, label } = Astro.props;
+---
+
+<p class="eyebrow" data-reveal><span class="eyebrow__n">{n}</span><span>{label}</span></p>

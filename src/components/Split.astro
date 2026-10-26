@@ -1,0 +1,40 @@
+---
+// A heading whose words rise out of a mask, one after another. Wrap a phrase
+// in *asterisks* to set it in the serif italic. Each item in `lines` starts
+// a new line. The text stays real text: screen readers and crawlers read it
+// as one plain sentence.
+interface Props {
+  lines: string[];
+  as?: 'h1' | 'h2' | 'h3' | 'p';
+  class?: string;
+  delay?: number;
+  id?: string;
+}
+const { lines, as: Tag = 'h2', class: cls, delay = 0, id } = Astro.props;
+
+let i = 0;
+const parsed = lines.map((line) =>
+  line.split(/(\*[^*]+\*)/).filter(Boolean).flatMap((chunk) => {
+    const em = chunk.startsWith('*');
+    return chunk.replace(/\*/g, '').split(/\s+/).filter(Boolean).map((word) => ({ word, em, i: i++ }));
+  }),
+);
+---
+
+<Tag class:list={[cls]} data-split id={id} style={`--d:${delay}ms`}>
+  {parsed.map((words) => (
+    <span class="line">
+      {words.map((w) => (
+        <>
+          <span class="w"><span class="w__i" style={`--i:${w.i}`}>{w.em ? <em>{w.word}</em> : w.word}</span></span>{' '}
+        </>
+      ))}
+    </span>
+  ))}
+</Tag>
+
+<style>
+  .line {
+    display: block;
+  }
+</style>

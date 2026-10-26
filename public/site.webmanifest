@@ -1,19 +1,12 @@
 {
-  "name": "Nafish Ahmed",
+  "name": "Nafish Ahmed — Senior Full-Stack Engineer",
   "short_name": "Nafish",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#08080a",
+  "theme_color": "#08080a",
   "icons": [
-    {
-      "src": "/favicon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/icon-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ],
-  "theme_color": "#1967ff",
-  "background_color": "#060a12",
-  "display": "standalone"
+    { "src": "/favicon-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512x512.png", "sizes": "512x512", "type": "image/png" }
+  ]
 }

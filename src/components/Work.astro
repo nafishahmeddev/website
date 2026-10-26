@@ -1,0 +1,225 @@
+---
+import Eyebrow from './Eyebrow.astro';
+import Split from './Split.astro';
+import { work } from '../data/profile';
+---
+
+<section class="section" id="work" aria-labelledby="work-title">
+  <div class="wrap">
+    <Eyebrow n="01" label="Selected work" />
+    <div class="work__head">
+      <Split id="work-title" class="heading" lines={['Systems people', '*trust with money.*']} />
+      <p class="lead work__intro" data-reveal>Production work since 2021, most of it backend: wallets, exchange integrations, cloud dashboards and healthcare. Open a row to see what I built.</p>
+    </div>
+
+    <ol class="work__list">
+      {work.map((w, i) => (
+        <li class="row" data-reveal style={`--i:${i}`}>
+          <h3 class="row__h">
+            <button class="row__btn" type="button" aria-expanded="false" aria-controls={`work-${w.slug}`} data-toggle data-sfx={i} data-cursor="Open">
+              <span class="row__n mono">{String(i + 1).padStart(2, '0')}</span>
+              <span class="row__name">{w.name}</span>
+              <span class="row__what">{w.what}</span>
+              <span class="row__period mono">{w.period}</span>
+              <span class="row__plus" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div class="row__panel" id={`work-${w.slug}`}>
+            <div class="row__body">
+              <div class="row__facts">
+                <p><span class="label">Role</span>{w.role}</p>
+                <p><span class="label">At</span>{w.where}</p>
+                <div class="tags">{w.stack.map((s) => <span class="tag">{s}</span>)}</div>
+              </div>
+              <ul class="row__points">
+                {w.points.map((p) => <li>{p}</li>)}
+              </ul>
+            </div>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .work__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    align-items: end;
+    gap: var(--s-7);
+    margin-block: var(--s-7) var(--s-8);
+  }
+  .work__intro {
+    max-width: 38ch;
+  }
+  .work__list {
+    border-top: 1px solid var(--c-line-strong);
+  }
+  .row {
+    border-bottom: 1px solid var(--c-line-strong);
+  }
+  .row__h {
+    font: inherit;
+    letter-spacing: normal;
+  }
+  .row__btn {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1.1fr) minmax(0, 1fr) 130px 28px;
+    align-items: center;
+    gap: var(--s-5);
+    padding-block: clamp(20px, 2.4vw, 36px);
+    text-align: left;
+  }
+  /* The accent wipes in from the left, behind the text. */
+  .row__btn::before {
+    content: '';
+    position: absolute;
+    inset: 0 calc(var(--gutter) * -0.5);
+    z-index: -1;
+    background: var(--c-accent);
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path var(--d-base) var(--ease-out);
+  }
+  .row__btn:hover::before,
+  .row__btn[aria-expanded='true']::before {
+    clip-path: inset(0 0 0 0);
+  }
+  .row__btn:hover,
+  .row__btn[aria-expanded='true'] {
+    color: var(--c-accent-ink);
+  }
+  .row__btn:hover .row__what,
+  .row__btn:hover .row__period,
+  .row__btn:hover .row__n,
+  .row__btn[aria-expanded='true'] .row__what,
+  .row__btn[aria-expanded='true'] .row__period,
+  .row__btn[aria-expanded='true'] .row__n {
+    color: color-mix(in srgb, var(--c-accent-ink) 78%, transparent);
+  }
+  .row__n {
+    color: var(--c-mute);
+  }
+  .row__name {
+    font-size: var(--t-title);
+    font-weight: 500;
+    letter-spacing: var(--tr-snug);
+    line-height: 1.1;
+    transition: transform var(--d-base) var(--ease-out);
+  }
+  .row__btn:hover .row__name {
+    transform: translateX(10px);
+  }
+  .row__what {
+    color: var(--c-text-soft);
+    transition: color var(--d-fast);
+  }
+  .row__period {
+    color: var(--c-mute);
+    text-align: right;
+  }
+  .row__plus {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    justify-self: end;
+  }
+  .row__plus::before,
+  .row__plus::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform var(--d-base) var(--ease-out);
+  }
+  .row__plus::after {
+    transform: rotate(90deg);
+  }
+  .row__btn[aria-expanded='true'] .row__plus::after {
+    transform: rotate(0deg);
+  }
+  .row__panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows var(--d-base) var(--ease-out);
+  }
+  .row__panel[data-open] {
+    grid-template-rows: 1fr;
+  }
+  .row__body {
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: var(--s-5);
+  }
+  .row__facts {
+    grid-column: 2;
+    display: grid;
+    gap: var(--s-3);
+    align-content: start;
+    padding-block: var(--s-6) var(--s-7);
+  }
+  .row__facts p {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+  }
+  .row__points {
+    padding-block: var(--s-6) var(--s-7);
+    display: grid;
+    gap: var(--s-3);
+    counter-reset: p;
+  }
+  .row__points li {
+    position: relative;
+    padding-left: var(--s-6);
+    color: var(--c-text-soft);
+  }
+  .row__points li::before {
+    counter-increment: p;
+    content: counter(p, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 0.25em;
+    font-family: var(--f-mono);
+    font-size: var(--t-micro);
+    color: var(--c-accent-hi);
+  }
+  /* Without JavaScript every row is open. */
+  :global(html:not(.js)) .row__panel {
+    grid-template-rows: 1fr;
+  }
+  @media (max-width: 900px) {
+    .work__head {
+      grid-template-columns: 1fr;
+    }
+    .row__btn {
+      grid-template-columns: 36px minmax(0, 1fr) 20px;
+      row-gap: var(--s-1);
+    }
+    .row__what {
+      grid-column: 2;
+      grid-row: 2;
+      font-size: var(--t-small);
+    }
+    .row__period {
+      grid-column: 2;
+      grid-row: 3;
+      text-align: left;
+    }
+    .row__plus {
+      grid-column: 3;
+      grid-row: 1;
+    }
+    .row__body {
+      grid-template-columns: 1fr;
+    }
+    .row__facts {
+      grid-column: 1;
+      padding-bottom: 0;
+    }
+  }
+</style>

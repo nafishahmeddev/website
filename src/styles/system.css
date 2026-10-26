@@ -1,0 +1,462 @@
+/* nafish.me design system.
+ *
+ * One file, four layers:
+ *   1. Tokens: colour, type, space, radius, motion. Nothing outside this
+ *      layer uses a raw value; components read tokens.
+ *   2. Base: the page, text defaults, focus and selection.
+ *   3. Primitives: the few reusable pieces (container, eyebrow, button,
+ *      tag, rule, reveal) every section is built from.
+ *   4. Motion states: what moves, gated on html.js so the page is complete
+ *      without JavaScript and for crawlers.
+ *
+ * Direction: ink and bone with one colour, cobalt, taken from the portrait.
+ * Geist for everything, Geist Mono for data and labels, Instrument Serif
+ * italic for the single emphasised phrase in a heading. Motion is slow out,
+ * fast in (expo), never bouncy.
+ */
+
+@layer tokens, base, primitives, motion;
+
+@layer tokens {
+  :root {
+    /* Colour: dark is the default identity. */
+    --c-bg: #08080a;
+    --c-bg-raise: #111114;
+    --c-bg-sink: #050506;
+    --c-text: #ece8df;
+    --c-text-soft: #b9b5ac;
+    --c-mute: #7d7a74;
+    --c-line: rgb(236 232 223 / 0.11);
+    --c-line-strong: rgb(236 232 223 / 0.22);
+    --c-accent: #2f4dff;
+    --c-accent-hi: #5c74ff;
+    --c-accent-ink: #ffffff;
+    --c-live: #3ad29f;
+    --c-overlay: rgb(8 8 10 / 0.72);
+
+    /* Type families. */
+    --f-sans: 'Geist Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --f-mono: 'Geist Mono Variable', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    --f-serif: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+
+    /* Type scale: fluid between 360px and 1600px viewports. */
+    --t-micro: 0.6875rem;
+    --t-small: 0.8125rem;
+    --t-body: clamp(0.9375rem, 0.9rem + 0.18vw, 1.0625rem);
+    --t-lead: clamp(1.125rem, 1rem + 0.55vw, 1.5rem);
+    --t-title: clamp(1.375rem, 1.1rem + 1.1vw, 2.25rem);
+    --t-head: clamp(2.25rem, 1.4rem + 3.8vw, 5.25rem);
+    --t-display: clamp(2.75rem, 0.9rem + 7.6vw, 9.75rem);
+    --t-mega: clamp(3rem, 0.4rem + 11.5vw, 15rem);
+
+    --lh-tight: 0.92;
+    --lh-snug: 1.12;
+    --lh-body: 1.6;
+    --tr-tight: -0.045em;
+    --tr-snug: -0.025em;
+    --tr-label: 0.08em;
+
+    /* Space: a 4px base, doubled at the large end. */
+    --s-1: 4px;
+    --s-2: 8px;
+    --s-3: 12px;
+    --s-4: 16px;
+    --s-5: 24px;
+    --s-6: 32px;
+    --s-7: 48px;
+    --s-8: 64px;
+    --s-9: 96px;
+    --s-10: 144px;
+    --gutter: clamp(16px, 3.6vw, 56px);
+    --section: clamp(96px, 7vw + 64px, 200px);
+    --max: 1520px;
+
+    /* Shape. */
+    --r-sm: 6px;
+    --r-md: 14px;
+    --r-lg: 28px;
+    --r-pill: 999px;
+
+    /* Motion. */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    --ease-snap: cubic-bezier(0.2, 0.9, 0.1, 1);
+    --d-fast: 180ms;
+    --d-base: 480ms;
+    --d-slow: 1100ms;
+    --stagger: 70ms;
+
+    /* Layers. */
+    --z-gl: 0;
+    --z-page: 1;
+    --z-header: 50;
+    --z-cursor: 90;
+    --z-toast: 95;
+
+    color-scheme: dark;
+  }
+
+  :root[data-theme='light'] {
+    --c-bg: #f2efe8;
+    --c-bg-raise: #fbfaf6;
+    --c-bg-sink: #e7e3da;
+    --c-text: #0f0f11;
+    --c-text-soft: #3d3c39;
+    --c-mute: #74716a;
+    --c-line: rgb(15 15 17 / 0.11);
+    --c-line-strong: rgb(15 15 17 / 0.24);
+    --c-accent: #1f3dff;
+    --c-accent-hi: #1f3dff;
+    --c-live: #13915f;
+    --c-overlay: rgb(242 239 232 / 0.78);
+    color-scheme: light;
+  }
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    background: var(--c-bg);
+    scroll-padding-top: 88px;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100svh;
+    background: var(--c-bg);
+    color: var(--c-text);
+    font-family: var(--f-sans);
+    font-size: var(--t-body);
+    line-height: var(--lh-body);
+    font-feature-settings: 'ss01', 'cv11';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  p,
+  ul,
+  ol,
+  dl,
+  dd,
+  figure {
+    margin: 0;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-weight: 500;
+    letter-spacing: var(--tr-snug);
+    line-height: var(--lh-snug);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ul,
+  ol {
+    padding: 0;
+    list-style: none;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img,
+  svg,
+  canvas {
+    display: block;
+    max-width: 100%;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  em {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background: var(--c-accent);
+    color: var(--c-accent-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--c-accent-hi);
+    outline-offset: 3px;
+    border-radius: var(--r-sm);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .skip {
+    position: fixed;
+    left: var(--s-4);
+    top: var(--s-4);
+    z-index: 100;
+    padding: var(--s-2) var(--s-4);
+    background: var(--c-accent);
+    color: var(--c-accent-ink);
+    border-radius: var(--r-pill);
+    transform: translateY(-200%);
+  }
+  .skip:focus {
+    transform: none;
+  }
+}
+
+@layer primitives {
+  .wrap {
+    width: 100%;
+    max-width: var(--max);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .section {
+    position: relative;
+    z-index: var(--z-page);
+    padding-block: var(--section);
+  }
+
+  /* Section heading row: index number, label, rule. */
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    font-family: var(--f-mono);
+    font-size: var(--t-micro);
+    font-weight: 500;
+    letter-spacing: var(--tr-label);
+    text-transform: uppercase;
+    color: var(--c-mute);
+  }
+  .eyebrow__n {
+    color: var(--c-accent-hi);
+  }
+  .eyebrow::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--c-line);
+  }
+  .eyebrow--bare::after {
+    display: none;
+  }
+
+  .heading {
+    font-size: var(--t-head);
+    line-height: 1;
+    letter-spacing: var(--tr-tight);
+    font-weight: 500;
+  }
+  .heading em {
+    color: var(--c-accent-hi);
+  }
+
+  .lead {
+    font-size: var(--t-lead);
+    line-height: 1.45;
+    color: var(--c-text-soft);
+    letter-spacing: -0.01em;
+  }
+
+  .mono {
+    font-family: var(--f-mono);
+    font-size: var(--t-small);
+    letter-spacing: 0;
+  }
+
+  .label {
+    font-family: var(--f-mono);
+    font-size: var(--t-micro);
+    letter-spacing: var(--tr-label);
+    text-transform: uppercase;
+    color: var(--c-mute);
+  }
+
+  /* Buttons: a pill whose fill rises from below on hover. */
+  .btn {
+    --btn-bg: var(--c-text);
+    --btn-ink: var(--c-bg);
+    --btn-fill: var(--c-accent);
+    --btn-fill-ink: var(--c-accent-ink);
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-3);
+    height: 52px;
+    padding-inline: var(--s-5);
+    border-radius: var(--r-pill);
+    background: var(--btn-bg);
+    color: var(--btn-ink);
+    font-size: var(--t-small);
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    overflow: hidden;
+    transition: color var(--d-base) var(--ease-out);
+  }
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--btn-fill);
+    border-radius: inherit;
+    transform: translateY(101%);
+    transition: transform var(--d-base) var(--ease-out);
+  }
+  .btn:hover {
+    color: var(--btn-fill-ink);
+  }
+  .btn:hover::before {
+    transform: none;
+  }
+  .btn--ghost {
+    --btn-bg: transparent;
+    --btn-ink: var(--c-text);
+    box-shadow: inset 0 0 0 1px var(--c-line-strong);
+  }
+  .btn__arrow {
+    width: 14px;
+    height: 14px;
+    transition: transform var(--d-base) var(--ease-out);
+  }
+  .btn:hover .btn__arrow {
+    transform: translateX(3px);
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    height: 26px;
+    padding-inline: 10px;
+    border-radius: var(--r-pill);
+    box-shadow: inset 0 0 0 1px var(--c-line-strong);
+    font-family: var(--f-mono);
+    font-size: var(--t-micro);
+    color: var(--c-text-soft);
+    white-space: nowrap;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .dot-live {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--c-live);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--c-live) 60%, transparent);
+    animation: pulse 2.4s var(--ease-out) infinite;
+  }
+
+  /* Text link with an underline that draws in. */
+  .link {
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+    transition: background-size var(--d-base) var(--ease-out);
+    padding-bottom: 2px;
+  }
+  .link:hover {
+    background-size: 100% 1px;
+  }
+
+  /* Words split for staggered reveals (see components/Split.astro). */
+  .w {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+  .w__i {
+    display: inline-block;
+  }
+}
+
+@layer motion {
+  @keyframes pulse {
+    70% {
+      box-shadow: 0 0 0 8px transparent;
+    }
+    100% {
+      box-shadow: 0 0 0 0 transparent;
+    }
+  }
+
+  /* Only hide what will be revealed when JavaScript is running. */
+  html.js [data-reveal] {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity var(--d-slow) var(--ease-out),
+      transform var(--d-slow) var(--ease-out);
+    transition-delay: calc(var(--i, 0) * var(--stagger));
+  }
+  html.js [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  html.js [data-split] .w__i {
+    transform: translateY(108%);
+    transition: transform var(--d-slow) var(--ease-out);
+    transition-delay: calc(var(--d, 0ms) + var(--i, 0) * 42ms);
+  }
+  html.js [data-split].is-in .w__i {
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 1ms !important;
+      transition-delay: 0ms !important;
+    }
+    html.js [data-reveal],
+    html.js [data-split] .w__i {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}

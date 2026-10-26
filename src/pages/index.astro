@@ -1,20 +1,26 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import SiteHeader from '../components/SiteHeader.astro';
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
-import Projects from '../components/Projects.astro';
+import Numbers from '../components/Numbers.astro';
+import Work from '../components/Work.astro';
+import Studio from '../components/Studio.astro';
+import Side from '../components/Side.astro';
 import Experience from '../components/Experience.astro';
-import StackServices from '../components/StackServices.astro';
-import ContactFooter from '../components/ContactFooter.astro';
+import Faq from '../components/Faq.astro';
+import Contact from '../components/Contact.astro';
 ---
 
-<BaseLayout>
-	<SiteHeader />
-	<main>
-		<Hero />
-		<Projects />
-		<Experience />
-		<StackServices />
-	</main>
-	<ContactFooter />
-</BaseLayout>
+<Base>
+  <Header />
+  <main id="main">
+    <Hero />
+    <Numbers />
+    <Work />
+    <Studio />
+    <Side />
+    <Experience />
+    <Faq />
+  </main>
+  <Contact />
+</Base>

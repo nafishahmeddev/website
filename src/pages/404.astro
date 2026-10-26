@@ -1,0 +1,34 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+---
+
+<Base title="Page not found — Nafish Ahmed" description="This address does not exist on nafish.me." noindex>
+  <Header />
+  <main id="main" class="nf wrap">
+    <p class="label">Error 404</p>
+    <h1 class="nf__h">Off the <em>map.</em></h1>
+    <p class="lead">This page does not exist. The rest of the site is one scroll long.</p>
+    <a class="btn" href="/">Back to nafish.me</a>
+  </main>
+</Base>
+
+<style>
+  .nf {
+    position: relative;
+    z-index: var(--z-page);
+    min-height: 100svh;
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: var(--s-5);
+  }
+  .nf__h {
+    font-size: var(--t-display);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--tr-tight);
+  }
+  .nf__h em {
+    color: var(--c-accent-hi);
+  }
+</style>

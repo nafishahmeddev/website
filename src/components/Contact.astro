@@ -1,0 +1,139 @@
+---
+import { profile } from '../data/profile';
+const [user, host] = profile.email.split('@');
+const links = [
+  { label: 'GitHub', href: profile.github, handle: 'nafishahmeddev' },
+  { label: 'LinkedIn', href: profile.linkedin, handle: 'nafish-ahmed-dev' },
+  { label: profile.studio.name, href: profile.studio.url, handle: 'idexa.app' },
+];
+---
+
+<section class="contact" id="contact" aria-labelledby="contact-title">
+  <div class="wrap">
+    <p class="eyebrow eyebrow--bare" data-reveal><span class="eyebrow__n">06</span><span>Contact</span></p>
+    <h2 id="contact-title" class="contact__title" data-reveal>Building something that moves money, or an app that should <em>stay on the phone?</em></h2>
+
+    <div class="contact__mail" data-reveal>
+      <a class="mail" href={`mailto:${profile.email}`} data-cursor="Write" data-sfx="4">
+        <span>{user}</span><span class="mail__at">@</span><span>{host}</span>
+      </a>
+      <button class="btn btn--ghost" type="button" data-copy={profile.email} data-magnetic="0.2">Copy address</button>
+    </div>
+
+    <ul class="contact__links">
+      {links.map((l, i) => (
+        <li data-reveal style={`--i:${i}`}>
+          <a href={l.href} rel="me noopener" target="_blank" data-sfx={i} data-cursor="Open">
+            <span class="label">{l.label}</span>
+            <span class="contact__handle">{l.handle} <span aria-hidden="true">↗</span></span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <footer class="foot wrap">
+    <p class="mono">© {new Date().getFullYear()} {profile.name}</p>
+    <p class="mono">{profile.city}, {profile.country} · <span data-clock>--:--</span> IST</p>
+    <p class="mono">Built with Astro and a fragment shader. <a class="link" href="/llms.txt">llms.txt</a></p>
+  </footer>
+</section>
+
+<style>
+  .contact {
+    position: relative;
+    z-index: var(--z-page);
+    padding-top: var(--section);
+    border-top: 1px solid var(--c-line);
+    background: linear-gradient(transparent, color-mix(in srgb, var(--c-bg-sink) 80%, transparent) 40%);
+  }
+  .contact__title {
+    margin-top: var(--s-6);
+    font-size: var(--t-title);
+    max-width: 30ch;
+    color: var(--c-text-soft);
+  }
+  .contact__title em {
+    color: var(--c-text);
+  }
+  .contact__mail {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--s-5);
+    margin-block: var(--s-7) var(--s-8);
+  }
+  .mail {
+    font-size: var(--t-mega);
+    line-height: 0.9;
+    letter-spacing: -0.055em;
+    font-weight: 500;
+    display: inline-flex;
+    transition: color var(--d-base) var(--ease-out);
+  }
+  .mail span {
+    display: inline-block;
+    transition: transform var(--d-slow) var(--ease-out);
+  }
+  .mail__at {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--c-accent-hi);
+    padding-inline: 0.04em;
+  }
+  .mail:hover .mail__at {
+    transform: rotate(-360deg);
+  }
+  .mail:hover {
+    color: var(--c-accent-hi);
+  }
+  .contact__links {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid var(--c-line-strong);
+  }
+  .contact__links a {
+    display: grid;
+    gap: var(--s-2);
+    padding: var(--s-5) var(--s-5) var(--s-5) 0;
+    transition: padding var(--d-base) var(--ease-out);
+  }
+  .contact__links li + li a {
+    padding-left: var(--s-5);
+    border-left: 1px solid var(--c-line-strong);
+  }
+  .contact__handle {
+    font-size: var(--t-lead);
+    transition: color var(--d-fast);
+  }
+  .contact__links a:hover .contact__handle {
+    color: var(--c-accent-hi);
+  }
+  .foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--s-3) var(--s-6);
+    padding-block: var(--s-8) var(--s-6);
+    color: var(--c-mute);
+  }
+  .foot .mono {
+    font-size: var(--t-micro);
+  }
+  @media (max-width: 700px) {
+    .mail {
+      font-size: clamp(2rem, 11.5vw, 4rem);
+      flex-wrap: wrap;
+    }
+    .contact__links {
+      grid-template-columns: 1fr;
+    }
+    .contact__links li + li a {
+      padding-left: 0;
+      border-left: 0;
+      border-top: 1px solid var(--c-line-strong);
+    }
+  }
+</style>

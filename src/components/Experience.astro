@@ -1,30 +1,158 @@
 ---
-import SectionShell from './SectionShell.astro';
-import { experience } from '../data/portfolio';
+import Eyebrow from './Eyebrow.astro';
+import Split from './Split.astro';
+import { experience, stack, profile } from '../data/profile';
 ---
 
-<SectionShell
-  id="experience"
-  title="Experience built around shipping"
-  lead="Simple process, readable systems, and work that remains editable after launch."
->
-  <div class="mt-10 grid gap-4">
-    {
-      experience.map((item, index) => (
-        <article class="reveal border-run motion-lift grid gap-5 rounded-[28px] border border-[var(--line)] bg-[color-mix(in_srgb,var(--surface-elevated)_78%,transparent)] p-6 md:grid-cols-[16rem_1fr]" style={`transition-delay:${index * 80}ms`}>
-          <div>
-            <p class="font-mono text-sm font-semibold text-[var(--accent)]">{item.period}</p>
-            <h3 class="mt-2 text-xl font-semibold text-[var(--text)]">{item.role}</h3>
-            <p class="mt-1 text-sm text-[var(--text-muted)]">{item.company}, {item.location}</p>
+<section class="section" id="experience" aria-labelledby="exp-title">
+  <div class="wrap">
+    <Eyebrow n="04" label="Experience" />
+    <div class="exp">
+      <div class="exp__aside">
+        <Split id="exp-title" class="heading" lines={[`${profile.years} years,`, '*four roles.*']} />
+        <p class="lead" data-reveal>Vimo Software, Softway Solutions and Avital Software: fintech, cloud dashboards and healthcare, newest first.</p>
+      </div>
+
+      <ol class="tl">
+        {experience.map((e, i) => (
+          <li class="tl__item" data-reveal style={`--i:${i}`}>
+            <p class="tl__period mono"><time datetime={e.start}>{e.period.split(' — ')[0]}</time> — {e.end ? <time datetime={e.end}>{e.period.split(' — ')[1]}</time> : 'now'}</p>
+            <h3 class="tl__role">{e.role}</h3>
+            <p class="tl__co">{e.company}</p>
+            <p class="tl__sum">{e.summary}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+
+    <div class="stack" id="stack" aria-labelledby="stack-title">
+      <h3 id="stack-title" class="label stack__title" data-reveal>What I use</h3>
+      <dl class="stack__grid">
+        {stack.map((g, i) => (
+          <div class="stack__group" data-reveal style={`--i:${i}`}>
+            <dt class="label">{g.label}</dt>
+            <dd>{g.items.join(', ')}</dd>
           </div>
-          <div>
-            <p class="max-w-4xl leading-7 text-[var(--text-muted)]">{item.details}</p>
-            <div class="mt-5 flex flex-wrap gap-2">
-              {item.stack.map((tech) => <span class="rounded-full border border-[var(--line)] px-3 py-1.5 font-mono text-xs text-[var(--text)]">{tech}</span>)}
-            </div>
-          </div>
-        </article>
-      ))
-    }
+        ))}
+      </dl>
+    </div>
   </div>
-</SectionShell>
+</section>
+
+<style>
+  .exp {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+    gap: var(--s-8);
+    margin-top: var(--s-7);
+  }
+  .exp__aside {
+    position: sticky;
+    top: 120px;
+    align-self: start;
+    display: grid;
+    gap: var(--s-5);
+  }
+  .exp__aside .lead {
+    max-width: 34ch;
+  }
+  .tl {
+    position: relative;
+    display: grid;
+    gap: var(--s-8);
+    padding-left: var(--s-7);
+  }
+  /* The line fills as you scroll through it, where the browser supports it. */
+  .tl::before,
+  .tl::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: var(--c-line-strong);
+  }
+  .tl::after {
+    background: var(--c-accent-hi);
+    transform-origin: top;
+    transform: scaleY(1);
+  }
+  @supports (animation-timeline: view()) {
+    .tl::after {
+      animation: fill linear both;
+      animation-timeline: view();
+      animation-range: entry 40% cover 60%;
+    }
+    @keyframes fill {
+      from { transform: scaleY(0); }
+      to { transform: scaleY(1); }
+    }
+  }
+  .tl__item {
+    position: relative;
+    display: grid;
+    gap: var(--s-2);
+  }
+  .tl__item::before {
+    content: '';
+    position: absolute;
+    left: calc(var(--s-7) * -1 + 1px);
+    top: 0.45em;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--c-bg);
+    box-shadow: inset 0 0 0 1.5px var(--c-accent-hi);
+    z-index: 1;
+  }
+  .tl__item:first-child::before {
+    background: var(--c-accent-hi);
+  }
+  .tl__period {
+    color: var(--c-mute);
+  }
+  .tl__role {
+    font-size: var(--t-title);
+    letter-spacing: var(--tr-snug);
+  }
+  .tl__co {
+    color: var(--c-accent-hi);
+  }
+  .tl__sum {
+    color: var(--c-text-soft);
+    max-width: 56ch;
+  }
+  .stack {
+    margin-top: var(--section);
+    padding-top: var(--s-6);
+    border-top: 1px solid var(--c-line-strong);
+  }
+  .stack__title {
+    font: inherit;
+    margin-bottom: var(--s-6);
+  }
+  .stack__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+    gap: var(--s-6) var(--s-5);
+  }
+  .stack__group {
+    display: grid;
+    gap: var(--s-2);
+  }
+  .stack__group dd {
+    font-size: var(--t-lead);
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+  }
+  @media (max-width: 900px) {
+    .exp {
+      grid-template-columns: 1fr;
+      gap: var(--s-7);
+    }
+    .exp__aside {
+      position: static;
+    }
+  }
+</style>
