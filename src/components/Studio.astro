@@ -2,6 +2,11 @@
 import Eyebrow from './Eyebrow.astro';
 import Split from './Split.astro';
 import { profile, studioApps } from '../data/profile';
+
+const groups = [
+  { label: 'On Google Play', apps: studioApps.filter((a) => a.live) },
+  { label: 'In progress', apps: studioApps.filter((a) => !a.live) },
+];
 ---
 
 <section class="section studio" id="studio" aria-labelledby="studio-title">
@@ -15,23 +20,81 @@ import { profile, studioApps } from '../data/profile';
       </div>
     </div>
 
-    <ul class="apps">
-      {studioApps.map((a, i) => (
-        <li data-reveal style={`--i:${i % 4}`}>
-          <a class="app" href={`${profile.studio.url}/${a.slug}/`} data-sfx={i} data-cursor="View">
-            <span class="app__top">
-              <img class="app__icon" src={`/apps/${a.slug}.webp`} alt="" width="56" height="56" loading="lazy" decoding="async" />
-              <span class:list={['app__status mono', a.live && 'is-live']}>{a.live ? <><span class="dot-live" /> On Google Play</> : 'In progress'}</span>
-            </span>
-            <span class="app__name">{a.name}</span>
-            <span class="app__kind label">{a.kind}</span>
-            <span class="app__line">{a.line}</span>
-          </a>
-        </li>
+    <div class="index" data-index>
+      {groups.map((g, gi) => (
+        <div class="index__group">
+          <h3 class="index__label label" data-reveal>
+            {gi === 0 && <span class="dot-live" />}
+            {g.label}
+          </h3>
+          <ul class="index__list">
+            {g.apps.map((a, i) => (
+              <li data-reveal style={`--i:${i}`}>
+                <a class="idx" href={`${profile.studio.url}/${a.slug}/`} data-sfx={i + gi * 5} data-cursor="View" data-preview={`/apps/${a.slug}.webp`}>
+                  <img class="idx__icon" src={`/apps/${a.slug}.webp`} alt="" width="44" height="44" loading="lazy" decoding="async" />
+                  <span class="idx__name">{a.name}</span>
+                  <span class="idx__kind label">{a.kind}</span>
+                  <span class="idx__line">{a.line}</span>
+                  <svg class="idx__arrow" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 11 11 3M5 3h6v6" fill="none" stroke="currentColor" stroke-width="1.5" /></svg>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
       ))}
-    </ul>
+
+      <!-- Follows the pointer over the list and shows the app's icon, large. -->
+      <div class="preview" data-preview-el aria-hidden="true">
+        <img src="" alt="" width="200" height="200" data-preview-img />
+      </div>
+    </div>
   </div>
 </section>
+
+<script>
+  const index = document.querySelector<HTMLElement>('[data-index]');
+  const box = document.querySelector<HTMLElement>('[data-preview-el]');
+  const img = document.querySelector<HTMLImageElement>('[data-preview-img]');
+  const fine = matchMedia('(pointer: fine)').matches;
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (index && box && img && fine && !still) {
+    const pos = { x: 0, y: 0 };
+    const now = { x: 0, y: 0, tilt: 0 };
+    let raf = 0;
+    const tick = () => {
+      const dx = pos.x - now.x;
+      now.x += dx * 0.14;
+      now.y += (pos.y - now.y) * 0.14;
+      // Lean into the direction of travel.
+      now.tilt += (Math.max(-18, Math.min(18, dx * 0.12)) - now.tilt) * 0.12;
+      box.style.transform = `translate3d(${now.x}px, ${now.y}px, 0) rotate(${now.tilt}deg)`;
+      raf = requestAnimationFrame(tick);
+    };
+
+    index.querySelectorAll<HTMLElement>('[data-preview]').forEach((row) => {
+      row.addEventListener('pointerenter', () => {
+        if (img.getAttribute('src') !== row.dataset.preview) img.src = row.dataset.preview!;
+        box.classList.add('is-on');
+      });
+    });
+    index.addEventListener('pointermove', (e) => {
+      const r = index.getBoundingClientRect();
+      pos.x = e.clientX - r.left;
+      pos.y = e.clientY - r.top;
+      if (!raf) {
+        now.x = pos.x;
+        now.y = pos.y;
+        tick();
+      }
+    });
+    index.addEventListener('pointerleave', () => {
+      box.classList.remove('is-on');
+      cancelAnimationFrame(raf);
+      raf = 0;
+    });
+  }
+</script>
 
 <style>
   .studio__head {
@@ -47,83 +110,152 @@ import { profile, studioApps } from '../data/profile';
     justify-items: start;
     max-width: 44ch;
   }
-  .apps {
+
+  .index {
+    position: relative;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1px;
-    background: var(--c-line);
-    border: 1px solid var(--c-line);
-    border-radius: var(--r-lg);
-    overflow: hidden;
+    gap: var(--s-8);
   }
-  .apps li {
+  .index__label {
     display: flex;
-  }
-  .app {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: var(--s-2);
-    padding: var(--s-5);
-    min-height: 260px;
-    background: color-mix(in srgb, var(--c-bg) 88%, transparent);
-    backdrop-filter: blur(6px);
-    transition: background-color var(--d-base) var(--ease-out);
-  }
-  .app:hover {
-    background: var(--c-bg-raise);
-  }
-  .app__top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: auto;
-    padding-bottom: var(--s-6);
-  }
-  .app__icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 14px;
-    box-shadow: 0 0 0 1px var(--c-line);
-    transition: transform var(--d-base) var(--ease-out);
-  }
-  .app:hover .app__icon {
-    transform: translateY(-4px) rotate(-6deg) scale(1.06);
-  }
-  .app__status {
-    display: inline-flex;
     align-items: center;
     gap: var(--s-2);
-    font-size: var(--t-micro);
-    color: var(--c-mute);
+    font-weight: 400;
+    padding-bottom: var(--s-4);
+    border-bottom: 1px solid var(--c-line-strong);
   }
-  .app__status.is-live {
-    color: var(--c-text-soft);
+
+  .idx {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) minmax(0, 0.8fr) minmax(0, 1.4fr) 20px;
+    align-items: center;
+    gap: var(--s-5);
+    padding-block: var(--s-5);
+    border-bottom: 1px solid var(--c-line);
+    transition: color var(--d-base) var(--ease-out);
   }
-  .app__name {
+  .idx__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 11px;
+    box-shadow: 0 0 0 1px var(--c-line);
+    transition:
+      transform var(--d-base) var(--ease-out),
+      opacity var(--d-base) var(--ease-out);
+  }
+  .idx__name {
     font-size: var(--t-title);
     font-weight: 500;
     letter-spacing: var(--tr-snug);
     line-height: 1.1;
+    transition: transform var(--d-base) var(--ease-out);
   }
-  .app__line {
+  .idx__kind {
+    transition: color var(--d-base) var(--ease-out);
+  }
+  .idx__line {
     color: var(--c-text-soft);
     font-size: var(--t-small);
-    max-width: 34ch;
-    min-height: 3.2em;
+    transition: color var(--d-base) var(--ease-out);
   }
+  .idx__arrow {
+    width: 14px;
+    height: 14px;
+    justify-self: end;
+    color: var(--c-mute);
+    transition:
+      transform var(--d-base) var(--ease-out),
+      color var(--d-base) var(--ease-out);
+  }
+
+  /* The hovered row stays lit; the rest step back. */
+  .index__list:hover .idx {
+    color: var(--c-mute);
+  }
+  .index__list:hover .idx__line,
+  .index__list:hover .idx__kind {
+    color: color-mix(in srgb, var(--c-mute) 70%, transparent);
+  }
+  .index__list:hover .idx__icon {
+    opacity: 0.35;
+  }
+  .index__list .idx:hover {
+    color: var(--c-text);
+  }
+  .index__list .idx:hover .idx__name {
+    transform: translateX(12px);
+  }
+  .index__list .idx:hover .idx__line {
+    color: var(--c-text-soft);
+  }
+  .index__list .idx:hover .idx__kind {
+    color: var(--c-accent-hi);
+  }
+  .index__list .idx:hover .idx__icon {
+    opacity: 1;
+    transform: scale(1.08) rotate(-6deg);
+  }
+  .index__list .idx:hover .idx__arrow {
+    color: var(--c-accent-hi);
+    transform: translate(3px, -3px);
+  }
+
+  .preview {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 2;
+    width: 200px;
+    height: 200px;
+    margin: -100px 0 0 -100px;
+    pointer-events: none;
+    opacity: 0;
+    scale: 0.6;
+    transition:
+      opacity var(--d-base) var(--ease-out),
+      scale var(--d-base) var(--ease-out);
+  }
+  .preview.is-on {
+    opacity: 1;
+    scale: 1;
+  }
+  .preview img {
+    width: 100%;
+    height: 100%;
+    border-radius: 46px;
+    box-shadow:
+      0 30px 80px -20px rgb(0 0 0 / 0.6),
+      0 0 0 1px var(--c-line-strong),
+      0 0 120px -10px color-mix(in srgb, var(--c-accent) 45%, transparent);
+  }
+  /* The preview would cover the row's own text, so it sits to the side of the pointer. */
+  .preview {
+    translate: 140px 0;
+  }
+
   @media (max-width: 1080px) {
-    .apps {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    .idx {
+      grid-template-columns: 44px minmax(0, 1fr) 20px;
+      row-gap: var(--s-1);
+    }
+    .idx__icon {
+      grid-row: span 3;
+      align-self: start;
+    }
+    .idx__kind,
+    .idx__line {
+      grid-column: 2;
+    }
+    .idx__arrow {
+      grid-column: 3;
+      grid-row: 1;
+    }
+    .preview {
+      display: none;
     }
   }
   @media (max-width: 900px) {
     .studio__head {
-      grid-template-columns: 1fr;
-    }
-  }
-  @media (max-width: 560px) {
-    .apps {
       grid-template-columns: 1fr;
     }
   }
