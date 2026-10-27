@@ -1,11 +1,11 @@
 // Interface sound, synthesised with the Web Audio API: no audio files.
 // Off until the visitor turns it on; the choice is remembered. Every sound is
-// short, quiet and pitched in one key (A minor pentatonic) so they never
-// clash. When on, a very low two-oscillator pad sits underneath and fades
-// out whenever the tab is hidden.
+// short, quiet and pitched in one key (D major pentatonic) so they never
+// clash. When on, soft generative music plays underneath and fades out
+// whenever the tab is hidden.
 
 const KEY = 'sfx';
-const NOTES = [440, 523.25, 587.33, 659.25, 783.99, 880];
+const NOTES = [440, 493.88, 587.33, 659.25, 739.99, 880];
 
 let ctx: AudioContext | null = null;
 let master: GainNode;
@@ -62,32 +62,107 @@ function blip(freq: number, { type = 'sine' as OscillatorType, dur = 0.09, vol =
   osc.stop(t + dur + 0.02);
 }
 
+// A small reverb made from decaying noise, so notes bloom instead of click.
+function makeReverb(a: AudioContext, seconds = 3.2) {
+  const rate = a.sampleRate;
+  const len = Math.floor(rate * seconds);
+  const buf = a.createBuffer(2, len, rate);
+  for (let ch = 0; ch < 2; ch++) {
+    const d = buf.getChannelData(ch);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6);
+  }
+  const conv = a.createConvolver();
+  conv.buffer = buf;
+  return conv;
+}
+
+// Background music: generative, never a loop. Soft bell-like notes from one
+// calm scale (D major pentatonic, upper octaves) fall at uneven intervals into
+// a long reverb, over a faint breath of filtered noise. Nothing sits below
+// 290 Hz, so there is no drone or hum.
+const SCALE = [293.66, 329.63, 369.99, 440, 493.88, 587.33, 659.25, 739.99, 880];
+
 function startPad() {
   const a = audio();
   if (!a || pad) return;
-  const gain = a.createGain();
-  gain.gain.value = 0;
-  const lp = a.createBiquadFilter();
-  lp.type = 'lowpass';
-  lp.frequency.value = 420;
-  const oscs = [110, 110.6, 164.8].map((f) => {
-    const o = a.createOscillator();
-    o.type = 'sine';
-    o.frequency.value = f;
-    o.connect(lp);
-    o.start();
-    return o;
-  });
-  lp.connect(gain).connect(master);
-  gain.gain.linearRampToValueAtTime(0.035, a.currentTime + 2.5);
+  const bus = a.createGain();
+  bus.gain.value = 0;
+  const verb = makeReverb(a);
+  const wet = a.createGain();
+  wet.gain.value = 0.9;
+  const dry = a.createGain();
+  dry.gain.value = 0.35;
+  bus.connect(dry).connect(master);
+  bus.connect(verb).connect(wet).connect(master);
+  bus.gain.linearRampToValueAtTime(1, a.currentTime + 3);
+
+  // Air: pink-ish noise through a narrow, slowly moving band.
+  const noiseLen = a.sampleRate * 4;
+  const nb = a.createBuffer(1, noiseLen, a.sampleRate);
+  const nd = nb.getChannelData(0);
+  let last = 0;
+  for (let i = 0; i < noiseLen; i++) {
+    last = (last + 0.02 * (Math.random() * 2 - 1)) / 1.02;
+    nd[i] = last * 3.5;
+  }
+  const noise = a.createBufferSource();
+  noise.buffer = nb;
+  noise.loop = true;
+  const band = a.createBiquadFilter();
+  band.type = 'bandpass';
+  band.frequency.value = 900;
+  band.Q.value = 0.7;
+  const air = a.createGain();
+  air.gain.value = 0.012;
+  const lfo = a.createOscillator();
+  lfo.frequency.value = 0.05;
+  const lfoDepth = a.createGain();
+  lfoDepth.gain.value = 400;
+  lfo.connect(lfoDepth).connect(band.frequency);
+  noise.connect(band).connect(air).connect(bus);
+  noise.start();
+  lfo.start();
+
+  let timer = 0;
+  let prev = 4;
+  const note = () => {
+    // Step to a nearby note more often than a far one, like a slow melody.
+    const step = [-2, -1, -1, 1, 1, 2, 3][Math.floor(Math.random() * 7)];
+    prev = Math.max(0, Math.min(SCALE.length - 1, prev + step));
+    const f = SCALE[prev];
+    const t = a.currentTime + 0.05;
+    const vol = 0.018 + Math.random() * 0.012;
+    // Two partials, slightly detuned, for a soft glass bell.
+    [
+      [f, 'sine', vol],
+      [f * 2.001, 'sine', vol * 0.22],
+      [f * 0.5, 'triangle', vol * 0.35],
+    ].forEach(([freq, type, v]) => {
+      const o = a.createOscillator();
+      const g = a.createGain();
+      o.type = type as OscillatorType;
+      o.frequency.value = freq as number;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(v as number, t + 0.08);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 4.5);
+      o.connect(g).connect(bus);
+      o.start(t);
+      o.stop(t + 4.6);
+    });
+    timer = window.setTimeout(note, 1800 + Math.random() * 3200);
+  };
+  timer = window.setTimeout(note, 600);
+
   pad = {
-    gain,
+    gain: bus,
     stop: () => {
+      clearTimeout(timer);
       const t = a.currentTime;
-      gain.gain.cancelScheduledValues(t);
-      gain.gain.setValueAtTime(gain.gain.value, t);
-      gain.gain.linearRampToValueAtTime(0, t + 0.6);
-      oscs.forEach((o) => o.stop(t + 0.7));
+      bus.gain.cancelScheduledValues(t);
+      bus.gain.setValueAtTime(bus.gain.value, t);
+      bus.gain.linearRampToValueAtTime(0, t + 1.2);
+      noise.stop(t + 1.3);
+      lfo.stop(t + 1.3);
       pad = null;
     },
   };
@@ -110,16 +185,16 @@ export const sfx = {
   },
   open() {
     if (!enabled) return;
-    blip(523.25, { dur: 0.16, vol: 0.045 });
-    blip(783.99, { dur: 0.22, vol: 0.04, at: 0.06 });
+    blip(587.33, { dur: 0.16, vol: 0.045 });
+    blip(880, { dur: 0.22, vol: 0.04, at: 0.06 });
   },
   close() {
     if (!enabled) return;
-    blip(659.25, { dur: 0.14, vol: 0.04, glide: 0.75 });
+    blip(739.99, { dur: 0.14, vol: 0.04, glide: 0.75 });
   },
   success() {
     if (!enabled) return;
-    [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => blip(f, { dur: 0.3, vol: 0.035, at: i * 0.055 }));
+    [587.33, 739.99, 880, 1174.66].forEach((f, i) => blip(f, { dur: 0.3, vol: 0.035, at: i * 0.055 }));
   },
   set(on: boolean) {
     enabled = on;

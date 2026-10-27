@@ -54,8 +54,11 @@ float fbm(vec2 p) {
 
 void main() {
   vec2 frag = gl_FragCoord.xy;
-  vec2 uv = (frag - 0.5 * u_res) / u_res.y;
-  vec2 m = (u_mouse - 0.5) * vec2(u_res.x / u_res.y, 1.0);
+  // Scale by the short side, so a tall phone sees the whole map, not a slice.
+  float unit = min(u_res.x, u_res.y);
+  vec2 aspect = u_res / unit;
+  vec2 uv = (frag - 0.5 * u_res) / unit;
+  vec2 m = (u_mouse - 0.5) * aspect;
 
   float t = u_time * 0.045;
   vec2 p = uv * 1.35 + vec2(0.0, u_scroll * 0.9);
@@ -76,7 +79,7 @@ void main() {
   float major = 1.0 - clamp(abs(fract(f / 5.0 - 0.5) - 0.5) * 5.0 / (w * 1.6), 0.0, 1.0);
 
   // Fade the map towards the edges so the type sits on calm ground.
-  float vign = smoothstep(1.35, 0.15, length(uv * vec2(0.85, 1.1)));
+  float vign = smoothstep(1.35, 0.15, length(uv / aspect * vec2(0.85, 1.1)));
 
   vec3 col = u_bg;
   col = mix(col, u_ink, (line * 0.55 + major * 0.45) * u_ink_amt * vign);
@@ -84,7 +87,8 @@ void main() {
   // Accent: lines near the pointer, and one slow bloom drifting at the right.
   float glow = exp(-d * d * 11.0) * u_hover;
   col = mix(col, u_accent, clamp(line * glow * 1.15 + major * glow * 0.6, 0.0, 1.0));
-  vec2 c = vec2(0.55 + 0.08 * sin(t * 3.0), -0.15 + 0.06 * cos(t * 2.3));
+  // The bloom sits toward the upper right of any screen shape.
+  vec2 c = (vec2(0.78, 0.62) - 0.5) * aspect + vec2(0.06 * sin(t * 3.0), 0.05 * cos(t * 2.3));
   float bloom = smoothstep(0.95, 0.0, length(uv - c));
   col = mix(col, u_accent, bloom * bloom * 0.16);
 
@@ -156,33 +160,61 @@ export function startField(canvas: HTMLCanvasElement) {
   new MutationObserver(readTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const touch = matchMedia('(pointer: coarse)').matches;
+
+  // On phones the address bar slides in and out while scrolling, which changes
+  // the viewport height. Only a real change (rotation, a new width) resizes the
+  // canvas, so the field never flickers or stretches mid-scroll.
+  let lastW = 0;
+  let lastH = 0;
   const resize = () => {
-    const dpr = Math.min(devicePixelRatio || 1, 1.5);
-    canvas.width = Math.round(innerWidth * dpr);
-    canvas.height = Math.round(innerHeight * dpr);
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+    if (w === lastW && Math.abs(h - lastH) < 160) return;
+    lastW = w;
+    lastH = h;
+    const dpr = Math.min(devicePixelRatio || 1, touch ? 1.25 : 1.5);
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.uniform2f(uRes, canvas.width, canvas.height);
     if (still) draw(0);
   };
 
   // Pointer and scroll are eased so the field moves like a surface, not a cursor.
-  const target = { x: 0.62, y: 0.55, hover: 0 };
+  // On touch screens there is no hover, so the hill drifts on its own and
+  // follows a finger while it is down.
+  const target = { x: 0.62, y: 0.55, hover: touch ? 0.85 : 0 };
   const now = { x: 0.62, y: 0.55, hover: 0, scroll: 0 };
+  let fingerUntil = 0;
   addEventListener('pointermove', (e) => {
-    target.x = e.clientX / innerWidth;
-    target.y = 1 - e.clientY / innerHeight;
+    if (touch && e.pointerType === 'touch' && !e.isPrimary) return;
+    target.x = e.clientX / canvas.clientWidth;
+    target.y = 1 - e.clientY / canvas.clientHeight;
     target.hover = 1;
+    fingerUntil = performance.now() + 2500;
   }, { passive: true });
-  document.addEventListener('pointerleave', () => (target.hover = 0));
+  addEventListener('pointerdown', (e) => {
+    target.x = e.clientX / canvas.clientWidth;
+    target.y = 1 - e.clientY / canvas.clientHeight;
+    fingerUntil = performance.now() + 2500;
+  }, { passive: true });
+  if (!touch) document.addEventListener('pointerleave', () => (target.hover = 0));
 
   let raf = 0;
   let start = performance.now();
   function draw(time: number) {
-    const k = 0.06;
+    if (touch && performance.now() > fingerUntil) {
+      const t = time / 1000;
+      target.x = 0.5 + 0.3 * Math.sin(t * 0.21);
+      target.y = 0.55 + 0.22 * Math.sin(t * 0.13 + 1.3);
+      target.hover = 0.85;
+    }
+    const k = touch ? 0.035 : 0.06;
     now.x += (target.x - now.x) * k;
     now.y += (target.y - now.y) * k;
     now.hover += (target.hover - now.hover) * 0.04;
-    now.scroll += (scrollY / innerHeight - now.scroll) * 0.08;
+    now.scroll += (scrollY / Math.max(1, canvas.clientHeight) - now.scroll) * 0.08;
     gl!.uniform1f(uTime, time / 1000);
     gl!.uniform2f(uMouse, now.x, now.y);
     gl!.uniform1f(uHover, now.hover);
