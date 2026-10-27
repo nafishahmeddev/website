@@ -19,8 +19,11 @@ const { size = 40, class: cls } = Astro.props;
   type Px = { x: number; y: number; c: string };
   const all: Px[] = [];
   pixelMe.forEach((row, y) => [...row].forEach((ch, x) => all.push({ x, y, c: pixelPalette[ch] })));
-  const ground = all.filter((p) => p.c === pixelPalette.B || p.c === pixelPalette.b);
-  const figure = all.filter((p) => !ground.includes(p));
+  // A circle stepped on the pixel grid, like the round original. A smooth
+  // CSS crop would cut pixels in half.
+  const inCircle = (p: Px) => (p.x - 15.5) ** 2 + (p.y - 15.5) ** 2 <= 16.2 ** 2;
+  const ground = all.filter((p) => inCircle(p) && (p.c === pixelPalette.B || p.c === pixelPalette.b));
+  const figure = all.filter((p) => inCircle(p) && p.c !== pixelPalette.B && p.c !== pixelPalette.b);
   const eyes = new Set(pixelEyes.map(([x, y]) => y * N + x));
 
   document.querySelectorAll<HTMLCanvasElement>('[data-pxme]').forEach((canvas) => {
@@ -100,7 +103,6 @@ const { size = 40, class: cls } = Astro.props;
     height: var(--px-size);
     image-rendering: pixelated;
     image-rendering: crisp-edges;
-    border-radius: 4px;
     flex: none;
   }
 </style>

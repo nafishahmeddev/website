@@ -25,7 +25,7 @@ const nav = [
       {nav.map((n, i) => (
         <a class="hdr__link" href={n.href} data-spy={n.id} data-sfx={i + 1}>
           <span class="hdr__n">{String(i + 1).padStart(2, '0')}</span>
-          <span class="hdr__label">{n.label}</span>
+          <span class="hdr__label"><span>{n.label}</span><span aria-hidden="true">{n.label}</span></span>
         </a>
       ))}
     </nav>
@@ -61,7 +61,7 @@ const nav = [
     const i = links.findIndex((l) => l.dataset.spy === id);
     if (whereN && whereLabel) {
       whereN.textContent = String(i + 1).padStart(2, '0');
-      whereLabel.textContent = i < 0 ? 'Index' : links[i].querySelector('.hdr__label')!.textContent!;
+      whereLabel.textContent = i < 0 ? 'Index' : links[i].querySelector('.hdr__label span')!.textContent!;
     }
   };
 
@@ -133,7 +133,7 @@ const nav = [
   .hdr__link {
     position: relative;
     display: inline-flex;
-    align-items: baseline;
+    align-items: center;
     gap: 6px;
     padding-block: var(--s-2);
     font-size: var(--t-small);
@@ -161,9 +161,29 @@ const nav = [
   .hdr__link:hover {
     color: var(--c-text);
   }
-  .hdr__link:hover::after,
   .hdr__link[aria-current]::after {
     transform: scaleX(1);
+  }
+  /* The label rolls up and its copy rolls in from below. */
+  .hdr__label {
+    display: grid;
+    overflow: hidden;
+    height: 1.4em;
+    line-height: 1.4;
+  }
+  .hdr__label span {
+    grid-area: 1 / 1;
+    transition: transform var(--d-base) var(--ease-out);
+  }
+  .hdr__label span + span {
+    transform: translateY(100%);
+    color: var(--c-text);
+  }
+  .hdr__link:hover .hdr__label span:first-child {
+    transform: translateY(-100%);
+  }
+  .hdr__link:hover .hdr__label span + span {
+    transform: none;
   }
   .hdr__link[aria-current] {
     color: var(--c-text);
