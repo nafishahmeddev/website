@@ -1,6 +1,5 @@
 ---
 import Split from './Split.astro';
-import PixelMe from './PixelMe.astro';
 import { profile, hero } from '../data/profile';
 ---
 
@@ -26,7 +25,7 @@ import { profile, hero } from '../data/profile';
       </div>
 
       <div class="hero__now" data-reveal style="--i:8">
-        <PixelMe size={72} class="hero__px" />
+        <img class="hero__ava" src="/avatar.webp" alt={`Portrait of ${profile.name}`} width="72" height="72" decoding="async" />
         <dl>
           <div><dt class="label">Now</dt><dd>{profile.currentTitle}, {profile.currentCompany}</dd></div>
           <div><dt class="label">Also</dt><dd>{profile.studio.role}, <a class="link" href={profile.studio.url} data-cursor="Visit">{profile.studio.name}</a></dd></div>
@@ -104,6 +103,12 @@ import { profile, hero } from '../data/profile';
     justify-self: end;
   }
 
+  .hero__ava {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    flex: none;
+  }
   .hero__now dl {
     display: grid;
     gap: var(--s-2);
