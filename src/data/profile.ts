@@ -141,7 +141,7 @@ export const studioApps: StudioApp[] = [
   { slug: 'tailstamp', name: 'Tailstamp', kind: 'Pet health records', line: 'Medicine reminders, vaccines and vet visits for dogs, cats and rabbits.', live: false },
   { slug: 'grau', name: 'Grau', kind: 'Jiu-jitsu journal', line: 'Training log and belt timeline for BJJ.', live: true },
   { slug: 'fuzzlets', name: 'Fuzzlets', kind: 'Cozy sort puzzle', line: 'Sort the fluffs and tuck them in for the night.', live: true },
-  { slug: 'loose-ends', name: 'Loose Ends', kind: 'Thread puzzle', line: 'Pull every thread free.', live: false },
+  { slug: 'loose-ends', name: 'Loose Ends', kind: 'Thread puzzle', line: 'Pull every thread free.', live: true },
 ];
 
 /** As on LinkedIn (linkedin.com/in/nafish-ahmed-dev), newest first. */
